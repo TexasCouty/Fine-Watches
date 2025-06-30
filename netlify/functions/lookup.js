@@ -1,9 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-// Use env var for safety:
 const uri = process.env.MONGO_URI;
-
-// Cache the client between calls
 let cachedClient = null;
 
 exports.handler = async function (event, context) {
@@ -30,8 +27,17 @@ exports.handler = async function (event, context) {
       console.log('♻️ Reusing cached MongoDB client.');
     }
 
-    const db = cachedClient.db('watchlookup');
-    const collection = db.collection('watch_refs');
+    const dbName = 'watchlookup';
+    console.log(`📁 Using DB: ${dbName}`);
+    const db = cachedClient.db(dbName);
+
+    const collectionName = 'watch_refs';
+    console.log(`📂 Using Collection: ${collectionName}`);
+    const collection = db.collection(collectionName);
+
+    // Log the first doc to verify data!
+    const firstDoc = await collection.findOne({});
+    console.log('🔎 First doc in collection:', JSON.stringify(firstDoc));
 
     console.log(`📡 Running regex query for: ${ref}`);
     const results = await collection.find({

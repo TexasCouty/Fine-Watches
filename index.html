@@ -18,7 +18,7 @@
       padding: 40px;
       border-radius: 12px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      max-width: 700px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
@@ -36,16 +36,16 @@
       text-align: center;
     }
 
-    input, button {
-      padding: 14px;
+    input, button, textarea {
+      padding: 10px;
       font-size: 1rem;
-      margin: 10px 0;
+      margin: 5px 0;
       width: 100%;
       box-sizing: border-box;
       border-radius: 6px;
     }
 
-    input {
+    input, textarea {
       border: 1px solid #555;
       background: #222;
       color: #fff;
@@ -122,6 +122,10 @@
       text-align: center;
     }
 
+    .edit-btn {
+      margin-top: 10px;
+    }
+
     @media (max-width: 700px) {
       .card {
         flex-direction: column;
@@ -173,7 +177,7 @@
           } else {
             console.log('✅ Final returned data:', data);
 
-            resultsDiv.innerHTML = data.map(item => {
+            resultsDiv.innerHTML = data.map((item, index) => {
               console.log(`🖼️ Images for ${item.reference}:`, item.images);
 
               const imagesHtml = (item.images || []).map(filename => {
@@ -181,8 +185,8 @@
               }).join('');
 
               return `
-                <div class="card">
-                  <div class="card-text">
+                <div class="card" id="card-${index}">
+                  <div class="card-text" id="text-${index}">
                     <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference}</strong></p>
                     <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
                     <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
@@ -192,6 +196,7 @@
                     <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
                     <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
                     <p><strong>Notes:</strong> ${item.notes || ''}</p>
+                    <button class="edit-btn" onclick="enableEdit(${index}, ${encodeURIComponent(JSON.stringify(item))})">Edit</button>
                   </div>
                   <div class="card-images">${imagesHtml}</div>
                 </div>
@@ -206,6 +211,53 @@
         console.error(err);
         resultsDiv.innerHTML = '<div class="message">Error connecting to the server.</div>';
       }
+    }
+
+    function enableEdit(index, itemRaw) {
+      const item = JSON.parse(decodeURIComponent(itemRaw));
+      const container = document.getElementById(`text-${index}`);
+      container.innerHTML = `
+        <input value="${item.reference}" id="ref-${index}" placeholder="Reference" />
+        <input value="${item.collection}" id="collection-${index}" placeholder="Collection" />
+        <input value="${item.retail_price}" id="price-${index}" placeholder="Retail Price" />
+        <input value="${item.dial}" id="dial-${index}" placeholder="Dial" />
+        <input value="${item.case}" id="case-${index}" placeholder="Case" />
+        <input value="${item.bracelet}" id="bracelet-${index}" placeholder="Bracelet" />
+        <input value="${item.movement}" id="movement-${index}" placeholder="Movement" />
+        <input value="${item.year_introduced}" id="year-${index}" placeholder="Year Introduced" />
+        <textarea id="notes-${index}" placeholder="Notes">${item.notes || ''}</textarea>
+        <button onclick="saveEdit(${index}, '${item.reference}')">Save</button>
+        <button onclick="lookupReference()">Cancel</button>
+      `;
+    }
+
+    async function saveEdit(index, originalRef) {
+      const fields = {
+        reference: document.getElementById(`ref-${index}`).value.trim(),
+        collection: document.getElementById(`collection-${index}`).value.trim(),
+        retail_price: document.getElementById(`price-${index}`).value.trim(),
+        dial: document.getElementById(`dial-${index}`).value.trim(),
+        case: document.getElementById(`case-${index}`).value.trim(),
+        bracelet: document.getElementById(`bracelet-${index}`).value.trim(),
+        movement: document.getElementById(`movement-${index}`).value.trim(),
+        year_introduced: document.getElementById(`year-${index}`).value.trim(),
+        notes: document.getElementById(`notes-${index}`).value.trim()
+      };
+
+      console.log('📝 Saving:', fields);
+
+      const res = await fetch('/.netlify/functions/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reference: originalRef,
+          fields: fields
+        })
+      });
+
+      const json = await res.json();
+      console.log('✅ Update response:', json);
+      lookupReference();
     }
   </script>
 </body>

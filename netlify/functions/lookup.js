@@ -1,6 +1,6 @@
 const { MongoClient } = require('mongodb');
 
-const uri = process.env.MONGO_URI;
+const uri = process.env.MONGO_URI; // Make sure this is set in Netlify!
 let cachedClient = null;
 
 exports.handler = async function (event) {
@@ -27,7 +27,8 @@ exports.handler = async function (event) {
       console.log('♻️ Using cached MongoDB client.');
     }
 
-    const db = cachedClient.db('watchlookup');
+    // ✅ Correct DB name — match your live cluster!
+    const db = cachedClient.db('test');
     const collection = db.collection('watch_refs');
 
     console.log(`📡 Running regex query for: ${ref}`);

@@ -80,6 +80,21 @@
       padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .card-text {
+      flex: 1 1 60%;
+      padding-right: 20px;
+    }
+
+    .card-images {
+      flex: 1 1 35%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
     }
 
     .manufacturer-line {
@@ -94,11 +109,10 @@
     }
 
     .watch-image {
-      max-width: 100%;
-      margin: 10px 0;
-      border-radius: 6px;
+      width: 100px;
+      height: auto;
+      border-radius: 4px;
       border: 1px solid #333;
-      display: block;
     }
 
     .message {
@@ -106,6 +120,23 @@
       background: #222;
       border-radius: 4px;
       text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        flex-direction: column;
+      }
+      .card-text,
+      .card-images {
+        flex: 1 1 100%;
+        padding: 0;
+      }
+      .card-images {
+        justify-content: flex-start;
+      }
+      .watch-image {
+        width: 80px;
+      }
     }
   </style>
 </head>
@@ -141,7 +172,7 @@
             resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
             resultsDiv.innerHTML = data.map(item => {
-              const imageCount = 4; // Adjust if you add more images later
+              const imageCount = 4;
               const imagesHtml = Array.from({ length: imageCount }, (_, i) => {
                 const number = (5 + i).toString().padStart(4, '0');
                 return `<img src="assets/${item.reference}-${number}.avif" alt="${item.reference} image" class="watch-image" />`;
@@ -149,16 +180,18 @@
 
               return `
                 <div class="card">
-                  <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference}</strong></p>
-                  <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
-                  <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
-                  <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>
-                  <p><strong>Case:</strong> ${item.case || 'N/A'}</p>
-                  <p><strong>Bracelet:</strong> ${item.bracelet || 'N/A'}</p>
-                  <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
-                  <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
-                  <p><strong>Notes:</strong> ${item.notes || ''}</p>
-                  ${imagesHtml}
+                  <div class="card-text">
+                    <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference}</strong></p>
+                    <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
+                    <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
+                    <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>
+                    <p><strong>Case:</strong> ${item.case || 'N/A'}</p>
+                    <p><strong>Bracelet:</strong> ${item.bracelet || 'N/A'}</p>
+                    <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
+                    <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
+                    <p><strong>Notes:</strong> ${item.notes || ''}</p>
+                  </div>
+                  <div class="card-images">${imagesHtml}</div>
                 </div>
               `;
             }).join('');

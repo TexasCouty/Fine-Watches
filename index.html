@@ -82,16 +82,11 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 
-    .manufacturer {
+    .manufacturer-line {
       font-weight: bold;
       font-size: 1rem;
       color: #d4af37;
-      margin: 0 0 5px 0;
-    }
-
-    .card h3 {
       margin: 0 0 10px 0;
-      font-size: 1.2rem;
     }
 
     .card p {
@@ -139,8 +134,7 @@
           } else {
             resultsDiv.innerHTML = data.map(item => `
               <div class="card">
-                <div class="manufacturer">${item.manufacturer || 'N/A'}</div>
-                <h3>Reference: ${item.reference}</h3>
+                <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference}</strong></p>
                 <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
                 <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
                 <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>
@@ -164,4 +158,3 @@
   </script>
 </body>
 </html>
-

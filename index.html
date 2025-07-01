@@ -7,10 +7,11 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 600px;
+      max-width: 800px;
       margin: 40px auto;
       padding: 20px;
       line-height: 1.6;
+      background: #f8f8f8;
     }
 
     h1 {
@@ -18,92 +19,105 @@
     }
 
     input, button {
-      padding: 10px;
+      padding: 12px;
       font-size: 1rem;
-      margin-right: 10px;
-      width: calc(100% - 120px);
-      max-width: 300px;
+      margin: 10px 0;
+      width: 100%;
       box-sizing: border-box;
     }
 
     button {
-      width: 80px;
+      background: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
     }
 
-    #result {
-      text-align: left;
+    button:hover {
+      background: #555;
+    }
+
+    .results {
       margin-top: 30px;
-      white-space: pre-wrap;
-      background: #f4f4f4;
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      word-wrap: break-word;
     }
 
-    @media (max-width: 600px) {
-      input, button {
-        display: block;
-        width: 100%;
-        margin: 10px 0;
-      }
+    .card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      margin: 5px 0;
+    }
+
+    .message {
+      padding: 15px;
+      background: #eee;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
   <h1>Fine Watches Reference Lookup</h1>
-  <input type="text" id="refInput" placeholder="Enter Reference Number" />
+  <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
   <button onclick="lookupReference()">Search</button>
 
-  <h3>Results:</h3>
-  <div id="result">Results will appear here...</div>
+  <div id="results" class="results"></div>
 
   <script>
     async function lookupReference() {
       const ref = document.getElementById('refInput').value.trim();
-      const result = document.getElementById('result');
-      result.textContent = '';
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
 
       if (!ref) {
         alert('Please enter a reference number.');
         return;
       }
 
-      result.textContent = 'Searching...';
+      resultsDiv.innerHTML = '<div class="message">Searching...</div>';
 
       try {
         const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
         if (response.ok) {
           const data = await response.json();
-          if (data.length === 0) {
-            result.textContent = 'No matches found.';
+          if (!Array.isArray(data) || data.length === 0) {
+            resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
-            result.textContent = data.map(item => {
-              return `
-Reference: ${item.reference}
-Collection: ${item.collection}
-Retail Price: ${item.retail_price || 'N/A'}
-Dial: ${item.dial}
-Case: ${item.case}
-Bracelet: ${item.bracelet}
-Movement: ${item.movement}
-Year Introduced: ${item.year_introduced}
-Notes: ${item.notes}
-Manufacturer: ${item.manufacturer}
-`.trim();
-            }).join('\n\n');
+            resultsDiv.innerHTML = data.map(item => `
+              <div class="card">
+                <h3>${item.manufacturer} ${item.reference}</h3>
+                <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
+                <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
+                <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>
+                <p><strong>Case:</strong> ${item.case || 'N/A'}</p>
+                <p><strong>Bracelet:</strong> ${item.bracelet || 'N/A'}</p>
+                <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
+                <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
+                <p><strong>Notes:</strong> ${item.notes || ''}</p>
+              </div>
+            `).join('');
           }
         } else {
           const error = await response.json();
-          result.textContent = error.message || 'No matches found.';
+          resultsDiv.innerHTML = `<div class="message">${error.message || 'No matches found.'}</div>`;
         }
       } catch (err) {
         console.error(err);
-        result.textContent = 'Error connecting to the server.';
+        resultsDiv.innerHTML = '<div class="message">Error connecting to the server.</div>';
       }
     }
   </script>
 </body>
 </html>
-
 

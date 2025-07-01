@@ -1,8 +1,9 @@
+require('dotenv').config(); // ✅ Loads .env vars automatically
 const { MongoClient } = require('mongodb');
 const fs = require('fs');
 
-// ✅ Your live Mongo URI
-const uri = 'mongodb+srv://texascouty21:lkjbPrV8Mr1iRrev@patek-cluster.rchgesl.mongodb.net/?retryWrites=true&w=majority&appName=patek-cluster';
+// ✅ Uses your .env MONGO_URI
+const uri = process.env.MONGO_URI;
 
 async function main() {
   const client = new MongoClient(uri);
@@ -12,13 +13,13 @@ async function main() {
     await client.connect();
     console.log('✅ Connected.');
 
-    const db = client.db('test'); // Make sure this matches your live DB!
+    const db = client.db('test'); // Make sure this matches your live DB name!
     const collection = db.collection('watch_refs');
 
     console.log(`📂 Using DB: test`);
     console.log(`📁 Using Collection: watch_refs`);
 
-    // ✅ Load your patch file
+    // ✅ Load your patch JSON
     const data = JSON.parse(fs.readFileSync('./patch_images.json', 'utf8'));
 
     let patched = 0;
@@ -46,3 +47,4 @@ async function main() {
 }
 
 main();
+

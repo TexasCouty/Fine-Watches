@@ -93,6 +93,14 @@
       margin: 5px 0;
     }
 
+    .watch-image {
+      max-width: 100%;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #333;
+      display: block;
+    }
+
     .message {
       padding: 15px;
       background: #222;
@@ -132,19 +140,28 @@
           if (!Array.isArray(data) || data.length === 0) {
             resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
-            resultsDiv.innerHTML = data.map(item => `
-              <div class="card">
-                <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference}</strong></p>
-                <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
-                <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
-                <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>
-                <p><strong>Case:</strong> ${item.case || 'N/A'}</p>
-                <p><strong>Bracelet:</strong> ${item.bracelet || 'N/A'}</p>
-                <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
-                <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
-                <p><strong>Notes:</strong> ${item.notes || ''}</p>
-              </div>
-            `).join('');
+            resultsDiv.innerHTML = data.map(item => {
+              const imageCount = 4; // Adjust if you add more images later
+              const imagesHtml = Array.from({ length: imageCount }, (_, i) => {
+                const number = (5 + i).toString().padStart(4, '0');
+                return `<img src="assets/${item.reference}-${number}.avif" alt="${item.reference} image" class="watch-image" />`;
+              }).join('');
+
+              return `
+                <div class="card">
+                  <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference}</strong></p>
+                  <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
+                  <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
+                  <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>
+                  <p><strong>Case:</strong> ${item.case || 'N/A'}</p>
+                  <p><strong>Bracelet:</strong> ${item.bracelet || 'N/A'}</p>
+                  <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
+                  <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
+                  <p><strong>Notes:</strong> ${item.notes || ''}</p>
+                  ${imagesHtml}
+                </div>
+              `;
+            }).join('');
           }
         } else {
           const error = await response.json();
@@ -158,3 +175,4 @@
   </script>
 </body>
 </html>
+

@@ -1,0 +1,2249 @@
+[
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520e6"
+    },
+    "reference": "5402ST",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Petite Tapisserie Blue",
+    "case": "Stainless Steel, 39mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 2121",
+    "year_introduced": "1972",
+    "notes": "Original Royal Oak 'Jumbo'",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520e7"
+    },
+    "reference": "15202ST.OO.1240ST.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 39mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 2121",
+    "year_introduced": "2012",
+    "notes": "Modern 'Jumbo' Extra-Thin",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520e8"
+    },
+    "reference": "15500ST.OO.1220ST.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 4302",
+    "year_introduced": "2019",
+    "notes": "Royal Oak Selfwinding",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520e9"
+    },
+    "reference": "15400ST.OO.1220ST.02",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 3120",
+    "year_introduced": "2012",
+    "notes": "Discontinued Royal Oak 41mm",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520ea"
+    },
+    "reference": "26240ST.OO.1320ST.01",
+    "collection": "Royal Oak Offshore",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 43mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 4401",
+    "year_introduced": "2021",
+    "notes": "Royal Oak Offshore Chronograph",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520eb"
+    },
+    "reference": "26470ST.OO.A801CR.01",
+    "collection": "Royal Oak Offshore",
+    "retail_price": "",
+    "dial": "Safari",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 3126/3840",
+    "year_introduced": "2014",
+    "notes": "Royal Oak Offshore 'Safari'",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520ec"
+    },
+    "reference": "26574ST.OO.1220ST.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 5134",
+    "year_introduced": "2015",
+    "notes": "Royal Oak Perpetual Calendar",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520ed"
+    },
+    "reference": "77451ST.ZZ.1261ST.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Silver Grande Tapisserie",
+    "case": "Stainless Steel, 34mm, Diamond Bezel",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 5800",
+    "year_introduced": "2020",
+    "notes": "Royal Oak Selfwinding 34mm, diamond bezel",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520ee"
+    },
+    "reference": "67651ST.ZZ.1261ST.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Silver Grande Tapisserie",
+    "case": "Stainless Steel, 33mm, Diamond Bezel",
+    "bracelet": "Stainless Steel",
+    "movement": "Quartz Caliber 2713",
+    "year_introduced": "2012",
+    "notes": "Royal Oak Quartz, diamond bezel",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520ef"
+    },
+    "reference": "77350ST.OO.1261ST.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Blue Grande Tapisserie",
+    "case": "Stainless Steel, 34mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 5800",
+    "year_introduced": "2019",
+    "notes": "Royal Oak Selfwinding 34mm, no diamonds",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f0"
+    },
+    "reference": "26589TI.OO.D003CA.01",
+    "collection": "Royal Oak Concept",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Titanium, 44mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber 2948",
+    "year_introduced": "2018",
+    "notes": "Flying Tourbillon GMT",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f1"
+    },
+    "reference": "15416CE.OO.1225CE.01",
+    "collection": "Royal Oak",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Black Ceramic, 41mm",
+    "bracelet": "Black Ceramic",
+    "movement": "Caliber 3132",
+    "year_introduced": "2021",
+    "notes": "Double Balance Wheel Openworked",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f2"
+    },
+    "reference": "15710ST.OO.A002CA.01",
+    "collection": "Royal Oak Offshore",
+    "retail_price": "",
+    "dial": "Black Méga Tapisserie",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber 3120",
+    "year_introduced": "2015",
+    "notes": "Offshore Diver",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f3"
+    },
+    "reference": "15210OR.OO.A002KB.01",
+    "collection": "Code 11.59",
+    "retail_price": "",
+    "dial": "Black Lacquered",
+    "case": "Pink Gold, 41mm",
+    "bracelet": "Rubber-Coated Strap",
+    "movement": "Caliber 4302",
+    "year_introduced": "2019",
+    "notes": "Time Only",
+    "manufacturer": "Audemars Piguet",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f4"
+    },
+    "reference": "311.30.42.30.01.005",
+    "collection": "Speedmaster Professional",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 1861",
+    "year_introduced": "2014",
+    "notes": "Moonwatch Hesalite",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f5"
+    },
+    "reference": "310.30.42.50.01.001",
+    "collection": "Speedmaster Professional",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 3861",
+    "year_introduced": "2021",
+    "notes": "New Master Chronometer Moonwatch",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f6"
+    },
+    "reference": "210.30.42.20.01.001",
+    "collection": "Seamaster Diver 300M",
+    "retail_price": "",
+    "dial": "Black Wave",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 8800",
+    "year_introduced": "2018",
+    "notes": "Modern Diver 300M",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f7"
+    },
+    "reference": "220.10.41.21.03.004",
+    "collection": "Seamaster Aqua Terra",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 8900",
+    "year_introduced": "2017",
+    "notes": "Aqua Terra Master Chronometer",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f8"
+    },
+    "reference": "215.30.44.21.01.002",
+    "collection": "Seamaster Planet Ocean",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 43.5mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 8900",
+    "year_introduced": "2016",
+    "notes": "Planet Ocean 600M",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520f9"
+    },
+    "reference": "233.30.41.21.01.001",
+    "collection": "Seamaster 300",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 8400",
+    "year_introduced": "2014",
+    "notes": "Retro inspired Seamaster 300",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520fa"
+    },
+    "reference": "3570.50.00",
+    "collection": "Speedmaster Professional",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 1861",
+    "year_introduced": "1996",
+    "notes": "Classic Moonwatch pre-Co-Axial",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520fb"
+    },
+    "reference": "311.32.42.30.04.003",
+    "collection": "Speedmaster Professional",
+    "retail_price": "",
+    "dial": "White",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 1861",
+    "year_introduced": "2015",
+    "notes": "Silver Snoopy Award",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520fc"
+    },
+    "reference": "130.30.39.21.03.001",
+    "collection": "Constellation Globemaster",
+    "retail_price": "",
+    "dial": "Blue Pie-Pan",
+    "case": "Stainless Steel, 39mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 8900",
+    "year_introduced": "2015",
+    "notes": "Master Chronometer Annual Calendar",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520fd"
+    },
+    "reference": "227.90.55.21.04.001",
+    "collection": "Seamaster PloProf",
+    "retail_price": "",
+    "dial": "White",
+    "case": "Titanium, 55mm",
+    "bracelet": "Titanium Mesh",
+    "movement": "Caliber 8912",
+    "year_introduced": "2016",
+    "notes": "Professional 1200M Diver",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520fe"
+    },
+    "reference": "513.98.39.21.56.001",
+    "collection": "De Ville",
+    "retail_price": "",
+    "dial": "Grey Skeleton",
+    "case": "Platinum, 38.7mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 2638",
+    "year_introduced": "2017",
+    "notes": "Central Tourbillon",
+    "manufacturer": "Omega",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee6406520ff"
+    },
+    "reference": "3700/1A",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Black-Blue",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 28-255 C",
+    "year_introduced": "1976",
+    "notes": "Original 'Jumbo' Nautilus",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652100"
+    },
+    "reference": "5711/1A-010",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2006",
+    "notes": "Discontinued 2021",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652101"
+    },
+    "reference": "5712/1A-001",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 240 PS IRM C LU",
+    "year_introduced": "2006",
+    "notes": "Moonphase & power reserve",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652102"
+    },
+    "reference": "5990/1A-001",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 40.5mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber CH 28-520 C FUS",
+    "year_introduced": "2014",
+    "notes": "Travel Time Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652103"
+    },
+    "reference": "5740/1G-001",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "White Gold, 40mm",
+    "bracelet": "White Gold",
+    "movement": "Caliber 240 Q",
+    "year_introduced": "2018",
+    "notes": "Perpetual Calendar",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652104"
+    },
+    "reference": "5167A-001",
+    "collection": "Aquanaut",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Tropical Rubber",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2007",
+    "notes": "Classic Aquanaut",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652105"
+    },
+    "reference": "5168G-001",
+    "collection": "Aquanaut",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "White Gold, 42.2mm",
+    "bracelet": "Tropical Rubber",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2017",
+    "notes": "Jumbo Aquanaut",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652106"
+    },
+    "reference": "5968A-001",
+    "collection": "Aquanaut",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 42.2mm",
+    "bracelet": "Tropical Rubber",
+    "movement": "Caliber CH 28‑520 C",
+    "year_introduced": "2018",
+    "notes": "Aquanaut Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652107"
+    },
+    "reference": "96",
+    "collection": "Calatrava",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Yellow Gold, 31mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 12-120",
+    "year_introduced": "1932",
+    "notes": "Original Calatrava",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652108"
+    },
+    "reference": "5196J-001",
+    "collection": "Calatrava",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Yellow Gold, 37mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 215 PS",
+    "year_introduced": "2004",
+    "notes": "Modern manual wind",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652109"
+    },
+    "reference": "5227G-001",
+    "collection": "Calatrava",
+    "retail_price": "",
+    "dial": "Ivory",
+    "case": "White Gold, 39mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2013",
+    "notes": "Officer’s caseback",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065210a"
+    },
+    "reference": "6119R-001",
+    "collection": "Calatrava",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Rose Gold, 39mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 30‑255 PS",
+    "year_introduced": "2021",
+    "notes": "Clous de Paris bezel",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065210b"
+    },
+    "reference": "3940J",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Yellow Gold, 36mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 240 Q",
+    "year_introduced": "1985",
+    "notes": "Perpetual Calendar",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065210c"
+    },
+    "reference": "3970E",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Yellow Gold, 36mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber CH 27-70 Q",
+    "year_introduced": "1986",
+    "notes": "Perpetual Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065210d"
+    },
+    "reference": "5270G-001",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "White Gold, 41mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber CH 29-535 PS Q",
+    "year_introduced": "2011",
+    "notes": "Perpetual Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065210e"
+    },
+    "reference": "5204R-011",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Opaline",
+    "case": "Rose Gold, 40mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber CHR 29‑535 PS Q",
+    "year_introduced": "2022",
+    "notes": "Split-seconds Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065210f"
+    },
+    "reference": "3738/100J",
+    "collection": "Golden Ellipse",
+    "retail_price": "",
+    "dial": "Blue Gold",
+    "case": "Yellow Gold, 31.2mm x 35.6mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 240",
+    "year_introduced": "1968",
+    "notes": "Classic Ellipse",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652110"
+    },
+    "reference": "5738P-001",
+    "collection": "Golden Ellipse",
+    "retail_price": "",
+    "dial": "Blue Gold",
+    "case": "Platinum, 34.5mm x 39.5mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 240",
+    "year_introduced": "2008",
+    "notes": "Large Ellipse",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652111"
+    },
+    "reference": "5098P-001",
+    "collection": "Gondolo",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Platinum, 32mm x 42mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 25-21 REC PS",
+    "year_introduced": "2007",
+    "notes": "Gondolo Art Deco",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652112"
+    },
+    "reference": "5124G-001",
+    "collection": "Gondolo",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "White Gold, 33.4mm x 43mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 25-21 REC PS",
+    "year_introduced": "2008",
+    "notes": "Rectangular Gondolo",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652113"
+    },
+    "reference": "4910/1200A-001",
+    "collection": "Twenty~4",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 25.1mm x 30mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Quartz Caliber E15",
+    "year_introduced": "1999",
+    "notes": "Twenty~4 Classic Quartz",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652114"
+    },
+    "reference": "7300/1200A-001",
+    "collection": "Twenty~4",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 36mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2018",
+    "notes": "Twenty~4 Automatic",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652115"
+    },
+    "reference": "6102P-001",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Blue Celestial",
+    "case": "Platinum, 44mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 240 LU CL C",
+    "year_introduced": "2015",
+    "notes": "Celestial Sky Chart",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652116"
+    },
+    "reference": "6300G-010",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "White Gold, 47.7mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 300 GS AL 36‑750 QIS FUS IRM",
+    "year_introduced": "2016",
+    "notes": "Grandmaster Chime",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652117"
+    },
+    "reference": "5531R-012",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Cloisonné Enamel",
+    "case": "Rose Gold, 40.2mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber R 27 HU",
+    "year_introduced": "2017",
+    "notes": "Minute Repeater World Time",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652118"
+    },
+    "reference": "5370P-011",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Blue Grand Feu Enamel",
+    "case": "Platinum, 41mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber CHR 29-535 PS",
+    "year_introduced": "2020",
+    "notes": "Split-Seconds Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652119"
+    },
+    "reference": "5271P-001",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Black Lacquer",
+    "case": "Platinum with diamonds, 41mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber CH 29‑535 PS Q",
+    "year_introduced": "2014",
+    "notes": "Perpetual Calendar Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065211a"
+    },
+    "reference": "5078G-010",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "White Enamel",
+    "case": "White Gold, 38mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber R 27 PS",
+    "year_introduced": "2005",
+    "notes": "Minute Repeater",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065211b"
+    },
+    "reference": "5164A-001",
+    "collection": "Aquanaut",
+    "retail_price": "",
+    "dial": "Black Embossed",
+    "case": "Stainless Steel, 40.8mm",
+    "bracelet": "Tropical Rubber",
+    "movement": "Caliber 324 S C FUS",
+    "year_introduced": "2011",
+    "notes": "Aquanaut Travel Time",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065211c"
+    },
+    "reference": "5067A-024",
+    "collection": "Aquanaut Luce",
+    "retail_price": "",
+    "dial": "Blue Embossed",
+    "case": "Stainless Steel with Diamonds, 35.6mm",
+    "bracelet": "Tropical Rubber",
+    "movement": "Quartz Caliber E23‑250 S C",
+    "year_introduced": "2021",
+    "notes": "Ladies Aquanaut with diamonds",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065211d"
+    },
+    "reference": "7118/1A-001",
+    "collection": "Nautilus Ladies",
+    "retail_price": "",
+    "dial": "Silvery Opaline",
+    "case": "Stainless Steel, 35.2mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2015",
+    "notes": "Ladies Nautilus",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065211e"
+    },
+    "reference": "7118/1450R-001",
+    "collection": "Nautilus Ladies",
+    "retail_price": "",
+    "dial": "Snow-set Diamonds",
+    "case": "Rose Gold fully diamond-set, 35.2mm",
+    "bracelet": "Rose Gold fully diamond-set",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2021",
+    "notes": "Haute Joaillerie Nautilus",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065211f"
+    },
+    "reference": "5167/300G-010",
+    "collection": "Aquanaut",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "White Gold with diamonds, 40mm",
+    "bracelet": "Tropical Rubber",
+    "movement": "Caliber 324 S C",
+    "year_introduced": "2022",
+    "notes": "Aquanaut Haute Joaillerie",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652120"
+    },
+    "reference": "5711/1A-018",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Tiffany Blue",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 26‑330 S C",
+    "year_introduced": "2021",
+    "notes": "Special Tiffany & Co. Edition",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652121"
+    },
+    "reference": "5976/1G-001",
+    "collection": "Nautilus",
+    "retail_price": "",
+    "dial": "Blue Gradient",
+    "case": "White Gold, 49.25mm",
+    "bracelet": "White Gold",
+    "movement": "Caliber CH 28‑520 C",
+    "year_introduced": "2016",
+    "notes": "40th Anniversary Nautilus Chronograph",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652122"
+    },
+    "reference": "5230G-001",
+    "collection": "Complications",
+    "retail_price": "",
+    "dial": "Grey",
+    "case": "White Gold, 38.5mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 240 HU",
+    "year_introduced": "2016",
+    "notes": "World Time",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652123"
+    },
+    "reference": "5822P-001",
+    "collection": "Cubitus",
+    "retail_price": "",
+    "dial": "Blue, Grand Date, Day, Moonphase",
+    "case": "Platinum, 45mm, baguette diamond at 6 o’clock",
+    "bracelet": "Navy composite/fabric strap",
+    "movement": "Calibre 240 PS CI J LU",
+    "year_introduced": "2024",
+    "notes": "Flagship Cubitus, first new Patek line in 25 years",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652124"
+    },
+    "reference": "5520P-001",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Platinum, 42.2mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber AL 30-660 S C FUS",
+    "year_introduced": "2019",
+    "notes": "Alarm Travel Time",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652125"
+    },
+    "reference": "6002G-001",
+    "collection": "Grand Complications",
+    "retail_price": "",
+    "dial": "Blue Cloisonné Enamel",
+    "case": "White Gold, 44mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber R TO 27 QR SID LU CL",
+    "year_introduced": "2013",
+    "notes": "Sky Moon Tourbillon",
+    "manufacturer": "Patek Philippe",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652126"
+    },
+    "reference": "RM 011-03",
+    "collection": "Flyback Chronograph",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Titanium, 49.94 x 44.50 mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RMAC3",
+    "year_introduced": "2016",
+    "notes": "Automatic Flyback Chronograph",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652127"
+    },
+    "reference": "RM 035",
+    "collection": "Rafael Nadal",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Magnesium-Aluminium, 48mm x 39.7mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RMUL1",
+    "year_introduced": "2011",
+    "notes": "Manual Winding Chronofiable Certified",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652128"
+    },
+    "reference": "RM 055",
+    "collection": "Bubba Watson",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "ATZ Ceramic, 49.9mm x 42.7mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RMUL2",
+    "year_introduced": "2011",
+    "notes": "Manual Winding, Sports Watch",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652129"
+    },
+    "reference": "RM 27-03",
+    "collection": "Rafael Nadal",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Quartz TPT, 47.77 x 40.30 mm",
+    "bracelet": "Fabric Velcro Strap",
+    "movement": "Caliber RM27-03",
+    "year_introduced": "2017",
+    "notes": "Tourbillon, 70G shock resistance",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065212a"
+    },
+    "reference": "RM 67-01",
+    "collection": "Extra Flat",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Titanium, 47.52 x 38.70 mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber CRMA6",
+    "year_introduced": "2015",
+    "notes": "Ultra-thin automatic",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065212b"
+    },
+    "reference": "RM 50-03",
+    "collection": "McLaren F1",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Graph TPT & Titanium, 44.50 x 49.65 mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RM50-03",
+    "year_introduced": "2017",
+    "notes": "Tourbillon Split-Seconds Chronograph",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065212c"
+    },
+    "reference": "RM 07-01",
+    "collection": "Ladies",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Rose Gold, 45.66 x 31.40 mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber CRMA2",
+    "year_introduced": "2014",
+    "notes": "Automatic Ladies Watch",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065212d"
+    },
+    "reference": "RM 052",
+    "collection": "Skull",
+    "retail_price": "",
+    "dial": "Skeleton Skull",
+    "case": "Titanium, 50mm x 42.7mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RM052",
+    "year_introduced": "2012",
+    "notes": "Tourbillon Skull",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065212e"
+    },
+    "reference": "RM 65-01",
+    "collection": "Automatic Split-Seconds Chronograph",
+    "retail_price": "",
+    "dial": "Skeleton",
+    "case": "Carbon TPT, 44.5 x 50mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RMAC4",
+    "year_introduced": "2020",
+    "notes": "Split-Seconds Automatic Chronograph",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065212f"
+    },
+    "reference": "RM 68-01",
+    "collection": "Tourbillon Art Piece",
+    "retail_price": "",
+    "dial": "Hand-Painted Skeleton",
+    "case": "Carbon NTPT, 50mm",
+    "bracelet": "Rubber Strap",
+    "movement": "Caliber RM68-01",
+    "year_introduced": "2016",
+    "notes": "Cyril Kongo Art Collaboration",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652130"
+    },
+    "reference": "RM 19-02",
+    "collection": "Tourbillon Fleur",
+    "retail_price": "",
+    "dial": "Skeleton Flower",
+    "case": "White Gold, 45mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber RM19-02",
+    "year_introduced": "2015",
+    "notes": "Ladies Tourbillon Automaton",
+    "manufacturer": "Richard Mille",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652131"
+    },
+    "reference": "228238",
+    "collection": "Day-Date 40",
+    "retail_price": "",
+    "dial": "Champagne",
+    "case": "Yellow Gold, 40mm",
+    "bracelet": "President",
+    "movement": "Caliber 3255",
+    "year_introduced": "2015",
+    "notes": "Flagship Day-Date",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652132"
+    },
+    "reference": "116500LN",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "White or Black",
+    "case": "Stainless Steel, 40mm, Black Ceramic Bezel",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 4130",
+    "year_introduced": "2016",
+    "notes": "Stainless Steel Daytona Ceramic Bezel",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652133"
+    },
+    "reference": "126610LN",
+    "collection": "Submariner Date",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3235",
+    "year_introduced": "2020",
+    "notes": "New generation Submariner Date",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652134"
+    },
+    "reference": "126710BLRO",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Jubilee",
+    "movement": "Caliber 3285",
+    "year_introduced": "2018",
+    "notes": "Pepsi bezel",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652135"
+    },
+    "reference": "126711CHNR",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Steel & Everose Gold, 40mm",
+    "bracelet": "Oyster",
+    "movement": "Caliber 3285",
+    "year_introduced": "2018",
+    "notes": "Root Beer",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652136"
+    },
+    "reference": "124060",
+    "collection": "Submariner No Date",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3230",
+    "year_introduced": "2020",
+    "notes": "No-date Submariner",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652137"
+    },
+    "reference": "126900",
+    "collection": "Air-King",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3230",
+    "year_introduced": "2022",
+    "notes": "Updated Air-King",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652138"
+    },
+    "reference": "116520",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "White",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 4130",
+    "year_introduced": "2000",
+    "notes": "Pre-ceramic Daytona",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652139"
+    },
+    "reference": "16710",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3185",
+    "year_introduced": "1989",
+    "notes": "Pepsi & Coke bezel options",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065213a"
+    },
+    "reference": "126200",
+    "collection": "Datejust 36",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 36mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3235",
+    "year_introduced": "2019",
+    "notes": "Modern Datejust 36",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065213b"
+    },
+    "reference": "126715CHNR",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Everose Gold, 40mm",
+    "bracelet": "Oyster",
+    "movement": "Caliber 3285",
+    "year_introduced": "2018",
+    "notes": "Full Everose 'Root Beer'",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065213c"
+    },
+    "reference": "214270",
+    "collection": "Explorer I",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 39mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3132",
+    "year_introduced": "2010",
+    "notes": "Explorer I 39mm",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065213d"
+    },
+    "reference": "216570",
+    "collection": "Explorer II",
+    "retail_price": "",
+    "dial": "White",
+    "case": "Stainless Steel, 42mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3187",
+    "year_introduced": "2011",
+    "notes": "Explorer II Polar",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065213e"
+    },
+    "reference": "116400GV",
+    "collection": "Milgauss",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3131",
+    "year_introduced": "2007",
+    "notes": "Green Sapphire Crystal",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065213f"
+    },
+    "reference": "126622",
+    "collection": "Yacht-Master",
+    "retail_price": "",
+    "dial": "Rhodium",
+    "case": "Steel & Platinum, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3235",
+    "year_introduced": "2016",
+    "notes": "Yacht-Master Rhodium Dial",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652140"
+    },
+    "reference": "126600",
+    "collection": "Sea-Dweller",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 43mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3235",
+    "year_introduced": "2017",
+    "notes": "Sea-Dweller 43mm",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652141"
+    },
+    "reference": "126660",
+    "collection": "Deepsea",
+    "retail_price": "",
+    "dial": "D-Blue Gradient",
+    "case": "Stainless Steel, 44mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3235",
+    "year_introduced": "2018",
+    "notes": "Deepsea D-Blue",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652142"
+    },
+    "reference": "326934",
+    "collection": "Sky-Dweller",
+    "retail_price": "",
+    "dial": "Blue, Black, White, Mint Green",
+    "case": "White Rolesor, 42mm",
+    "bracelet": "Oyster or Jubilee",
+    "movement": "Caliber 9001",
+    "year_introduced": "2017",
+    "notes": "Annual Calendar GMT",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652143"
+    },
+    "reference": "50509",
+    "collection": "Cellini Time",
+    "retail_price": "",
+    "dial": "White",
+    "case": "White Gold, 39mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 3132",
+    "year_introduced": "2014",
+    "notes": "Classic Dress Watch",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652144"
+    },
+    "reference": "126710GRNR",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Oystersteel, 40mm, Black-Grey Ceramic Bezel",
+    "bracelet": "Jubilee or Oyster",
+    "movement": "Caliber 3285",
+    "year_introduced": "2023",
+    "notes": "GMT-Master II Black-Grey 'Bruce Wayne'",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652145"
+    },
+    "reference": "126720VTNR",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Oystersteel, 40mm, Green-Black Ceramic Bezel, Left-Hand Crown",
+    "bracelet": "Oyster",
+    "movement": "Caliber 3285",
+    "year_introduced": "2022",
+    "notes": "GMT-Master II Green-Black 'Sprite'",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652146"
+    },
+    "reference": "126710BLNR-J",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Oystersteel, 40mm, Blue-Black Ceramic Bezel",
+    "bracelet": "Jubilee",
+    "movement": "Caliber 3285",
+    "year_introduced": "2018",
+    "notes": "GMT-Master II Blue-Black 'Batgirl'",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652147"
+    },
+    "reference": "126710BLNR-O",
+    "collection": "GMT-Master II",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Oystersteel, 40mm, Blue-Black Ceramic Bezel",
+    "bracelet": "Oyster",
+    "movement": "Caliber 3285",
+    "year_introduced": "2018",
+    "notes": "GMT-Master II Blue-Black 'Batman'",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652148"
+    },
+    "reference": "126515LN",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "Black or Sundust",
+    "case": "Everose Gold, 40mm, Black Ceramic Bezel",
+    "bracelet": "Oysterflex",
+    "movement": "Caliber 4130",
+    "year_introduced": "2021",
+    "notes": "Everose Daytona Ceramic Bezel on Oysterflex",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652149"
+    },
+    "reference": "116518LN",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "Champagne or Black",
+    "case": "Yellow Gold, 40mm, Black Ceramic Bezel",
+    "bracelet": "Oysterflex",
+    "movement": "Caliber 4130",
+    "year_introduced": "2017",
+    "notes": "Yellow Gold Daytona Ceramic Bezel on Oysterflex",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065214a"
+    },
+    "reference": "116519LN",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "Steel, Silver, or Meteorite",
+    "case": "White Gold, 40mm, Black Ceramic Bezel",
+    "bracelet": "Oysterflex",
+    "movement": "Caliber 4130",
+    "year_introduced": "2017",
+    "notes": "White Gold Daytona Ceramic Bezel on Oysterflex",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065214b"
+    },
+    "reference": "116500LN",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "White or Black",
+    "case": "Stainless Steel, 40mm, Black Ceramic Bezel",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 4130",
+    "year_introduced": "2016",
+    "notes": "Stainless Steel Daytona Ceramic Bezel",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065214c"
+    },
+    "reference": "116508",
+    "collection": "Cosmograph Daytona",
+    "retail_price": "",
+    "dial": "Green, Champagne, or Black",
+    "case": "Yellow Gold, 40mm",
+    "bracelet": "Yellow Gold",
+    "movement": "Caliber 4130",
+    "year_introduced": "2016",
+    "notes": "Yellow Gold Daytona 'John Mayer' Green Dial",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065214d"
+    },
+    "reference": "228235",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Chocolate, Olive or Sundust",
+    "case": "Everose Gold, 40mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2015",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 40 Everose Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065214e"
+    },
+    "reference": "228236",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Ice Blue",
+    "case": "Platinum, 40mm, Fluted Bezel",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2022",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 40 Platinum Fluted Bezel",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065214f"
+    },
+    "reference": "228206",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Ice Blue or Silver",
+    "case": "Platinum, 40mm, Smooth Bezel",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2015",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 40 Platinum Smooth Bezel",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652150"
+    },
+    "reference": "228239",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Silver, Blue, White",
+    "case": "White Gold, 40mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2015",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 40 White Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652151"
+    },
+    "reference": "228396",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Ice Blue Diamond",
+    "case": "Platinum, 40mm, Diamond Bezel",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2016",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 40 Platinum Diamond Bezel",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652152"
+    },
+    "reference": "128235",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Sundust, Olive, Chocolate",
+    "case": "Everose Gold, 36mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2019",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 36 Everose Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652153"
+    },
+    "reference": "128238",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Champagne, Silver, Green",
+    "case": "Yellow Gold, 36mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2019",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 36 Yellow Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652154"
+    },
+    "reference": "128239",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Silver, Blue, White",
+    "case": "White Gold, 36mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3255",
+    "year_introduced": "2019",
+    "manufacturer": "Rolex",
+    "notes": "Day-Date 36 White Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652155"
+    },
+    "reference": "18238",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Champagne",
+    "case": "Yellow Gold, 36mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3155",
+    "year_introduced": "1988",
+    "manufacturer": "Rolex",
+    "notes": "Vintage Day-Date 36",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652156"
+    },
+    "reference": "118238",
+    "collection": "Day-Date",
+    "retail_price": "",
+    "dial": "Champagne",
+    "case": "Yellow Gold, 36mm",
+    "bracelet": "President Bracelet",
+    "movement": "Caliber 3155",
+    "year_introduced": "2000",
+    "manufacturer": "Rolex",
+    "notes": "Classic Day-Date 36",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652157"
+    },
+    "reference": "16610",
+    "collection": "Submariner Date",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3135",
+    "year_introduced": "1988",
+    "notes": "Classic aluminum bezel Submariner",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652158"
+    },
+    "reference": "14060M",
+    "collection": "Submariner No Date",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3130",
+    "year_introduced": "2001",
+    "notes": "No-date Sub, 4-liner",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652159"
+    },
+    "reference": "279174",
+    "collection": "Lady-Datejust",
+    "retail_price": "",
+    "dial": "White Mother of Pearl",
+    "case": "Steel & White Gold, 28mm",
+    "bracelet": "Jubilee",
+    "movement": "Caliber 2236",
+    "year_introduced": "2016",
+    "notes": "Ladies Datejust with fluted bezel",
+    "manufacturer": "Rolex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065215a"
+    },
+    "reference": "126603",
+    "collection": "Sea-Dweller",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "Stainless Steel & Yellow Rolesor, 43mm",
+    "bracelet": "Oystersteel & Yellow Gold",
+    "movement": "Caliber 3235",
+    "year_introduced": "2019",
+    "manufacturer": "Rolex",
+    "notes": "Sea-Dweller Two-Tone",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065215b"
+    },
+    "reference": "136660",
+    "collection": "Deepsea",
+    "retail_price": "",
+    "dial": "Black or D-Blue",
+    "case": "Stainless Steel, 44mm",
+    "bracelet": "Oystersteel",
+    "movement": "Caliber 3235",
+    "year_introduced": "2022",
+    "manufacturer": "Rolex",
+    "notes": "Updated Deepsea Sea-Dweller",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065215c"
+    },
+    "reference": "326933",
+    "collection": "Sky-Dweller",
+    "retail_price": "",
+    "dial": "Champagne, Black, White",
+    "case": "Yellow Rolesor, 42mm",
+    "bracelet": "Oystersteel & Yellow Gold",
+    "movement": "Caliber 9001",
+    "year_introduced": "2017",
+    "manufacturer": "Rolex",
+    "notes": "Sky-Dweller Yellow Rolesor",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065215d"
+    },
+    "reference": "326938",
+    "collection": "Sky-Dweller",
+    "retail_price": "",
+    "dial": "Champagne, White",
+    "case": "Yellow Gold, 42mm",
+    "bracelet": "Yellow Gold",
+    "movement": "Caliber 9001",
+    "year_introduced": "2012",
+    "manufacturer": "Rolex",
+    "notes": "Sky-Dweller Yellow Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065215e"
+    },
+    "reference": "326935",
+    "collection": "Sky-Dweller",
+    "retail_price": "",
+    "dial": "Chocolate, Sundust",
+    "case": "Everose Gold, 42mm",
+    "bracelet": "Everose Gold",
+    "movement": "Caliber 9001",
+    "year_introduced": "2012",
+    "manufacturer": "Rolex",
+    "notes": "Sky-Dweller Everose Gold",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065215f"
+    },
+    "reference": "326238",
+    "collection": "Sky-Dweller",
+    "retail_price": "",
+    "dial": "Black, Champagne, White",
+    "case": "Yellow Gold, 42mm",
+    "bracelet": "Oysterflex",
+    "movement": "Caliber 9001",
+    "year_introduced": "2020",
+    "manufacturer": "Rolex",
+    "notes": "Sky-Dweller Yellow Gold Oysterflex",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652160"
+    },
+    "reference": "336934",
+    "collection": "Sky-Dweller",
+    "retail_price": "",
+    "dial": "Black",
+    "case": "White Rolesor, 42mm",
+    "bracelet": "Oyster, White Rolesor",
+    "movement": "Caliber 9002",
+    "year_introduced": "2023",
+    "manufacturer": "Rolex",
+    "notes": "Rolex Sky-Dweller White Rolesor Black Dial",
+    "images": [
+      "336934-0002.avif",
+      "336934-0004.avif",
+      "336934-0006.avif",
+      "336934-0008.avif"
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652161"
+    },
+    "reference": "81180/000R-9159",
+    "collection": "Patrimony",
+    "retail_price": "",
+    "dial": "Silver Opaline",
+    "case": "Pink Gold, 40mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 1400",
+    "year_introduced": "2018",
+    "notes": "Manual-wind Patrimony",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652162"
+    },
+    "reference": "43075/000R-9737",
+    "collection": "Traditionnelle",
+    "retail_price": "",
+    "dial": "Silver Opaline",
+    "case": "Pink Gold, 38mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 4400 AS",
+    "year_introduced": "2017",
+    "notes": "Traditionnelle Manual-wind",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652163"
+    },
+    "reference": "4500V/110A-B128",
+    "collection": "Overseas",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 41mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 5100",
+    "year_introduced": "2016",
+    "notes": "Overseas Automatic",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652164"
+    },
+    "reference": "5500V/110A-B148",
+    "collection": "Overseas Chronograph",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "Stainless Steel, 42.5mm",
+    "bracelet": "Stainless Steel",
+    "movement": "Caliber 5200",
+    "year_introduced": "2016",
+    "notes": "Overseas Chronograph",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652165"
+    },
+    "reference": "6000T/000P-B347",
+    "collection": "Traditionnelle",
+    "retail_price": "",
+    "dial": "Blue Grand Feu Enamel",
+    "case": "Platinum, 42.5mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 2755 TMR",
+    "year_introduced": "2021",
+    "notes": "Minute Repeater Tourbillon",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652166"
+    },
+    "reference": "4300V/120G-B945",
+    "collection": "Overseas Perpetual Calendar",
+    "retail_price": "",
+    "dial": "Blue",
+    "case": "White Gold, 41.5mm",
+    "bracelet": "White Gold",
+    "movement": "Caliber 1120 QP/1",
+    "year_introduced": "2020",
+    "notes": "Overseas Perpetual Calendar Ultra-Thin",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652167"
+    },
+    "reference": "82035/000R-9359",
+    "collection": "Patrimony Moon Phase",
+    "retail_price": "",
+    "dial": "Silver Opaline",
+    "case": "Pink Gold, 42.5mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 2460 R31L",
+    "year_introduced": "2017",
+    "notes": "Patrimony Moon Phase and Retrograde Date",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652168"
+    },
+    "reference": "82035/000R-B168",
+    "collection": "Historiques",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Pink Gold, 40mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 4400 AS",
+    "year_introduced": "2020",
+    "notes": "Historiques American 1921",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee640652169"
+    },
+    "reference": "82230/000R-9963",
+    "collection": "Malte",
+    "retail_price": "",
+    "dial": "Silver Opaline",
+    "case": "Pink Gold, 36.7mm x 47.6mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 4400 AS",
+    "year_introduced": "2012",
+    "notes": "Malte Manual-Wind Tonneau",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065216a"
+    },
+    "reference": "4605F/000R-B496",
+    "collection": "Égérie",
+    "retail_price": "",
+    "dial": "Silver Opaline",
+    "case": "Pink Gold, 35mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 1088",
+    "year_introduced": "2020",
+    "notes": "Ladies Moon Phase",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68631781ddb0dee64065216b"
+    },
+    "reference": "4600E/000A-B442",
+    "collection": "Fiftysix",
+    "retail_price": "",
+    "dial": "Silver",
+    "case": "Stainless Steel, 40mm",
+    "bracelet": "Leather Strap",
+    "movement": "Caliber 1326",
+    "year_introduced": "2018",
+    "notes": "Automatic Date",
+    "manufacturer": "Vacheron Constantin",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68633053453e0beb42c8532d"
+    },
+    "reference": "336933",
+    "bracelet": "Oyster, Yellow Rolesor",
+    "case": "Yellow Rolesor, 42mm",
+    "collection": "Sky-Dweller",
+    "dial": "Mint Green",
+    "manufacturer": "Rolex",
+    "movement": "Caliber 9002",
+    "notes": "Rolex Sky-Dweller Two-Tone Mint Green Dial",
+    "retail_price": "",
+    "year_introduced": "2023",
+    "images": [
+      "336933-0002.avif",
+      "336933-0004.avif",
+      "336933-0006.avif"
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "68633053453e0beb42c8532e"
+    },
+    "reference": "336938",
+    "bracelet": "Oyster, Jubilee, Yellow Gold",
+    "case": "Full Yellow Gold, 42mm",
+    "collection": "Sky-Dweller",
+    "dial": "Bright Green, Bright White, Champagne, Bright BLack",
+    "manufacturer": "Rolex",
+    "movement": "Caliber 9002",
+    "notes": "Rolex Sky-Dweller solid gold champagne dial",
+    "retail_price": "$56,200",
+    "year_introduced": "2023",
+    "images": [
+      "336938-0004.avif",
+      "336938-0005.avif",
+      "336938-0006.avif",
+      "336938-0008.avif"
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "68633053453e0beb42c8532f"
+    },
+    "reference": "336235",
+    "bracelet": "Oysterflex, Everose Gold",
+    "case": "Everose Gold, 42mm",
+    "collection": "Sky-Dweller",
+    "dial": "Green",
+    "manufacturer": "Rolex",
+    "movement": "Caliber 9002",
+    "notes": "Rolex Sky-Dweller Everose Gold Green Dial on Oysterflex",
+    "retail_price": "",
+    "year_introduced": "2023",
+    "images": [
+      "336235-0002.avif",
+      "336235-0003.avif",
+      "336235-0004.avif"
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6863319a453e0beb42c853b6"
+    },
+    "reference": "336239",
+    "bracelet": "Oysterflex, White Gold",
+    "case": "White Gold, 42mm",
+    "collection": "Sky-Dweller",
+    "dial": "Blue-Green",
+    "manufacturer": "Rolex",
+    "movement": "Caliber 9002",
+    "notes": "Rolex Sky-Dweller White Gold Blue-Green Dial on Oysterflex",
+    "retail_price": "",
+    "year_introduced": "2023",
+    "images": []
+  },
+  {
+    "_id": {
+      "$oid": "68633287453e0beb42c85420"
+    },
+    "reference": "336935",
+    "bracelet": "Oysterflex, Everose Gold",
+    "case": "Everose Gold, 42mm",
+    "collection": "Sky-Dweller",
+    "dial": "Green",
+    "manufacturer": "Rolex",
+    "movement": "Caliber 9002",
+    "notes": "Rolex Sky-Dweller Everose Gold Green Dial on Oysterflex",
+    "retail_price": "",
+    "year_introduced": "2023",
+    "images": [
+      "336935-0005.avif",
+      "336935-0006.avif",
+      "336935-0007.avif",
+      "336935-0008.avif"
+    ]
+  }
+]

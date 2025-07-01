@@ -172,10 +172,8 @@
             resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
             resultsDiv.innerHTML = data.map(item => {
-              const imageCount = 4;
-              const imagesHtml = Array.from({ length: imageCount }, (_, i) => {
-                const number = (5 + i).toString().padStart(4, '0');
-                return `<img src="assets/${item.reference}-${number}.avif" alt="${item.reference} image" class="watch-image" />`;
+              const imagesHtml = (item.images || []).map(filename => {
+                return `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`;
               }).join('');
 
               return `

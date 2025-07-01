@@ -1,4 +1,6 @@
 const { MongoClient } = require('mongodb');
+const fs = require('fs');
+const path = require('path');
 
 const uri = process.env.MONGO_URI;
 let cachedClient = null;
@@ -28,18 +30,9 @@ exports.handler = async function (event, context) {
     }
 
     const dbName = 'watchlookup';
-    console.log(`📁 Using DB: ${dbName}`);
     const db = cachedClient.db(dbName);
+    const collection = db.collection('watch_refs');
 
-    const collectionName = 'watch_refs';
-    console.log(`📂 Using Collection: ${collectionName}`);
-    const collection = db.collection(collectionName);
-
-    // Log the first doc to verify connection is good
-    const firstDoc = await collection.findOne({});
-    console.log('🔎 First doc in collection:', JSON.stringify(firstDoc));
-
-    console.log(`📡 Running regex query for: ${ref}`);
     const results = await collection.find({
       reference: { $regex: ref, $options: 'i' },
     }).toArray();
@@ -47,17 +40,22 @@ exports.handler = async function (event, context) {
     console.log(`✅ Query returned ${results.length} result(s)`);
 
     if (results.length === 0) {
-      console.log(`🚫 No match found for: ${ref}`);
       return {
         statusCode: 404,
         body: JSON.stringify({ message: `Reference "${ref}" not found.` }),
       };
     }
 
-    // ✅ ✅ ✅ Added log — see exactly what your API returns
-    console.log('🟢 Final results JSON:', JSON.stringify(results, null, 2));
+    // ✅ New: dynamically attach matching image filenames
+    const assetsPath = path.resolve(__dirname, '../../assets');
+    const allFiles = fs.readdirSync(assetsPath);
 
-    console.log(`📦 Sending results back to client`);
+    results.forEach(doc => {
+      doc.images = allFiles.filter(filename => filename.startsWith(doc.reference));
+    });
+
+    console.log('🟢 Final results JSON with images:', JSON.stringify(results, null, 2));
+
     return {
       statusCode: 200,
       body: JSON.stringify(results),

@@ -172,7 +172,9 @@
         const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
         if (response.ok) {
           const data = await response.json();
+          window.searchResults = data; // ✅ Save raw results globally
           console.log('✅ Final returned data:', data);
+
           if (!Array.isArray(data) || data.length === 0) {
             resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
@@ -195,7 +197,7 @@
                     <p><strong>Movement:</strong> ${item.movement || 'N/A'}</p>
                     <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
                     <p><strong>Notes:</strong> ${item.notes || ''}</p>
-                    <button class="edit-btn" onclick="enableEdit(${index}, ${encodeURIComponent(JSON.stringify(item))})">Edit</button>
+                    <button class="edit-btn" onclick="enableEdit(${index})">Edit</button>
                   </div>
                   <div class="card-images">${imagesHtml}</div>
                 </div>
@@ -212,9 +214,11 @@
       }
     }
 
-    function enableEdit(index, itemRaw) {
-      console.log('✏️ Edit clicked:', index);
-      const item = JSON.parse(decodeURIComponent(itemRaw));
+    function enableEdit(index) {
+      console.log('✏️ Edit clicked for index:', index);
+      const item = window.searchResults[index];
+      console.log('🔍 Editing item:', item);
+
       const container = document.getElementById(`text-${index}`);
       container.innerHTML = `
         <input value="${item.reference}" id="ref-${index}" placeholder="Reference" />

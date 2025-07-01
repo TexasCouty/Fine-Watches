@@ -46,12 +46,16 @@ exports.handler = async function (event, context) {
       };
     }
 
-    // ✅ New: dynamically attach matching image filenames
+    // ✅ New: dynamically attach matching image filenames with logging
     const assetsPath = path.resolve(__dirname, '../../assets');
+    console.log(`📂 Assets path resolved to: ${assetsPath}`);
+
     const allFiles = fs.readdirSync(assetsPath);
+    console.log(`🗂️ Total files in assets: ${allFiles.length}`);
 
     results.forEach(doc => {
       doc.images = allFiles.filter(filename => filename.startsWith(doc.reference));
+      console.log(`🔗 ${doc.reference} matched images: ${JSON.stringify(doc.images)}`);
     });
 
     console.log('🟢 Final results JSON with images:', JSON.stringify(results, null, 2));

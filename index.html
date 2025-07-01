@@ -171,7 +171,11 @@
           if (!Array.isArray(data) || data.length === 0) {
             resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
+            console.log('✅ Final returned data:', data);
+
             resultsDiv.innerHTML = data.map(item => {
+              console.log(`🖼️ Images for ${item.reference}:`, item.images);
+
               const imagesHtml = (item.images || []).map(filename => {
                 return `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`;
               }).join('');

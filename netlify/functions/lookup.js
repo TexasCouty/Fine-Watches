@@ -35,7 +35,7 @@ exports.handler = async function (event, context) {
     console.log(`📂 Using Collection: ${collectionName}`);
     const collection = db.collection(collectionName);
 
-    // Log the first doc to verify data!
+    // Log the first doc to verify connection is good
     const firstDoc = await collection.findOne({});
     console.log('🔎 First doc in collection:', JSON.stringify(firstDoc));
 
@@ -54,7 +54,10 @@ exports.handler = async function (event, context) {
       };
     }
 
-    console.log(`📦 Sending results: ${JSON.stringify(results)}`);
+    // ✅ ✅ ✅ Added log — see exactly what your API returns
+    console.log('🟢 Final results JSON:', JSON.stringify(results, null, 2));
+
+    console.log(`📦 Sending results back to client`);
     return {
       statusCode: 200,
       body: JSON.stringify(results),

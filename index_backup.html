@@ -6,25 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #000000, #434343);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-    }
-
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      max-width: 600px;
-      width: 100%;
-      text-align: center;
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.6;
+      background: #f8f8f8;
     }
 
     .logo {
@@ -35,62 +22,46 @@
     }
 
     h1 {
+      text-align: center;
       font-size: 1.8rem;
-      color: #d4af37;
-      margin-bottom: 30px;
     }
 
     input, button {
-      padding: 14px;
+      padding: 12px;
       font-size: 1rem;
       margin: 10px 0;
       width: 100%;
       box-sizing: border-box;
-      border-radius: 6px;
-    }
-
-    input {
-      border: 1px solid #555;
-      background: #222;
-      color: #fff;
-    }
-
-    input::placeholder {
-      color: #aaa;
     }
 
     button {
-      background: #d4af37;
-      color: #000;
+      background: #333;
+      color: #fff;
       border: none;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
     }
 
     button:hover {
-      background: #b9972f;
-      transform: translateY(-2px);
+      background: #555;
     }
 
     .results {
       margin-top: 30px;
-      text-align: left;
     }
 
     .card {
-      background: #111;
-      border: 1px solid #333;
+      background: #fff;
+      border: 1px solid #ddd;
       border-radius: 6px;
       padding: 20px;
       margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     .card h3 {
       margin-top: 0;
       margin-bottom: 10px;
       font-size: 1.2rem;
-      color: #d4af37;
     }
 
     .card p {
@@ -99,22 +70,20 @@
 
     .message {
       padding: 15px;
-      background: #222;
+      background: #eee;
       border-radius: 4px;
       text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
-    <h1>Fine Watches Reference Lookup</h1>
+  <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
+  <h1>Fine Watches Reference Lookup</h1>
 
-    <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
-    <button onclick="lookupReference()">Search</button>
+  <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
+  <button onclick="lookupReference()">Search</button>
 
-    <div id="results" class="results"></div>
-  </div>
+  <div id="results" class="results"></div>
 
   <script>
     async function lookupReference() {

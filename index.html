@@ -3,26 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <title>Fine Watches Reference Lookup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       font-family: Arial, sans-serif;
       max-width: 600px;
-      margin: 50px auto;
+      margin: 40px auto;
       padding: 20px;
       line-height: 1.6;
     }
+
+    h1 {
+      font-size: 1.8rem;
+    }
+
     input, button {
       padding: 10px;
       font-size: 1rem;
       margin-right: 10px;
+      width: calc(100% - 120px);
+      max-width: 300px;
+      box-sizing: border-box;
     }
+
+    button {
+      width: 80px;
+    }
+
     #result {
       text-align: left;
       margin-top: 30px;
       white-space: pre-wrap;
       background: #f4f4f4;
-      padding: 10px;
+      padding: 15px;
       border: 1px solid #ccc;
+      border-radius: 4px;
+      word-wrap: break-word;
+    }
+
+    @media (max-width: 600px) {
+      input, button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+      }
     }
   </style>
 </head>
@@ -32,7 +56,7 @@
   <button onclick="lookupReference()">Search</button>
 
   <h3>Results:</h3>
-  <div id="result"></div>
+  <div id="result">Results will appear here...</div>
 
   <script>
     async function lookupReference() {
@@ -45,14 +69,33 @@
         return;
       }
 
+      result.textContent = 'Searching...';
+
       try {
         const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
         if (response.ok) {
           const data = await response.json();
-          result.textContent = JSON.stringify(data, null, 2);
+          if (data.length === 0) {
+            result.textContent = 'No matches found.';
+          } else {
+            result.textContent = data.map(item => {
+              return `
+Reference: ${item.reference}
+Collection: ${item.collection}
+Retail Price: ${item.retail_price || 'N/A'}
+Dial: ${item.dial}
+Case: ${item.case}
+Bracelet: ${item.bracelet}
+Movement: ${item.movement}
+Year Introduced: ${item.year_introduced}
+Notes: ${item.notes}
+Manufacturer: ${item.manufacturer}
+`.trim();
+            }).join('\n\n');
+          }
         } else {
           const error = await response.json();
-          result.textContent = error.message || 'Reference not found.';
+          result.textContent = error.message || 'No matches found.';
         }
       } catch (err) {
         console.error(err);
@@ -62,4 +105,5 @@
   </script>
 </body>
 </html>
+
 

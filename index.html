@@ -14,7 +14,15 @@
       background: #f8f8f8;
     }
 
+    .logo {
+      max-width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+
     h1 {
+      text-align: center;
       font-size: 1.8rem;
     }
 
@@ -64,11 +72,14 @@
       padding: 15px;
       background: #eee;
       border-radius: 4px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+  <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
   <h1>Fine Watches Reference Lookup</h1>
+
   <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
   <button onclick="lookupReference()">Search</button>
 
@@ -120,4 +131,3 @@
   </script>
 </body>
 </html>
-

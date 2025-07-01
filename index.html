@@ -19,7 +19,7 @@
       border-radius: 12px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.5);
       max-width: 600px;
-      margin: 0 auto; /* horizontally center */
+      margin: 0 auto;
     }
 
     .logo {
@@ -82,11 +82,16 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 
-    .card h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 1.2rem;
+    .manufacturer {
+      font-weight: bold;
+      font-size: 1rem;
       color: #d4af37;
+      margin: 0 0 5px 0;
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
     }
 
     .card p {
@@ -134,7 +139,8 @@
           } else {
             resultsDiv.innerHTML = data.map(item => `
               <div class="card">
-                <h3>${item.manufacturer} ${item.reference}</h3>
+                <div class="manufacturer">${item.manufacturer || 'N/A'}</div>
+                <h3>Reference: ${item.reference}</h3>
                 <p><strong>Collection:</strong> ${item.collection || 'N/A'}</p>
                 <p><strong>Retail Price:</strong> ${item.retail_price || 'N/A'}</p>
                 <p><strong>Dial:</strong> ${item.dial || 'N/A'}</p>

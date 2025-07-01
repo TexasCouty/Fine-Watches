@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fine Watches Reference</title>
+  <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -172,11 +172,10 @@
         const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
         if (response.ok) {
           const data = await response.json();
+          console.log('✅ Final returned data:', data);
           if (!Array.isArray(data) || data.length === 0) {
             resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
           } else {
-            console.log('✅ Final returned data:', data);
-
             resultsDiv.innerHTML = data.map((item, index) => {
               console.log(`🖼️ Images for ${item.reference}:`, item.images);
 
@@ -214,6 +213,7 @@
     }
 
     function enableEdit(index, itemRaw) {
+      console.log('✏️ Edit clicked:', index);
       const item = JSON.parse(decodeURIComponent(itemRaw));
       const container = document.getElementById(`text-${index}`);
       container.innerHTML = `
@@ -244,7 +244,7 @@
         notes: document.getElementById(`notes-${index}`).value.trim()
       };
 
-      console.log('📝 Saving:', fields);
+      console.log('💾 Saving edit:', fields);
 
       const res = await fetch('/.netlify/functions/update', {
         method: 'POST',

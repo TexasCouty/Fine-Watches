@@ -18,7 +18,7 @@
       padding: 40px;
       border-radius: 12px;
       box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
     }
 
@@ -91,8 +91,8 @@
 
     .card-images {
       flex: 1 1 35%;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
       justify-content: flex-end;
     }
@@ -109,10 +109,10 @@
     }
 
     .watch-image {
-      width: 100px;
-      height: auto;
-      border-radius: 4px;
+      width: 100%;
+      border-radius: 6px;
       border: 1px solid #333;
+      display: block;
     }
 
     .message {
@@ -122,7 +122,7 @@
       text-align: center;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 700px) {
       .card {
         flex-direction: column;
       }
@@ -132,10 +132,10 @@
         padding: 0;
       }
       .card-images {
-        justify-content: flex-start;
+        grid-template-columns: repeat(2, 1fr);
       }
       .watch-image {
-        width: 80px;
+        width: 100%;
       }
     }
   </style>

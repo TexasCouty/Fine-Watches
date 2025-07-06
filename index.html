@@ -172,11 +172,15 @@
         const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
         if (response.ok) {
           const data = await response.json();
-          window.searchResults = data; // ✅ Save raw results globally
+          window.searchResults = data; // Save results globally
           console.log('✅ Final returned data:', data);
 
           if (!Array.isArray(data) || data.length === 0) {
-            resultsDiv.innerHTML = '<div class="message">No matches found.</div>';
+            resultsDiv.innerHTML = `
+              <div class="message">No matches found.</div>
+              <button onclick="showAddForm()">➕ Add New Reference</button>
+              <div id="addForm"></div>
+            `;
           } else {
             resultsDiv.innerHTML = data.map((item, index) => {
               console.log(`🖼️ Images for ${item.reference}:`, item.images);
@@ -263,7 +267,53 @@
       console.log('✅ Update response:', json);
       lookupReference();
     }
+
+    function showAddForm() {
+      console.log('➕ Showing Add Form');
+      const formDiv = document.getElementById('addForm');
+      formDiv.innerHTML = `
+        <input id="newRef" placeholder="Reference" />
+        <input id="newCollection" placeholder="Collection" />
+        <input id="newRetailPrice" placeholder="Retail Price" />
+        <input id="newDial" placeholder="Dial" />
+        <input id="newCase" placeholder="Case" />
+        <input id="newBracelet" placeholder="Bracelet" />
+        <input id="newMovement" placeholder="Movement" />
+        <input id="newYear" placeholder="Year Introduced" />
+        <textarea id="newNotes" placeholder="Notes"></textarea>
+        <textarea id="newImages" placeholder="Images (comma-separated)"></textarea>
+        <button onclick="saveNew()">Save</button>
+      `;
+    }
+
+    async function saveNew() {
+      const newDoc = {
+        reference: document.getElementById('newRef').value.trim(),
+        collection: document.getElementById('newCollection').value.trim(),
+        retail_price: document.getElementById('newRetailPrice').value.trim(),
+        dial: document.getElementById('newDial').value.trim(),
+        case: document.getElementById('newCase').value.trim(),
+        bracelet: document.getElementById('newBracelet').value.trim(),
+        movement: document.getElementById('newMovement').value.trim(),
+        year_introduced: document.getElementById('newYear').value.trim(),
+        notes: document.getElementById('newNotes').value.trim(),
+        images: document.getElementById('newImages').value.trim().split(',').map(s => s.trim())
+      };
+
+      console.log('➕ Adding new reference:', newDoc);
+
+      const res = await fetch('/.netlify/functions/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newDoc)
+      });
+
+      const json = await res.json();
+      console.log('✅ Add response:', json);
+      lookupReference();
+    }
   </script>
 </body>
 </html>
+
 

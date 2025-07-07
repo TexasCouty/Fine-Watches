@@ -44,6 +44,7 @@
       border-radius: 8px;
       max-height: 900px;
       overflow-y: auto;
+      position: relative;
     }
     .lookup-section h2 {
       color: #d4af37;
@@ -130,6 +131,31 @@
       word-wrap: break-word;
       white-space: normal;
     }
+
+    /* Autocomplete styles */
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #222;
+      color: #fff;
+      max-height: 200px;
+      overflow-y: auto;
+      border-radius: 0 0 6px 6px;
+    }
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+    }
+    .autocomplete-items div:hover {
+      background-color: #b9972f;
+      color: black;
+    }
   </style>
 </head>
 <body>
@@ -189,7 +215,7 @@
       </div>
 
       <!-- Grey Market Lookup Section -->
-      <div class="lookup-section">
+      <div class="lookup-section" style="position:relative;">
         <h2>Grey Market Lookup</h2>
         <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
         <button onclick="lookupGreyMarket()">Search Grey Market</button>
@@ -208,7 +234,7 @@
           <input type="text" id="gm_model" />
 
           <label for="gm_model_name">Model Name</label>
-          <input type="text" id="gm_model_name" />
+          <input type="text" id="gm_model_name" autocomplete="off" />
 
           <label for="gm_nickname">Nickname or Dial</label>
           <input type="text" id="gm_nickname" />
@@ -446,11 +472,12 @@
   }
 
   async function saveGreyMarketEntry() {
+    const rawModelName = document.getElementById('gm_model_name').value.trim();
     const data = {
       "Date Entered": document.getElementById('gm_date_entered').value.trim(),
       "Year": document.getElementById('gm_year').value.trim(),
       "Model": document.getElementById('gm_model').value.trim(),
-      "Model Name": document.getElementById('gm_model_name').value.trim(),
+      "Model Name": rawModelName.toUpperCase(),
       "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
       "Bracelet": document.getElementById('gm_bracelet').value.trim(),
       "Bracelet Metal/Color": document.getElementById('gm_bracelet_metal_color').value.trim(),
@@ -622,6 +649,70 @@
       }
     }
   }
+
+  // Autocomplete for Model Name in Grey Market form
+  let modelNameSuggestions = [];
+
+  async function fetchModelNameSuggestions() {
+    try {
+      const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
+      if (!res.ok) throw new Error('Failed to load model names');
+      const data = await res.json();
+      const namesSet = new Set();
+      data.forEach(item => {
+        if (item['Model Name']) namesSet.add(item['Model Name'].toUpperCase());
+      });
+      modelNameSuggestions = Array.from(namesSet).sort();
+    } catch (e) {
+      console.error('Error fetching model name suggestions', e);
+    }
+  }
+
+  function setupAutocomplete(inputId) {
+    const input = document.getElementById(inputId);
+    input.addEventListener('input', () => {
+      closeAllLists();
+      if (!input.value) return false;
+      const val = input.value.toUpperCase();
+      const list = document.createElement('div');
+      list.setAttribute('id', inputId + '-autocomplete-list');
+      list.setAttribute('class', 'autocomplete-items');
+      input.parentNode.appendChild(list);
+
+      let count = 0;
+      for (let name of modelNameSuggestions) {
+        if (name.startsWith(val)) {
+          const item = document.createElement('div');
+          item.innerHTML = `<strong>${name.substr(0, val.length)}</strong>${name.substr(val.length)}`;
+          item.addEventListener('click', () => {
+            input.value = name;
+            closeAllLists();
+          });
+          list.appendChild(item);
+          count++;
+          if (count >= 10) break;
+        }
+      }
+    });
+
+    function closeAllLists(elmnt) {
+      const items = document.getElementsByClassName('autocomplete-items');
+      for (let i = items.length - 1; i >= 0; i--) {
+        if (elmnt != items[i] && elmnt != input) {
+          items[i].parentNode.removeChild(items[i]);
+        }
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      closeAllLists(e.target);
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', async () => {
+    await fetchModelNameSuggestions();
+    setupAutocomplete('gm_model_name');
+  });
 </script>
 </body>
 </html>

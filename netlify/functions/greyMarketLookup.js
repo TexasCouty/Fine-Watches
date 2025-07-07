@@ -7,38 +7,46 @@ exports.handler = async (event) => {
   console.log('⚙️ Grey Market Lookup Function STARTED');
 
   if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
+    console.warn(`❌ Invalid HTTP method: ${event.httpMethod}`);
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed, use GET' }) };
   }
 
   try {
     const refRaw = event.queryStringParameters?.reference || '';
     const ref = refRaw.trim();
+
     console.log(`🔍 Received query parameter: "${ref}"`);
 
-    if (!ref) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Reference parameter is required' }) };
-    }
-
     if (!cachedClient) {
+      console.log('🧩 Connecting to MongoDB...');
       cachedClient = new MongoClient(uri);
       await cachedClient.connect();
       console.log('✅ MongoDB CONNECTED');
+    } else {
+      console.log('♻️ Using cached MongoDB client');
     }
 
-    const db = cachedClient.db('test'); // adjust DB name
+    const db = cachedClient.db('test'); // adjust DB name as needed
     const collection = db.collection('grey_market_refs');
 
-    const results = await collection.find({
-      Model: { $regex: ref, $options: 'i' }
-    }).toArray();
+    // Build query: if ref is empty fetch all, else filter by Model regex
+    const query = ref ? { Model: { $regex: ref, $options: 'i' } } : {};
+
+    console.log('📡 Running query:', JSON.stringify(query));
+
+    const results = await collection.find(query).toArray();
 
     console.log(`✅ Query returned ${results.length} result(s)`);
 
-    return { statusCode: 200, body: JSON.stringify(results) };
+    return {
+      statusCode: 200,
+      body: JSON.stringify(results),
+    };
   } catch (err) {
     console.error('💥 ERROR in greyMarketLookup:', err);
-    return { statusCode: 500, body: JSON.stringify({ error: 'Internal Server Error' }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    };
   }
 };
-
-

@@ -127,18 +127,15 @@ button:hover {
   border-spacing: 0;
   width: 100%;
   background: transparent;
-  /* Make scrolling possible if too wide on small screens */
   overflow-x: auto;
   display: table;
 }
-
 #greyMarketTable th,
 #greyMarketTable td {
   vertical-align: middle;
   padding: 14px 10px;
   font-size: 0.98rem;
 }
-
 #greyMarketTable th {
   white-space: normal;
   background: #111;
@@ -146,34 +143,27 @@ button:hover {
   top: 0;
   z-index: 2;
 }
-
 #greyMarketTable td {
   white-space: normal;
 }
-
-#greyMarketTable td:nth-child(3),  /* Model */
-#greyMarketTable td:nth-child(4),  /* Model Name */
-#greyMarketTable td:nth-child(6),  /* Bracelet */
-#greyMarketTable td:nth-child(7),  /* Bracelet Metal/Color */
-#greyMarketTable td:nth-child(8),  /* Price */
-#greyMarketTable td:last-child     /* Actions column (Edit) */
-{
+#greyMarketTable td:nth-child(3),
+#greyMarketTable td:nth-child(4),
+#greyMarketTable td:nth-child(6),
+#greyMarketTable td:nth-child(7),
+#greyMarketTable td:nth-child(8),
+#greyMarketTable td:last-child {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 120px;
 }
-
-#greyMarketTable td:nth-child(8),   /* Price */
-#greyMarketTable td:nth-child(11)   /* Current Retail */
-{
+#greyMarketTable td:nth-child(8),
+#greyMarketTable td:nth-child(11) {
   text-align: right;
 }
-
 #greyMarketTable td:last-child {
   text-align: center;
 }
-
 #greyMarketTable button {
   min-width: 60px;
   padding: 8px 0;
@@ -189,7 +179,6 @@ button:hover {
   background: #d4af37;
   color: #000;
 }
-
 #greyMarketTable tbody tr:nth-child(even) {
   background: #181818;
 }
@@ -265,54 +254,57 @@ button:hover {
     min-width: 0;
     padding: 15px;
   }
-  #greyMarketTable, #greyMarketTable thead, #greyMarketTable tbody, #greyMarketTable th, #greyMarketTable td, #greyMarketTable tr {
-    display: block;
-    width: 100%;
+  #greyMarketTable, #greyMarketTable thead, #greyMarketTable tbody, #greyMarketTable th, #greyMarketTable tr {
+    display: block !important;
+    width: 100% !important;
   }
-
   #greyMarketTable thead {
-    display: none;
+    display: none !important;
   }
-
   #greyMarketTable tr {
     margin-bottom: 28px;
-    border-radius: 10px;
-    box-shadow: 0 0 8px #222;
-    background: #171717;
-    border: 1px solid #222;
-    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px #00000060;
+    border: 1px solid #232323;
+    background: #181818;
+    overflow: hidden;
+    padding: 10px 0 15px 0;
+    position: relative;
   }
-
   #greyMarketTable td {
-    border: none;
+    display: block !important;
     position: relative;
     padding-left: 48%;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    min-height: 32px;
-    text-align: left;
-    font-size: 1.04rem;
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border: none;
+    border-bottom: 1px solid #252525;
+    min-height: 38px;
+    font-size: 1.12rem;
     background: transparent;
-    box-shadow: none;
-    border-bottom: 1px solid #232323;
-  }
-
-  #greyMarketTable td:last-child {
-    text-align: right;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  #greyMarketTable td::before {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 44%;
-    white-space: nowrap;
-    font-weight: bold;
-    color: #d4af37;
-    content: attr(data-label);
-    font-size: 0.99rem;
     text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #greyMarketTable td:last-child {
+    border-bottom: none;
+    text-align: right;
+    padding-right: 16px;
+    padding-left: 44%;
+  }
+  #greyMarketTable td::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 43%;
+    min-width: 110px;
+    color: #d4af37;
+    font-weight: bold;
+    font-size: 0.99em;
+    white-space: normal;
+    text-align: left;
+    letter-spacing: 0.01em;
+    opacity: 0.93;
   }
 }

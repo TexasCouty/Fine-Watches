@@ -405,3 +405,5 @@ function sortTable(n) {
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchGreyMarketData();
 });
+window.showEditReferenceForm = showEditReferenceForm;
+window.showEditGreyMarketForm = showEditGreyMarketForm;

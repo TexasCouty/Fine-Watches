@@ -179,6 +179,9 @@
           <label for="ref_notes">Notes</label>
           <textarea id="ref_notes" rows="3"></textarea>
 
+          <label for="ref_images">Images (comma-separated filenames)</label>
+          <input id="ref_images" type="text" placeholder="e.g. 127335-0001.avif, 127335-0002.jpg" />
+
           <button onclick="saveReference()">Save</button>
           <button onclick="cancelReferenceForm()">Cancel</button>
           <button id="deleteButton" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteReference()">Delete</button>
@@ -220,12 +223,13 @@
     document.getElementById('ref_movement').value = data.movement || '';
     document.getElementById('ref_year_introduced').value = data.year_introduced || '';
     document.getElementById('ref_notes').value = data.notes || '';
+    document.getElementById('ref_images').value = (data.images || []).join(', ');
     document.getElementById('deleteButton').style.display = 'inline-block';
     document.getElementById('refFormContainer').style.display = 'block';
   }
 
   function clearReferenceForm() {
-    const fields = ['ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial','ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes'];
+    const fields = ['ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial','ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes','ref_images'];
     fields.forEach(id => document.getElementById(id).value = '');
   }
 
@@ -234,6 +238,9 @@
   }
 
   async function saveReference() {
+    const imagesRaw = document.getElementById('ref_images').value.trim();
+    const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()) : [];
+
     const data = {
       reference: document.getElementById('ref_reference').value.trim(),
       manufacturer: document.getElementById('ref_manufacturer').value.trim(),
@@ -245,6 +252,7 @@
       movement: document.getElementById('ref_movement').value.trim(),
       year_introduced: document.getElementById('ref_year_introduced').value.trim(),
       notes: document.getElementById('ref_notes').value.trim(),
+      images: images
     };
 
     if (!data.reference) {
@@ -458,3 +466,4 @@
 </script>
 </body>
 </html>
+

@@ -37,11 +37,11 @@ exports.handler = async (event) => {
       console.log('♻️ Using cached MongoDB client');
     }
 
-    const db = cachedClient.db('test'); // Adjust to your actual DB name
-    const collection = db.collection('grey_market');
+    const db = cachedClient.db('test'); // Adjust to your actual DB name if different
+    const collection = db.collection('grey_market_refs'); // Corrected collection name
 
     const totalCount = await collection.countDocuments();
-    console.log(`🗃️ Total documents in grey_market collection: ${totalCount}`);
+    console.log(`🗃️ Total documents in grey_market_refs collection: ${totalCount}`);
 
     // Try exact match first (debug step)
     let results = await collection.find({ Model: ref }).toArray();
@@ -70,3 +70,4 @@ exports.handler = async (event) => {
     };
   }
 };
+

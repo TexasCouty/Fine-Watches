@@ -1,11 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fine Watches Reference Lookup</title>
+  <title>Fine Watches Reference & Grey Market Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- ✅ README: LuxeTime dark theme + table with balanced columns -->
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -66,6 +65,19 @@
       text-align: left;
       overflow-x: auto;
     }
+    .card {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .manufacturer-line {
+      font-weight: bold;
+      font-size: 1rem;
+      color: #d4af37;
+      margin: 0 0 10px 0;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -83,7 +95,6 @@
       border: 1px solid #333;
       padding: 10px;
       word-wrap: break-word;
-      overflow-wrap: break-word;
       white-space: normal;
     }
   </style>
@@ -91,28 +102,68 @@
 <body>
   <div class="container">
     <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
-    <h1>Fine Watches Reference Lookup</h1>
+    <h1>Fine Watches Reference & Grey Market Lookup</h1>
 
-    <!-- ✅ Reference Lookup -->
-    <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
-    <button onclick="lookupReference()">Search</button>
+    <h2>Reference Lookup</h2>
+    <input type="text" id="refInput" placeholder="Enter Reference Number" />
+    <button onclick="lookupReference()">Search Reference</button>
 
-    <!-- ✅ Grey Market Lookup -->
-    <input type="text" id="greyMarketInput" placeholder="Enter Reference Number for Grey Market Price" />
+    <h2>Grey Market Lookup</h2>
+    <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
     <button onclick="lookupGreyMarket()">Search Grey Market</button>
 
     <div id="results" class="results"></div>
   </div>
 
   <script>
-    // ✅ Grey Market Lookup
+    async function lookupReference() {
+      const ref = document.getElementById('refInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = '';
+
+      if (!ref) {
+        alert('Please enter a reference number.');
+        return;
+      }
+
+      resultsDiv.innerHTML = '<div class="message">Searching Reference DB...</div>';
+
+      try {
+        const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
+        if (response.ok) {
+          const data = await response.json();
+
+          if (!Array.isArray(data) || data.length === 0) {
+            resultsDiv.innerHTML = `<div class="message">No Reference matches found.</div>`;
+          } else {
+            resultsDiv.innerHTML = data.map(item => `
+              <div class="card">
+                <p class="manufacturer-line"><strong>${item.manufacturer || 'N/A'} — Reference: ${item.reference || 'N/A'}</strong></p>
+                <p>Collection: ${item.collection || 'N/A'}</p>
+                <p>Retail Price: ${item.retail_price || 'N/A'}</p>
+                <p>Dial: ${item.dial || 'N/A'}</p>
+                <p>Case: ${item.case || 'N/A'}</p>
+                <p>Bracelet: ${item.bracelet || 'N/A'}</p>
+                <p>Movement: ${item.movement || 'N/A'}</p>
+              </div>
+            `).join('');
+          }
+        } else {
+          resultsDiv.innerHTML = `<div class="message">No Reference matches found.</div>`;
+        }
+      } catch (err) {
+        console.error(err);
+        resultsDiv.innerHTML = '<div class="message">Error connecting to the server.</div>';
+      }
+    }
+
     async function lookupGreyMarket() {
       const ref = document.getElementById('greyMarketInput').value.trim();
       const resultsDiv = document.getElementById('results');
       resultsDiv.innerHTML = '';
 
       if (!ref) {
-        alert('Please enter a reference number.');
+        alert('Please enter a model.');
         return;
       }
 
@@ -140,31 +191,34 @@
                     <th onclick="sortTable(7)">Price</th>
                     <th onclick="sortTable(8)">Full Set</th>
                     <th onclick="sortTable(9)">Retail Ready</th>
-                    <th onclick="sortTable(10)">Current Retail (Not Inc Tax)</th>
+                    <th onclick="sortTable(10)">Current Retail</th>
                     <th onclick="sortTable(11)">Dealer</th>
                     <th onclick="sortTable(12)">Comments</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
             `;
 
-            table += data.map(item => `
-              <tr>
-                <td>${item["Date Entered"] || 'N/A'}</td>
-                <td>${item.Year || 'N/A'}</td>
-                <td>${item.Model || 'N/A'}</td>
-                <td>${item["Model Name"] || 'N/A'}</td>
-                <td>${item["Nickname or Dial"] || 'N/A'}</td>
-                <td>${item.Bracelet || 'N/A'}</td>
-                <td>${item["Bracelet Metal/Color"] || 'N/A'}</td>
-                <td>${item.Price || 'N/A'}</td>
-                <td>${item["Full Set"] || 'N/A'}</td>
-                <td>${item["Retail Ready"] || 'N/A'}</td>
-                <td>${item["Current Retail (Not Inc Tax)"] || 'N/A'}</td>
-                <td>${item.Dealer || 'N/A'}</td>
-                <td>${item.Comments || ''}</td>
-              </tr>
-            `).join('');
+            data.forEach((item, index) => {
+              table += `
+                <tr id="row-${index}" data-id="${item._id}">
+                  <td>${item["Date Entered"] || ''}</td>
+                  <td>${item.Year || ''}</td>
+                  <td>${item.Model || ''}</td>
+                  <td>${item["Model Name"] || ''}</td>
+                  <td>${item["Nickname or Dial"] || ''}</td>
+                  <td>${item.Bracelet || ''}</td>
+                  <td>${item["Bracelet Metal/Color"] || ''}</td>
+                  <td>${item.Price || ''}</td>
+                  <td>${item["Full Set"] || ''}</td>
+                  <td>${item["Retail Ready"] || ''}</td>
+                  <td>${item["Current Retail (Not Inc Tax)"] || ''}</td>
+                  <td>${item.Dealer || ''}</td>
+                  <td>${item.Comments || ''}</td>
+                  <td><button onclick="editRow(${index})">Edit</button></td>
+                </tr>`;
+            });
 
             table += `</tbody></table>`;
             resultsDiv.innerHTML = table;
@@ -178,64 +232,80 @@
       }
     }
 
-    // ✅ FINAL sortTable — bulletproof scope
+    function editRow(index) {
+      const row = document.getElementById(`row-${index}`);
+      const cells = row.querySelectorAll('td');
+      const original = Array.from(cells).map(td => td.innerText);
+
+      for (let i = 0; i < cells.length - 1; i++) {
+        const val = original[i] === 'N/A' ? '' : original[i];
+        cells[i].innerHTML = `<input value="${val}" style="width: 100%;">`;
+      }
+
+      cells[cells.length - 1].innerHTML = `<button onclick="saveRow(${index})">Save</button>`;
+    }
+
+    async function saveRow(index) {
+      const row = document.getElementById(`row-${index}`);
+      const cells = row.querySelectorAll('td');
+      const inputs = row.querySelectorAll('input');
+
+      const fields = [
+        "Date Entered","Year","Model","Model Name","Nickname or Dial",
+        "Bracelet","Bracelet Metal/Color","Price","Full Set","Retail Ready",
+        "Current Retail (Not Inc Tax)","Dealer","Comments"
+      ];
+
+      const updated = {};
+      inputs.forEach((input, i) => {
+        updated[fields[i]] = input.value.trim();
+      });
+
+      const id = row.getAttribute('data-id');
+
+      await fetch('/.netlify/functions/updateGreyMarket', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, fields: updated })
+      });
+
+      lookupGreyMarket();
+    }
+
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
-      let switching = true;
-      let dir = "asc";
-      let switchcount = 0;
-
-      console.log(`📌 sortTable START column ${n}`);
+      let switching = true, dir = "asc", switchcount = 0;
 
       while (switching) {
         switching = false;
         const rows = table.rows;
-        console.log(`🔍 Checking ${rows.length} rows`);
-
         let shouldSwitch = false;
-        let i = 1; // ✅ declared outside for
+        let i = 1;
 
         for (; i < (rows.length - 1); i++) {
           shouldSwitch = false;
-          console.log(`Row ${i} compare`);
-
           let x = rows[i].getElementsByTagName("TD")[n];
           let y = rows[i + 1].getElementsByTagName("TD")[n];
-          console.log(` x: "${x.innerHTML.trim()}" | y: "${y.innerHTML.trim()}"`);
-
           if (dir === "asc") {
             if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-              shouldSwitch = true;
-              console.log(`  ✅ Will switch ASC`);
-              break;
+              shouldSwitch = true; break;
             }
           } else if (dir === "desc") {
             if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-              shouldSwitch = true;
-              console.log(`  ✅ Will switch DESC`);
-              break;
+              shouldSwitch = true; break;
             }
           }
         }
-
-        console.log(`➡️ shouldSwitch after loop: ${shouldSwitch}`);
         if (shouldSwitch) {
-          console.log(`🔄 Swapping rows ${i} and ${i + 1}`);
           rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true;
-          switchcount++;
+          switching = true; switchcount++;
         } else {
           if (switchcount === 0 && dir === "asc") {
-            dir = "desc";
-            switching = true;
-            console.log(`↕️ Switching direction to DESC`);
+            dir = "desc"; switching = true;
           }
         }
       }
-
-      console.log(`✅ sortTable DONE`);
     }
   </script>
 </body>
 </html>
-

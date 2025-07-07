@@ -22,7 +22,7 @@
     .card p { margin: 5px 0; }
     .watch-image { width: 100%; border-radius: 6px; border: 1px solid #333; display: block; }
     .message { padding: 15px; background: #222; border-radius: 4px; text-align: center; }
-    .edit-btn { margin-top: 10px; }
+    .edit-btn { margin-top: 10px; margin-right: 5px; }
     @media (max-width: 700px) { .card { flex-direction: column; } .card-text, .card-images { flex: 1 1 100%; padding: 0; } .card-images { grid-template-columns: repeat(2, 1fr); } .watch-image { width: 100%; } }
   </style>
 </head>
@@ -80,6 +80,7 @@
                     <p><strong>Year Introduced:</strong> ${item.year_introduced || 'N/A'}</p>
                     <p><strong>Notes:</strong> ${item.notes || ''}</p>
                     <button class="edit-btn" onclick="enableEdit(${index})">Edit</button>
+                    <button class="edit-btn" onclick="deleteRef('${item.reference}')">Delete</button>
                   </div>
                   <div class="card-images">${imagesHtml}</div>
                 </div>
@@ -173,6 +174,23 @@
       lookupReference();
     }
 
+    async function deleteRef(reference) {
+      const confirmDelete = confirm(`Are you sure you want to delete ${reference}? This cannot be undone.`);
+      if (!confirmDelete) return;
+
+      console.log(`🗑️ Deleting ${reference}...`);
+
+      const res = await fetch('/.netlify/functions/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reference })
+      });
+
+      const json = await res.json();
+      console.log('✅ Delete response:', json);
+      lookupReference();
+    }
+
     function showAddForm() {
       console.log('➕ Showing Add Form');
       const formDiv = document.getElementById('addForm');
@@ -220,4 +238,3 @@
   </script>
 </body>
 </html>
-

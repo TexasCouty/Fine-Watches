@@ -121,16 +121,32 @@ button:hover {
   display: block;
 }
 
-/*--- Table Polish ---*/
+/*--- Pro Table Polish ---*/
+#greyMarketTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: transparent;
+  /* Make scrolling possible if too wide on small screens */
+  overflow-x: auto;
+  display: table;
+}
+
 #greyMarketTable th,
 #greyMarketTable td {
   vertical-align: middle;
   padding: 14px 10px;
+  font-size: 0.98rem;
 }
 
 #greyMarketTable th {
   /* Allow wrapping for header text */
   white-space: normal;
+  background: #111;
+  /* sticky header! */
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 #greyMarketTable td {
@@ -150,6 +166,13 @@ button:hover {
   text-overflow: ellipsis;
   overflow: hidden;
   max-width: 120px;
+}
+
+/* Align numeric columns right for easy reading */
+#greyMarketTable td:nth-child(8),   /* Price */
+#greyMarketTable td:nth-child(11)   /* Current Retail */
+{
+  text-align: right;
 }
 
 /* For Edit button cell */
@@ -172,6 +195,24 @@ button:hover {
 #greyMarketTable button:hover {
   background: #d4af37;
   color: #000;
+}
+
+/* Striped rows */
+#greyMarketTable tbody tr:nth-child(even) {
+  background: #181818;
+}
+#greyMarketTable tbody tr:nth-child(odd) {
+  background: #121212;
+}
+
+/* Row hover */
+#greyMarketTable tbody tr:hover {
+  background: #232323;
+}
+
+/* Softer borders */
+#greyMarketTable td, #greyMarketTable th {
+  border-bottom: 1px solid #222;
 }
 
 /* Autocomplete styles */
@@ -224,4 +265,3 @@ button:hover {
   background: #d4af37;
   color: #000;
 }
-

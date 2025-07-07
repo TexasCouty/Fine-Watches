@@ -116,20 +116,19 @@
   }
   /* UPDATED card-images container for better wrapping */
  .card-images {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  max-width: 600px; /* Increased from 220px */
-  }
-  /* UPDATED watch images styling */
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 20px; /* space between images */
+  max-width: 300px; /* Adjust as needed */
+}
+
 .watch-image {
-    width: 140px;
-    height: 140px;
-    object-fit: contain;
-    border-radius: 8px;
-    border: 1px solid #d4af37;
-    display: block;
-  }
+  width: 100%;   /* full width of grid cell */
+  height: auto;  /* auto height to keep aspect ratio */
+  border-radius: 8px;
+  border: 1px solid #d4af37;
+  display: block;
+}
   table {
     width: 100%;
     border-collapse: collapse;

@@ -26,10 +26,10 @@ exports.handler = async (event) => {
       console.log('♻️ Using cached MongoDB client');
     }
 
-    const db = cachedClient.db('test'); // adjust DB name as needed
+    const db = cachedClient.db('test'); // adjust as needed
     const collection = db.collection('grey_market_refs');
 
-    // Build query: if ref is empty fetch all, else filter by Model regex
+    // If ref empty, query all documents
     const query = ref ? { Model: { $regex: ref, $options: 'i' } } : {};
 
     console.log('📡 Running query:', JSON.stringify(query));
@@ -50,3 +50,4 @@ exports.handler = async (event) => {
     };
   }
 };
+

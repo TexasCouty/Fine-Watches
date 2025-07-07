@@ -114,83 +114,37 @@
     color: #d4af37;
     margin: 0 0 10px 0;
   }
-  /* UPDATED card-images container for better wrapping */
- .card-images {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two columns */
-  gap: 20px; /* space between images */
-  max-width: 300px; /* Adjust as needed */
-}
-
-.watch-image {
-  width: 100%;   /* full width of grid cell */
-  height: auto;  /* auto height to keep aspect ratio */
-  border-radius: 8px;
-  border: 1px solid #d4af37;
-  display: block;
-}
-  table {
+  .card-images {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 300px;
+  }
+  .watch-image {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    table-layout: fixed;
-  }
-  table th {
-    background: transparent;
-    border-bottom: 2px solid #d4af37;
-    color: #d4af37;
-    font-weight: 700;
-    padding: 12px 8px;
-    text-align: left;
-    user-select: none;
-  }
-  table td {
-    background: #111;
-    border: 1px solid #333;
-    padding: 12px 8px;
-    color: #eee;
-    word-wrap: break-word;
-    white-space: normal;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #d4af37;
+    display: block;
   }
   /* Autocomplete styles */
-  .autocomplete-items {
+  .autocomplete-wrapper {
+    position: relative;
+  }
+  #recordPicker {
     position: absolute;
-    border: 1px solid #d4af37;
-    border-top: none;
-    z-index: 1001;
     top: 100%;
     left: 0;
     right: 0;
     background: #222;
-    color: #eee;
+    border: 1px solid #d4af37;
+    border-top: none;
     max-height: 200px;
     overflow-y: auto;
     border-radius: 0 0 8px 8px;
-    width: 100%;
     box-sizing: border-box;
-  }
-  .autocomplete-items div {
-    padding: 10px;
-    cursor: pointer;
-    color: #eee;
-  }
-  .autocomplete-items div:hover {
-    background: #d4af37;
-    color: #000;
-  }
-  /* Multi-record picker popup */
-  #recordPicker {
-    position: absolute;
     z-index: 1100;
-    top: calc(100% + 5px);
-    left: 0;
-    right: 0;
-    max-height: 250px;
-    overflow-y: auto;
-    background: #222;
-    border: 1px solid #d4af37;
-    border-radius: 0 0 8px 8px;
-    box-sizing: border-box;
+    width: 100%;
   }
   #recordPicker div {
     padding: 10px;
@@ -261,60 +215,54 @@
     </div>
 
     <!-- Grey Market Lookup Section -->
-    <div class="lookup-section" style="position:relative;">
+    <div class="lookup-section">
       <h2>Grey Market Lookup</h2>
-      <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
-      <button onclick="lookupGreyMarket()">Search Grey Market</button>
-      <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
 
-      <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
-        <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
-
-        <label for="gm_date_entered">Date Entered</label>
-        <input type="date" id="gm_date_entered" />
-
-        <label for="gm_year">Year</label>
-        <input type="text" id="gm_year" />
-
-        <label for="gm_model">Model</label>
-        <input type="text" id="gm_model" />
-
-        <label for="gm_model_name" autocomplete="off">Model Name</label>
-        <input type="text" id="gm_model_name" />
-
+      <label for="gm_model_name">Model Name</label>
+      <div class="autocomplete-wrapper">
+        <input type="text" id="gm_model_name" autocomplete="off" />
         <div id="recordPicker" style="display:none;"></div>
-
-        <label for="gm_nickname">Nickname or Dial</label>
-        <input type="text" id="gm_nickname" />
-
-        <label for="gm_bracelet">Bracelet</label>
-        <input type="text" id="gm_bracelet" />
-
-        <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
-        <input type="text" id="gm_bracelet_metal_color" />
-
-        <label for="gm_price">Price</label>
-        <input type="text" id="gm_price" />
-
-        <label for="gm_full_set">Full Set</label>
-        <input type="text" id="gm_full_set" />
-
-        <label for="gm_retail_ready">Retail Ready</label>
-        <input type="text" id="gm_retail_ready" />
-
-        <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
-        <input type="text" id="gm_current_retail" />
-
-        <label for="gm_dealer">Dealer</label>
-        <input type="text" id="gm_dealer" />
-
-        <label for="gm_comments">Comments</label>
-        <textarea id="gm_comments" rows="3"></textarea>
-
-        <button onclick="saveGreyMarketEntry()">Save</button>
-        <button onclick="cancelGreyMarketForm()">Cancel</button>
-        <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
       </div>
+
+      <label for="gm_date_entered">Date Entered</label>
+      <input type="date" id="gm_date_entered" />
+
+      <label for="gm_year">Year</label>
+      <input type="text" id="gm_year" />
+
+      <label for="gm_model">Model</label>
+      <input type="text" id="gm_model" />
+
+      <label for="gm_nickname">Nickname or Dial</label>
+      <input type="text" id="gm_nickname" />
+
+      <label for="gm_bracelet">Bracelet</label>
+      <input type="text" id="gm_bracelet" />
+
+      <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
+      <input type="text" id="gm_bracelet_metal_color" />
+
+      <label for="gm_price">Price</label>
+      <input type="text" id="gm_price" />
+
+      <label for="gm_full_set">Full Set</label>
+      <input type="text" id="gm_full_set" />
+
+      <label for="gm_retail_ready">Retail Ready</label>
+      <input type="text" id="gm_retail_ready" />
+
+      <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
+      <input type="text" id="gm_current_retail" />
+
+      <label for="gm_dealer">Dealer</label>
+      <input type="text" id="gm_dealer" />
+
+      <label for="gm_comments">Comments</label>
+      <textarea id="gm_comments" rows="3"></textarea>
+
+      <button onclick="saveGreyMarketEntry()">Save</button>
+      <button onclick="cancelGreyMarketForm()">Cancel</button>
+      <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
     </div>
   </div>
 
@@ -322,9 +270,12 @@
 </div>
 
 <script>
-  // Reference Lookup JS (unchanged)
   let currentEditingRef = null;
+  let currentEditingGMModel = null;
+  let greyMarketData = [];
+  let modelNameSuggestions = [];
 
+  // Reference Lookup CRUD functions
   function showAddReferenceForm() {
     currentEditingRef = null;
     document.getElementById('formTitle').innerText = 'Add New Reference';
@@ -352,8 +303,8 @@
   }
 
   function clearReferenceForm() {
-    const fields = ['ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial','ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes','ref_images'];
-    fields.forEach(id => document.getElementById(id).value = '');
+    ['ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial','ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes','ref_images']
+      .forEach(id => document.getElementById(id).value = '');
   }
 
   function cancelReferenceForm() {

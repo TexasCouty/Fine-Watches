@@ -1,130 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>LuxeTime Watches Lookup</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>LuxeTime Watches Lookup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
-  <h1>LuxeTime Watches Lookup</h1>
+  <div class="container">
+    <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
+    <h1>LuxeTime Watches Lookup</h1>
 
-  <div class="lookup-grid">
+    <div class="lookup-grid">
 
-    <!-- Reference Lookup Section -->
-    <div class="lookup-section">
-      <h2>Reference Lookup</h2>
-      <input type="text" id="refInput" placeholder="Enter Reference Number" />
-      <button onclick="lookupReference()">Search Reference</button>
-      <button onclick="showAddReferenceForm()">Add New Reference</button>
+      <!-- Reference Lookup Section -->
+      <div class="lookup-section">
+        <h2>Reference Lookup</h2>
+        <input type="text" id="refInput" placeholder="Enter Reference Number" />
+        <button onclick="lookupReference()">Search Reference</button>
+        <button onclick="showAddReferenceForm()">Add New Reference</button>
 
-      <div id="refFormContainer" style="margin-top:20px; display:none;">
-        <h3 id="formTitle">Add New Reference</h3>
+        <div id="refFormContainer" style="margin-top:20px; display:none;">
+          <h3 id="formTitle">Add New Reference</h3>
+          <label for="ref_reference">Reference</label>
+          <input id="ref_reference" type="text" />
 
-        <label for="ref_reference">Reference</label>
-        <input id="ref_reference" type="text" />
+          <label for="ref_manufacturer">Manufacturer</label>
+          <input id="ref_manufacturer" type="text" />
 
-        <label for="ref_manufacturer">Manufacturer</label>
-        <input id="ref_manufacturer" type="text" />
+          <label for="ref_collection">Collection</label>
+          <input id="ref_collection" type="text" />
 
-        <label for="ref_collection">Collection</label>
-        <input id="ref_collection" type="text" />
+          <label for="ref_retail_price">Retail Price</label>
+          <input id="ref_retail_price" type="text" />
 
-        <label for="ref_retail_price">Retail Price</label>
-        <input id="ref_retail_price" type="text" />
+          <label for="ref_dial">Dial</label>
+          <input id="ref_dial" type="text" />
 
-        <label for="ref_dial">Dial</label>
-        <input id="ref_dial" type="text" />
+          <label for="ref_case">Case</label>
+          <input id="ref_case" type="text" />
 
-        <label for="ref_case">Case</label>
-        <input id="ref_case" type="text" />
+          <label for="ref_bracelet">Bracelet</label>
+          <input id="ref_bracelet" type="text" />
 
-        <label for="ref_bracelet">Bracelet</label>
-        <input id="ref_bracelet" type="text" />
+          <label for="ref_movement">Movement</label>
+          <input id="ref_movement" type="text" />
 
-        <label for="ref_movement">Movement</label>
-        <input id="ref_movement" type="text" />
+          <label for="ref_year_introduced">Year Introduced</label>
+          <input id="ref_year_introduced" type="text" />
 
-        <label for="ref_year_introduced">Year Introduced</label>
-        <input id="ref_year_introduced" type="text" />
+          <label for="ref_notes">Notes</label>
+          <textarea id="ref_notes" rows="3"></textarea>
 
-        <label for="ref_notes">Notes</label>
-        <textarea id="ref_notes" rows="3"></textarea>
+          <label for="ref_images">Images (comma-separated filenames)</label>
+          <input id="ref_images" type="text" placeholder="e.g. 127335-0001.avif, 127335-0002.jpg" />
 
-        <label for="ref_images">Images (comma-separated filenames)</label>
-        <input id="ref_images" type="text" placeholder="e.g. 127335-0001.avif, 127335-0002.jpg" />
-
-        <button onclick="saveReference()">Save</button>
-        <button onclick="cancelReferenceForm()">Cancel</button>
-        <button id="deleteButton" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteReference()">Delete</button>
-      </div>
-    </div>
-
-    <!-- Grey Market Lookup Section -->
-    <div class="lookup-section" style="position:relative;">
-      <h2>Grey Market Lookup</h2>
-      <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
-      <button onclick="lookupGreyMarket()">Search Grey Market</button>
-      <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
-
-      <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
-        <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
-
-        <label for="gm_date_entered">Date Entered</label>
-        <input type="date" id="gm_date_entered" />
-
-        <label for="gm_year">Year</label>
-        <input type="text" id="gm_year" />
-
-        <label for="gm_model">Model</label>
-        <input type="text" id="gm_model" />
-
-        <label for="gm_model_name">Model Name</label>
-        <div class="autocomplete-wrapper">
-          <input type="text" id="gm_model_name" autocomplete="off" />
-          <div id="gmRecordPicker" style="display:none;"></div>
+          <button onclick="saveReference()">Save</button>
+          <button onclick="cancelReferenceForm()">Cancel</button>
+          <button id="deleteButton" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteReference()">Delete</button>
         </div>
+      </div>
 
-        <label for="gm_nickname">Nickname or Dial</label>
-        <input type="text" id="gm_nickname" />
+      <!-- Grey Market Lookup Section -->
+      <div class="lookup-section" style="position:relative;">
+        <h2>Grey Market Lookup</h2>
+        <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
+        <button onclick="lookupGreyMarket()">Search Grey Market</button>
+        <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
 
-        <label for="gm_bracelet">Bracelet</label>
-        <input type="text" id="gm_bracelet" />
+        <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
+          <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
 
-        <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
-        <input type="text" id="gm_bracelet_metal_color" />
+          <label for="gm_date_entered">Date Entered</label>
+          <input type="date" id="gm_date_entered" />
 
-        <label for="gm_price">Price</label>
-        <input type="text" id="gm_price" />
+          <label for="gm_year">Year</label>
+          <input type="text" id="gm_year" />
 
-        <label for="gm_full_set">Full Set</label>
-        <input type="text" id="gm_full_set" />
+          <label for="gm_model">Model</label>
+          <input type="text" id="gm_model" />
 
-        <label for="gm_retail_ready">Retail Ready</label>
-        <input type="text" id="gm_retail_ready" />
+          <label for="gm_model_name">Model Name</label>
+          <div class="autocomplete-wrapper">
+            <input type="text" id="gm_model_name" autocomplete="off" />
+            <div id="gmRecordPicker" style="display:none;"></div>
+          </div>
 
-        <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
-        <input type="text" id="gm_current_retail" />
+          <label for="gm_nickname">Nickname or Dial</label>
+          <input type="text" id="gm_nickname" />
 
-        <label for="gm_dealer">Dealer</label>
-        <input type="text" id="gm_dealer" />
+          <label for="gm_bracelet">Bracelet</label>
+          <input type="text" id="gm_bracelet" />
 
-        <label for="gm_comments">Comments</label>
-        <textarea id="gm_comments" rows="3"></textarea>
+          <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
+          <input type="text" id="gm_bracelet_metal_color" />
 
-        <button onclick="saveGreyMarketEntry()">Save</button>
-        <button onclick="cancelGreyMarketForm()">Cancel</button>
-        <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
+          <label for="gm_price">Price</label>
+          <input type="text" id="gm_price" />
+
+          <label for="gm_full_set">Full Set</label>
+          <input type="text" id="gm_full_set" />
+
+          <label for="gm_retail_ready">Retail Ready</label>
+          <input type="text" id="gm_retail_ready" />
+
+          <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
+          <input type="text" id="gm_current_retail" />
+
+          <label for="gm_dealer">Dealer</label>
+          <input type="text" id="gm_dealer" />
+
+          <label for="gm_comments">Comments</label>
+          <textarea id="gm_comments" rows="3"></textarea>
+
+          <button onclick="saveGreyMarketEntry()">Save</button>
+          <button onclick="cancelGreyMarketForm()">Cancel</button>
+          <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
+        </div>
       </div>
     </div>
+
+    <div id="results" class="results"></div>
   </div>
 
-  <div id="results" class="results"></div>
-</div>
-
-<!-- Load main.js at the end of the body -->
-<script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

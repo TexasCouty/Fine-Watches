@@ -120,103 +120,41 @@ button:hover {
   border: 1px solid #d4af37;
   display: block;
 }
-
-/*--- Pro Table Polish ---*/
-#greyMarketTable {
-  border-collapse: separate;
-  border-spacing: 0;
+table {
   width: 100%;
-  background: transparent;
-  overflow-x: auto;
-  display: table;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed;
 }
-#greyMarketTable th,
-#greyMarketTable td {
+th, td {
+  text-align: left;
   vertical-align: middle;
-  padding: 14px 10px;
-  font-size: 0.98rem;
+  padding: 10px 8px;
 }
-#greyMarketTable th {
-  white-space: normal;
-  background: #111;
-  position: sticky;
-  top: 0;
-  z-index: 2;
-}
-#greyMarketTable td {
-  white-space: normal;
-}
-#greyMarketTable td:nth-child(3),
-#greyMarketTable td:nth-child(4),
-#greyMarketTable td:nth-child(6),
-#greyMarketTable td:nth-child(7),
-#greyMarketTable td:nth-child(8),
-#greyMarketTable td:last-child {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  max-width: 120px;
-}
-#greyMarketTable td:nth-child(8),
-#greyMarketTable td:nth-child(11) {
-  text-align: right;
-}
-#greyMarketTable td:last-child {
-  text-align: center;
-}
-#greyMarketTable button {
-  min-width: 60px;
-  padding: 8px 0;
-  font-size: 1rem;
-  font-weight: 700;
-  border-radius: 8px;
-  border: 2px solid #d4af37;
+table th {
   background: transparent;
+  border-bottom: 2px solid #d4af37;
   color: #d4af37;
-  transition: background 0.3s, color 0.3s;
+  font-weight: 700;
+  padding: 12px 8px;
+  text-align: left;
+  user-select: none;
 }
-#greyMarketTable button:hover {
-  background: #d4af37;
-  color: #000;
-}
-#greyMarketTable tbody tr:nth-child(even) {
-  background: #181818;
-}
-#greyMarketTable tbody tr:nth-child(odd) {
-  background: #121212;
-}
-#greyMarketTable tbody tr:hover {
-  background: #232323;
-}
-#greyMarketTable td, #greyMarketTable th {
-  border-bottom: 1px solid #222;
-}
-
-/* Autocomplete styles */
-.autocomplete-items {
-  position: absolute;
-  border: 1px solid #d4af37;
-  border-top: none;
-  z-index: 1001;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #222;
+table td {
+  background: #111;
+  border: 1px solid #333;
   color: #eee;
-  max-height: 200px;
-  overflow-y: auto;
-  border-radius: 0 0 8px 8px;
-  width: 100%;
-  box-sizing: border-box;
+  word-wrap: break-word;
+  white-space: normal;
+  font-size: 1rem;
 }
-.autocomplete-items div {
-  padding: 10px;
-  cursor: pointer;
-  color: #eee;
-}
-.autocomplete-items div:hover {
-  background: #d4af37;
-  color: #000;
+#greyMarketTable td button {
+  width: 80px;
+  font-weight: bold;
+  margin: 0 auto;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  display: block;
 }
 .autocomplete-wrapper { position: relative; }
 #gmRecordPicker {
@@ -243,68 +181,85 @@ button:hover {
   color: #000;
 }
 
-/* --- Mobile Responsive: Table as Stacked Cards --- */
+/* --- MOBILE FRIENDLY TABLE --- */
 @media (max-width: 700px) {
   .lookup-grid {
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
   }
   .lookup-section {
-    max-height: none;
+    max-width: 100%;
     min-width: 0;
-    padding: 15px;
+    margin-bottom: 24px;
   }
-  #greyMarketTable, #greyMarketTable thead, #greyMarketTable tbody, #greyMarketTable th, #greyMarketTable tr {
-    display: block !important;
-    width: 100% !important;
+  table, thead, tbody, tr, th, td {
+    display: block;
+    width: 100%;
+  }
+  #greyMarketTable {
+    border: none;
+    margin-top: 10px;
+    background: none;
   }
   #greyMarketTable thead {
-    display: none !important;
+    display: none;
   }
   #greyMarketTable tr {
-    margin-bottom: 28px;
-    border-radius: 12px;
-    box-shadow: 0 0 12px #00000060;
-    border: 1px solid #232323;
+    margin: 15px 0;
     background: #181818;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px #0003;
+    border: 1px solid #333;
+    padding-bottom: 10px;
     overflow: hidden;
-    padding: 10px 0 15px 0;
-    position: relative;
   }
   #greyMarketTable td {
-    display: block !important;
     position: relative;
-    padding-left: 48%;
-    padding-top: 16px;
-    padding-bottom: 16px;
     border: none;
-    border-bottom: 1px solid #252525;
-    min-height: 38px;
-    font-size: 1.12rem;
+    border-bottom: 1px solid #222;
+    padding: 12px 8px 12px 44%;
+    min-height: 40px;
+    vertical-align: middle;
     background: transparent;
-    text-align: left;
-    width: 100%;
-    box-sizing: border-box;
+    word-break: break-word;
+    font-size: 1.08rem;
+    text-align: left !important;
+    display: flex;
+    align-items: center;
   }
   #greyMarketTable td:last-child {
     border-bottom: none;
-    text-align: right;
-    padding-right: 16px;
-    padding-left: 44%;
   }
   #greyMarketTable td::before {
-    content: attr(data-label);
     position: absolute;
-    top: 16px;
-    left: 16px;
-    width: 43%;
-    min-width: 110px;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 42%;
+    content: attr(data-label);
     color: #d4af37;
-    font-weight: bold;
-    font-size: 0.99em;
-    white-space: normal;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-right: 8px;
+    white-space: pre-line;
     text-align: left;
-    letter-spacing: 0.01em;
-    opacity: 0.93;
+  }
+  #greyMarketTable td[data-label="Actions"] {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+  }
+  #greyMarketTable td[data-label="Actions"] button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    max-width: 120px;
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border-radius: 8px;
   }
 }

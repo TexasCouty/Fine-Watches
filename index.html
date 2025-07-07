@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 40px 20px; background: linear-gradient(135deg, #000000, #434343); color: #fff; }
-    .container { background: rgba(0, 0, 0, 0.7); padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-width: 900px; margin: 0 auto; }
+    .container { background: rgba(0, 0, 0, 0.7); padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-width: 1200px; margin: 0 auto; }
     .logo { max-width: 200px; height: auto; display: block; margin: 0 auto 20px auto; }
     h1 { font-size: 1.8rem; color: #d4af37; margin-bottom: 30px; text-align: center; }
     label { display: block; margin-top: 10px; font-weight: bold; color: #d4af37; }
@@ -15,7 +15,7 @@
     input::placeholder { color: #aaa; }
     button { background: #d4af37; color: #000; border: none; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
     button:hover { background: #b9972f; transform: translateY(-2px); }
-    .results { margin-top: 30px; text-align: left; }
+    .results { margin-top: 30px; text-align: left; overflow-x: auto; }
     .card { background: #111; border: 1px solid #333; border-radius: 6px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; flex-wrap: wrap; }
     .card-text { flex: 1 1 60%; padding-right: 20px; }
     .card-images { flex: 1 1 35%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; justify-content: flex-end; }
@@ -24,6 +24,9 @@
     .watch-image { width: 100%; border-radius: 6px; border: 1px solid #333; display: block; }
     .message { padding: 15px; background: #222; border-radius: 4px; text-align: center; }
     .edit-btn { margin-top: 10px; margin-right: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    table th { background: #d4af37; color: #000; padding: 10px; cursor: pointer; }
+    table td { background: #111; border: 1px solid #333; padding: 10px; }
     @media (max-width: 700px) { .card { flex-direction: column; } .card-text, .card-images { flex: 1 1 100%; padding: 0; } .card-images { grid-template-columns: repeat(2, 1fr); } .watch-image { width: 100%; } }
   </style>
 </head>
@@ -32,11 +35,11 @@
     <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>Fine Watches Reference Lookup</h1>
 
-    <!-- ✅ Existing Reference Search -->
+    <!-- ✅ Reference Search -->
     <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
     <button onclick="lookupReference()">Search</button>
 
-    <!-- ✅ New Grey Market Search -->
+    <!-- ✅ Grey Market Search -->
     <input type="text" id="greyMarketInput" placeholder="Enter Reference Number for Grey Market Price" />
     <button onclick="lookupGreyMarket()">Search Grey Market</button>
 
@@ -120,18 +123,42 @@
           if (!Array.isArray(data) || data.length === 0) {
             resultsDiv.innerHTML = `<div class="message">No Grey Market matches found.</div>`;
           } else {
-            resultsDiv.innerHTML = data.map(item => `
-              <div class="card">
-                <div class="card-text">
-                  <p class="manufacturer-line"><strong>${item.Manufacturer || 'N/A'} — Reference: ${item['Reference Number'] || 'N/A'}</strong></p>
-                  <p><strong>Model:</strong> ${item.Model || 'N/A'}</p>
-                  <p><strong>Retail Price:</strong> ${item['Retail Price'] || 'N/A'}</p>
-                  <p><strong>Market Price:</strong> ${item['Market Price'] || 'N/A'}</p>
-                  <p><strong>Date:</strong> ${item.Date || 'N/A'}</p>
-                  <p><strong>Notes:</strong> ${item.Notes || ''}</p>
-                </div>
-              </div>
+            let table = `
+              <table id="greyMarketTable">
+                <thead>
+                  <tr>
+                    <th onclick="sortTable(0)">Model</th>
+                    <th onclick="sortTable(1)">Model Name</th>
+                    <th onclick="sortTable(2)">Nickname/Dial</th>
+                    <th onclick="sortTable(3)">Bracelet</th>
+                    <th onclick="sortTable(4)">Metal/Color</th>
+                    <th onclick="sortTable(5)">Price</th>
+                    <th onclick="sortTable(6)">Current Retail</th>
+                    <th onclick="sortTable(7)">Dealer</th>
+                    <th onclick="sortTable(8)">Comments</th>
+                    <th onclick="sortTable(9)">Date Entered</th>
+                  </tr>
+                </thead>
+                <tbody>
+            `;
+
+            table += data.map(item => `
+              <tr>
+                <td>${item.Model || 'N/A'}</td>
+                <td>${item["Model Name"] || 'N/A'}</td>
+                <td>${item["Nickname or Dial"] || 'N/A'}</td>
+                <td>${item.Bracelet || 'N/A'}</td>
+                <td>${item["Bracelet Metal/Color"] || 'N/A'}</td>
+                <td>${item.Price || 'N/A'}</td>
+                <td>${item["Current Retail (Not Inc Tax)"] || 'N/A'}</td>
+                <td>${item.Dealer || 'N/A'}</td>
+                <td>${item.Comments || ''}</td>
+                <td>${item["Date Entered"] || 'N/A'}</td>
+              </tr>
             `).join('');
+
+            table += `</tbody></table>`;
+            resultsDiv.innerHTML = table;
           }
         } else {
           resultsDiv.innerHTML = `<div class="message">No Grey Market matches found.</div>`;
@@ -142,9 +169,48 @@
       }
     }
 
-    // All your other functions stay the same:
-    // enableEdit, addImageInput, removeImage, saveEdit, deleteRef, showAddForm, saveNew...
-    // They do not conflict with the new lookupGreyMarket()
+    function sortTable(n) {
+      const table = document.getElementById("greyMarketTable");
+      let switching = true;
+      let dir = "asc"; 
+      let switchcount = 0;
+
+      while (switching) {
+        switching = false;
+        let rows = table.rows;
+
+        for (let i = 1; i < (rows.length - 1); i++) {
+          let shouldSwitch = false;
+          let x = rows[i].getElementsByTagName("TD")[n];
+          let y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount === 0 && dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+
+    // Your enableEdit, saveEdit, deleteRef, showAddForm, saveNew stay unchanged
   </script>
 </body>
 </html>

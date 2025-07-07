@@ -32,9 +32,11 @@ exports.handler = async function (event) {
       cachedClient = new MongoClient(uri);
       await cachedClient.connect();
       console.log('✅ MongoDB CONNECTED');
+    } else {
+      console.log('♻️ Reusing cached MongoDB client');
     }
 
-    const db = cachedClient.db('test');
+    const db = cachedClient.db('test'); // adjust if needed
     const collection = db.collection('watch_refs');
 
     const result = await collection.insertOne(body);

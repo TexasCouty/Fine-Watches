@@ -33,10 +33,10 @@ exports.handler = async function (event) {
       await cachedClient.connect();
       console.log('✅ MongoDB CONNECTED');
     } else {
-      console.log('♻️ Using cached MongoDB client');
+      console.log('♻️ Reusing cached MongoDB client');
     }
 
-    const db = cachedClient.db('test');
+    const db = cachedClient.db('test'); // adjust if your DB name is different
     const collection = db.collection('watch_refs');
 
     console.log(`🔍 Updating reference ${body.reference} with fields:`, body.fields);
@@ -61,4 +61,3 @@ exports.handler = async function (event) {
     };
   }
 };
-

@@ -5,31 +5,145 @@
   <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ README: Styles for page layout, colors, dark theme, table styling -->
+  <!-- ✅ README: Styles for LuxeTime theme, clean table, fixed layout -->
   <style>
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 40px 20px; background: linear-gradient(135deg, #000000, #434343); color: #fff; }
-    .container { background: rgba(0, 0, 0, 0.7); padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-width: 1200px; margin: 0 auto; }
-    .logo { max-width: 200px; height: auto; display: block; margin: 0 auto 20px auto; }
-    h1 { font-size: 1.8rem; color: #d4af37; margin-bottom: 30px; text-align: center; }
-    label { display: block; margin-top: 10px; font-weight: bold; color: #d4af37; }
-    input, button, textarea { padding: 10px; font-size: 1rem; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 6px; }
-    input, textarea { border: 1px solid #555; background: #222; color: #fff; }
-    input::placeholder { color: #aaa; }
-    button { background: #d4af37; color: #000; border: none; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
-    button:hover { background: #b9972f; transform: translateY(-2px); }
-    .results { margin-top: 30px; text-align: left; overflow-x: auto; }
-    .card { background: #111; border: 1px solid #333; border-radius: 6px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; flex-wrap: wrap; }
-    .card-text { flex: 1 1 60%; padding-right: 20px; }
-    .card-images { flex: 1 1 35%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; justify-content: flex-end; }
-    .manufacturer-line { font-weight: bold; font-size: 1rem; color: #d4af37; margin: 0 0 10px 0; }
-    .card p { margin: 5px 0; }
-    .watch-image { width: 100%; border-radius: 6px; border: 1px solid #333; display: block; }
-    .message { padding: 15px; background: #222; border-radius: 4px; text-align: center; }
-    .edit-btn { margin-top: 10px; margin-right: 5px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    table th { background: #d4af37; color: #000; padding: 10px; cursor: pointer; }
-    table td { background: #111; border: 1px solid #333; padding: 10px; }
-    @media (max-width: 700px) { .card { flex-direction: column; } .card-text, .card-images { flex: 1 1 100%; padding: 0; } .card-images { grid-template-columns: repeat(2, 1fr); } .watch-image { width: 100%; } }
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #000000, #434343);
+      color: #fff;
+    }
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .logo {
+      max-width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #d4af37;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #d4af37;
+    }
+    input, button, textarea {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 5px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 6px;
+    }
+    input, textarea {
+      border: 1px solid #555;
+      background: #222;
+      color: #fff;
+    }
+    input::placeholder {
+      color: #aaa;
+    }
+    button {
+      background: #d4af37;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      background: #b9972f;
+      transform: translateY(-2px);
+    }
+    .results {
+      margin-top: 30px;
+      text-align: left;
+      overflow-x: auto;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .card-text {
+      flex: 1 1 60%;
+      padding-right: 20px;
+    }
+    .card-images {
+      flex: 1 1 35%;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    .manufacturer-line {
+      font-weight: bold;
+      font-size: 1rem;
+      color: #d4af37;
+      margin: 0 0 10px 0;
+    }
+    .card p {
+      margin: 5px 0;
+    }
+    .watch-image {
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #333;
+      display: block;
+    }
+    .message {
+      padding: 15px;
+      background: #222;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .edit-btn {
+      margin-top: 10px;
+      margin-right: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      table-layout: fixed; /* ✅ Forces equal column widths */
+    }
+    table th {
+      background: #d4af37;
+      color: #000;
+      padding: 10px;
+      cursor: pointer;
+    }
+    table td {
+      background: #111;
+      border: 1px solid #333;
+      padding: 10px;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      white-space: normal; /* ✅ Wraps long text in cells */
+    }
+    @media (max-width: 700px) {
+      .card { flex-direction: column; }
+      .card-text, .card-images { flex: 1 1 100%; padding: 0; }
+      .card-images { grid-template-columns: repeat(2, 1fr); }
+      .watch-image { width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -45,13 +159,12 @@
     <input type="text" id="greyMarketInput" placeholder="Enter Reference Number for Grey Market Price" />
     <button onclick="lookupGreyMarket()">Search Grey Market</button>
 
-    <!-- ✅ README: Results area for both lookups -->
+    <!-- ✅ README: Results output -->
     <div id="results" class="results"></div>
   </div>
 
-  <!-- ✅ README: JavaScript logic for both lookups, edit & save -->
   <script>
-    // ✅ Reference Lookup — unchanged
+    // ✅ Reference Lookup stays the same
     async function lookupReference() {
       const ref = document.getElementById('refInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -108,7 +221,7 @@
       }
     }
 
-    // ✅ Grey Market Lookup — all 16 fields in same order as Excel, sortable
+    // ✅ Grey Market Lookup — 13 final columns, balanced layout
     async function lookupGreyMarket() {
       const ref = document.getElementById('greyMarketInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -146,9 +259,6 @@
                     <th onclick="sortTable(10)">Current Retail (Not Inc Tax)</th>
                     <th onclick="sortTable(11)">Dealer</th>
                     <th onclick="sortTable(12)">Comments</th>
-                    <th onclick="sortTable(13)">Date Posted</th>
-                    <th onclick="sortTable(14)">Watch Year</th>
-                    <th onclick="sortTable(15)">reference</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -169,9 +279,6 @@
                 <td>${item["Current Retail (Not Inc Tax)"] || 'N/A'}</td>
                 <td>${item.Dealer || 'N/A'}</td>
                 <td>${item.Comments || ''}</td>
-                <td>${item["Date Posted"] || 'N/A'}</td>
-                <td>${item["Watch Year"] || 'N/A'}</td>
-                <td>${item.reference || 'N/A'}</td>
               </tr>
             `).join('');
 
@@ -187,7 +294,7 @@
       }
     }
 
-    // ✅ README: Sorts the Grey Market table by clicking column headers
+    // ✅ Sorts Grey Market table by column
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
       let switching = true;
@@ -229,8 +336,7 @@
       }
     }
 
-    // ✅ README: Your edit/save/delete/add new logic below stays unchanged
-    // enableEdit, saveEdit, deleteRef, showAddForm, saveNew...
+    // ✅ Other functions: enableEdit, saveEdit, deleteRef, showAddForm, saveNew stay unchanged
   </script>
 </body>
 </html>

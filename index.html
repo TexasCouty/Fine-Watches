@@ -5,143 +5,25 @@
   <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      margin: 0;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #000000, #434343);
-      color: #fff;
-    }
-
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .logo {
-      max-width: 200px;
-      height: auto;
-      display: block;
-      margin: 0 auto 20px auto;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      color: #d4af37;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    input, button, textarea {
-      padding: 10px;
-      font-size: 1rem;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 6px;
-    }
-
-    input, textarea {
-      border: 1px solid #555;
-      background: #222;
-      color: #fff;
-    }
-
-    input::placeholder {
-      color: #aaa;
-    }
-
-    button {
-      background: #d4af37;
-      color: #000;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-
-    button:hover {
-      background: #b9972f;
-      transform: translateY(-2px);
-    }
-
-    .results {
-      margin-top: 30px;
-      text-align: left;
-    }
-
-    .card {
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 6px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .card-text {
-      flex: 1 1 60%;
-      padding-right: 20px;
-    }
-
-    .card-images {
-      flex: 1 1 35%;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      justify-content: flex-end;
-    }
-
-    .manufacturer-line {
-      font-weight: bold;
-      font-size: 1rem;
-      color: #d4af37;
-      margin: 0 0 10px 0;
-    }
-
-    .card p {
-      margin: 5px 0;
-    }
-
-    .watch-image {
-      width: 100%;
-      border-radius: 6px;
-      border: 1px solid #333;
-      display: block;
-    }
-
-    .message {
-      padding: 15px;
-      background: #222;
-      border-radius: 4px;
-      text-align: center;
-    }
-
-    .edit-btn {
-      margin-top: 10px;
-    }
-
-    @media (max-width: 700px) {
-      .card {
-        flex-direction: column;
-      }
-      .card-text,
-      .card-images {
-        flex: 1 1 100%;
-        padding: 0;
-      }
-      .card-images {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .watch-image {
-        width: 100%;
-      }
-    }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 40px 20px; background: linear-gradient(135deg, #000000, #434343); color: #fff; }
+    .container { background: rgba(0, 0, 0, 0.7); padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-width: 900px; margin: 0 auto; }
+    .logo { max-width: 200px; height: auto; display: block; margin: 0 auto 20px auto; }
+    h1 { font-size: 1.8rem; color: #d4af37; margin-bottom: 30px; text-align: center; }
+    input, button, textarea { padding: 10px; font-size: 1rem; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 6px; }
+    input, textarea { border: 1px solid #555; background: #222; color: #fff; }
+    input::placeholder { color: #aaa; }
+    button { background: #d4af37; color: #000; border: none; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; }
+    button:hover { background: #b9972f; transform: translateY(-2px); }
+    .results { margin-top: 30px; text-align: left; }
+    .card { background: #111; border: 1px solid #333; border-radius: 6px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; flex-wrap: wrap; }
+    .card-text { flex: 1 1 60%; padding-right: 20px; }
+    .card-images { flex: 1 1 35%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; justify-content: flex-end; }
+    .manufacturer-line { font-weight: bold; font-size: 1rem; color: #d4af37; margin: 0 0 10px 0; }
+    .card p { margin: 5px 0; }
+    .watch-image { width: 100%; border-radius: 6px; border: 1px solid #333; display: block; }
+    .message { padding: 15px; background: #222; border-radius: 4px; text-align: center; }
+    .edit-btn { margin-top: 10px; }
+    @media (max-width: 700px) { .card { flex-direction: column; } .card-text, .card-images { flex: 1 1 100%; padding: 0; } .card-images { grid-template-columns: repeat(2, 1fr); } .watch-image { width: 100%; } }
   </style>
 </head>
 <body>
@@ -184,11 +66,7 @@
           } else {
             resultsDiv.innerHTML = data.map((item, index) => {
               console.log(`🖼️ Images for ${item.reference}:`, item.images);
-
-              const imagesHtml = (item.images || []).map(filename => {
-                return `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`;
-              }).join('');
-
+              const imagesHtml = (item.images || []).map(filename => `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`).join('');
               return `
                 <div class="card" id="card-${index}">
                   <div class="card-text" id="text-${index}">
@@ -224,6 +102,10 @@
       console.log('🔍 Editing item:', item);
 
       const container = document.getElementById(`text-${index}`);
+      const imagesInputs = (item.images || []).map((filename, i) =>
+        `<div><input id="image-${index}-${i}" value="${filename}" /><button onclick="removeImage(${index}, ${i})">Remove</button></div>`
+      ).join('');
+
       container.innerHTML = `
         <input value="${item.reference}" id="ref-${index}" placeholder="Reference" />
         <input value="${item.collection || ''}" id="collection-${index}" placeholder="Collection" />
@@ -234,12 +116,34 @@
         <input value="${item.movement || ''}" id="movement-${index}" placeholder="Movement" />
         <input value="${item.year_introduced || ''}" id="year-${index}" placeholder="Year Introduced" />
         <textarea id="notes-${index}" placeholder="Notes">${item.notes || ''}</textarea>
+        <div id="images-${index}">${imagesInputs}</div>
+        <button onclick="addImageInput(${index})">Add Image</button>
         <button onclick="saveEdit(${index}, '${item.reference}')">Save</button>
         <button onclick="lookupReference()">Cancel</button>
       `;
     }
 
+    function addImageInput(index) {
+      const imagesDiv = document.getElementById(`images-${index}`);
+      const count = imagesDiv.children.length;
+      const newInput = document.createElement('div');
+      newInput.innerHTML = `<input id="image-${index}-${count}" placeholder="New image filename" />`;
+      imagesDiv.appendChild(newInput);
+    }
+
+    function removeImage(index, i) {
+      const input = document.getElementById(`image-${index}-${i}`).parentElement;
+      input.remove();
+    }
+
     async function saveEdit(index, originalRef) {
+      const images = [];
+      const imagesDiv = document.getElementById(`images-${index}`);
+      imagesDiv.querySelectorAll('input').forEach(input => {
+        const val = input.value.trim();
+        if (val) images.push(val);
+      });
+
       const fields = {
         reference: document.getElementById(`ref-${index}`).value.trim(),
         collection: document.getElementById(`collection-${index}`).value.trim() || 'N/A',
@@ -249,7 +153,8 @@
         bracelet: document.getElementById(`bracelet-${index}`).value.trim() || 'N/A',
         movement: document.getElementById(`movement-${index}`).value.trim() || 'N/A',
         year_introduced: document.getElementById(`year-${index}`).value.trim() || 'N/A',
-        notes: document.getElementById(`notes-${index}`).value.trim() || ''
+        notes: document.getElementById(`notes-${index}`).value.trim() || '',
+        images: images
       };
 
       console.log('💾 Saving edit:', fields);

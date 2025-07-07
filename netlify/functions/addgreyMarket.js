@@ -24,6 +24,8 @@ exports.handler = async (event) => {
       cachedClient = new MongoClient(uri);
       await cachedClient.connect();
       console.log('✅ MongoDB CONNECTED');
+    } else {
+      console.log('♻️ Using cached MongoDB client');
     }
 
     const db = cachedClient.db('test');

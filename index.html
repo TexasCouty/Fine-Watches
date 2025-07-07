@@ -38,7 +38,7 @@
     }
     .lookup-section {
       flex: 1;
-      min-width: 300px;
+      min-width: 320px;
       background: rgba(255, 255, 255, 0.05);
       padding: 20px;
       border-radius: 8px;
@@ -139,7 +139,7 @@
 
     <div class="lookup-grid">
 
-      <!-- Reference Lookup and CRUD -->
+      <!-- Reference Lookup Section -->
       <div class="lookup-section">
         <h2>Reference Lookup</h2>
         <input type="text" id="refInput" placeholder="Enter Reference Number" />
@@ -188,18 +188,68 @@
         </div>
       </div>
 
-      <!-- Grey Market Lookup -->
+      <!-- Grey Market Lookup Section -->
       <div class="lookup-section">
         <h2>Grey Market Lookup</h2>
         <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
         <button onclick="lookupGreyMarket()">Search Grey Market</button>
+        <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
+
+        <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
+          <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
+
+          <label for="gm_date_entered">Date Entered</label>
+          <input type="date" id="gm_date_entered" />
+
+          <label for="gm_year">Year</label>
+          <input type="text" id="gm_year" />
+
+          <label for="gm_model">Model</label>
+          <input type="text" id="gm_model" />
+
+          <label for="gm_model_name">Model Name</label>
+          <input type="text" id="gm_model_name" />
+
+          <label for="gm_nickname">Nickname or Dial</label>
+          <input type="text" id="gm_nickname" />
+
+          <label for="gm_bracelet">Bracelet</label>
+          <input type="text" id="gm_bracelet" />
+
+          <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
+          <input type="text" id="gm_bracelet_metal_color" />
+
+          <label for="gm_price">Price</label>
+          <input type="text" id="gm_price" />
+
+          <label for="gm_full_set">Full Set</label>
+          <input type="text" id="gm_full_set" />
+
+          <label for="gm_retail_ready">Retail Ready</label>
+          <input type="text" id="gm_retail_ready" />
+
+          <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
+          <input type="text" id="gm_current_retail" />
+
+          <label for="gm_dealer">Dealer</label>
+          <input type="text" id="gm_dealer" />
+
+          <label for="gm_comments">Comments</label>
+          <textarea id="gm_comments" rows="3"></textarea>
+
+          <button onclick="saveGreyMarketEntry()">Save</button>
+          <button onclick="cancelGreyMarketForm()">Cancel</button>
+          <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
+        </div>
       </div>
+
     </div>
 
     <div id="results" class="results"></div>
   </div>
 
 <script>
+  // Reference Lookup CRUD
   let currentEditingRef = null;
 
   function showAddReferenceForm() {
@@ -355,6 +405,113 @@
     }
   }
 
+  // Grey Market CRUD
+  let currentEditingGMModel = null;
+
+  function showAddGreyMarketForm() {
+    currentEditingGMModel = null;
+    document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
+    clearGreyMarketForm();
+    document.getElementById('gm_delete_button').style.display = 'none';
+    document.getElementById('greyMarketFormContainer').style.display = 'block';
+  }
+
+  function showEditGreyMarketForm(data) {
+    currentEditingGMModel = data.Model;
+    document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
+    document.getElementById('gm_date_entered').value = data["Date Entered"] || '';
+    document.getElementById('gm_year').value = data.Year || '';
+    document.getElementById('gm_model').value = data.Model || '';
+    document.getElementById('gm_model_name').value = data["Model Name"] || '';
+    document.getElementById('gm_nickname').value = data["Nickname or Dial"] || '';
+    document.getElementById('gm_bracelet').value = data.Bracelet || '';
+    document.getElementById('gm_bracelet_metal_color').value = data["Bracelet Metal/Color"] || '';
+    document.getElementById('gm_price').value = data.Price || '';
+    document.getElementById('gm_full_set').value = data["Full Set"] || '';
+    document.getElementById('gm_retail_ready').value = data["Retail Ready"] || '';
+    document.getElementById('gm_current_retail').value = data["Current Retail (Not Inc Tax)"] || '';
+    document.getElementById('gm_dealer').value = data.Dealer || '';
+    document.getElementById('gm_comments').value = data.Comments || '';
+    document.getElementById('gm_delete_button').style.display = 'inline-block';
+    document.getElementById('greyMarketFormContainer').style.display = 'block';
+  }
+
+  function clearGreyMarketForm() {
+    const fields = ['gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname','gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set','gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'];
+    fields.forEach(id => document.getElementById(id).value = '');
+  }
+
+  function cancelGreyMarketForm() {
+    document.getElementById('greyMarketFormContainer').style.display = 'none';
+  }
+
+  async function saveGreyMarketEntry() {
+    const data = {
+      "Date Entered": document.getElementById('gm_date_entered').value.trim(),
+      "Year": document.getElementById('gm_year').value.trim(),
+      "Model": document.getElementById('gm_model').value.trim(),
+      "Model Name": document.getElementById('gm_model_name').value.trim(),
+      "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
+      "Bracelet": document.getElementById('gm_bracelet').value.trim(),
+      "Bracelet Metal/Color": document.getElementById('gm_bracelet_metal_color').value.trim(),
+      "Price": document.getElementById('gm_price').value.trim(),
+      "Full Set": document.getElementById('gm_full_set').value.trim(),
+      "Retail Ready": document.getElementById('gm_retail_ready').value.trim(),
+      "Current Retail (Not Inc Tax)": document.getElementById('gm_current_retail').value.trim(),
+      "Dealer": document.getElementById('gm_dealer').value.trim(),
+      "Comments": document.getElementById('gm_comments').value.trim()
+    };
+
+    if (!data.Model) {
+      alert('Model is required!');
+      return;
+    }
+
+    try {
+      let url = '/.netlify/functions/addgreyMarket';
+      let method = 'POST';
+      let body = JSON.stringify(data);
+
+      if (currentEditingGMModel) {
+        url = '/.netlify/functions/updateGreyMarket';
+        body = JSON.stringify({ Model: currentEditingGMModel, fields: data });
+      }
+
+      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
+      if (!res.ok) throw new Error('Network response was not ok');
+
+      alert(currentEditingGMModel ? 'Grey Market entry updated' : 'Grey Market entry added');
+      cancelGreyMarketForm();
+      lookupGreyMarket();
+
+    } catch (err) {
+      alert('Error saving Grey Market entry: ' + err.message);
+      console.error(err);
+    }
+  }
+
+  async function deleteGreyMarketEntry() {
+    if (!currentEditingGMModel) return;
+    if (!confirm(`Are you sure you want to delete model "${currentEditingGMModel}"?`)) return;
+
+    try {
+      const res = await fetch('/.netlify/functions/deleteGreyMarket', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ Model: currentEditingGMModel })
+      });
+      if (!res.ok) throw new Error('Network response was not ok');
+
+      alert('Grey Market entry deleted');
+      cancelGreyMarketForm();
+      lookupGreyMarket();
+
+    } catch (err) {
+      alert('Error deleting Grey Market entry: ' + err.message);
+      console.error(err);
+    }
+  }
+
   async function lookupGreyMarket() {
     const ref = document.getElementById('greyMarketInput').value.trim();
     const resultsDiv = document.getElementById('results');
@@ -393,6 +550,7 @@
             <th onclick="sortTable(10)">Current Retail</th>
             <th onclick="sortTable(11)">Dealer</th>
             <th onclick="sortTable(12)">Comments</th>
+            <th>Actions</th>
           </tr>
         </thead><tbody>`;
 
@@ -411,6 +569,7 @@
           <td>${item["Current Retail (Not Inc Tax)"] || ''}</td>
           <td>${item.Dealer || ''}</td>
           <td>${item.Comments || ''}</td>
+          <td><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button></td>
         </tr>`;
       });
 

@@ -4,7 +4,7 @@ const uri = process.env.MONGO_URI;
 let cachedClient = null;
 
 exports.handler = async (event) => {
-  console.log('✏️ Update Grey Market Function STARTED');
+  console.log('🗑️ Delete Grey Market Function STARTED');
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
@@ -12,11 +12,9 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    console.log('✅ Parsed body:', body);
-
-    const { Model, fields } = body;
-    if (!Model || !fields) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing Model or fields' }) };
+    const model = body.Model || body.model;
+    if (!model) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Model is required for deletion' }) };
     }
 
     if (!cachedClient) {
@@ -25,19 +23,19 @@ exports.handler = async (event) => {
       console.log('✅ MongoDB CONNECTED');
     }
 
-    const db = cachedClient.db('test'); // adjust DB name
+    const db = cachedClient.db('test'); // Adjust as needed
     const collection = db.collection('grey_market_refs');
 
-    const result = await collection.updateOne({ Model }, { $set: fields });
-    console.log('✅ Update result:', result);
+    const result = await collection.deleteOne({ Model: model });
+    console.log('✅ Delete result:', result);
 
-    if (result.matchedCount === 0) {
+    if (result.deletedCount === 0) {
       return { statusCode: 404, body: JSON.stringify({ error: 'Model not found' }) };
     }
 
-    return { statusCode: 200, body: JSON.stringify({ message: 'Updated successfully' }) };
+    return { statusCode: 200, body: JSON.stringify({ message: 'Deleted successfully' }) };
   } catch (err) {
-    console.error('💥 ERROR during update:', err);
+    console.error('💥 ERROR during deletion:', err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Internal Server Error' }) };
   }
 };

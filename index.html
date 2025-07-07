@@ -5,7 +5,7 @@
   <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ README: LuxeTime dark theme + balanced table layout -->
+  <!-- ✅ README: LuxeTime theme, table layout, balanced columns -->
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -122,7 +122,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      table-layout: fixed; /* ✅ Equal columns */
+      table-layout: fixed;
     }
     table th {
       background: #d4af37;
@@ -136,7 +136,7 @@
       padding: 10px;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      white-space: normal; /* ✅ Wraps long Dealer/Comments */
+      white-space: normal;
     }
     @media (max-width: 700px) {
       .card { flex-direction: column; }
@@ -291,7 +291,7 @@
       }
     }
 
-    // ✅ FINAL sortTable with logs
+    // ✅ FIXED sortTable: shouldSwitch scoped properly
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
       let switching = true;
@@ -305,8 +305,10 @@
         let rows = table.rows;
         console.log(`🔍 Checking ${rows.length} rows`);
 
+        let shouldSwitch; // ✅ Correct: declared BEFORE the loop
+
         for (let i = 1; i < (rows.length - 1); i++) {
-          let shouldSwitch = false;
+          shouldSwitch = false; // ✅ Reset each loop
           console.log(`Row ${i} compare`);
 
           let x = rows[i].getElementsByTagName("TD")[n];

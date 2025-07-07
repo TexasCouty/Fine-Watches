@@ -5,6 +5,7 @@
   <title>LuxeTime Watches Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    /* your existing styles here, unchanged */
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
       margin: 0;
@@ -168,7 +169,7 @@
       max-height: 200px;
       overflow-y: auto;
       border-radius: 0 0 8px 8px;
-      width: 100%;  /* ensure it matches input width */
+      width: 100%;
       box-sizing: border-box;
     }
     .autocomplete-items div {
@@ -721,6 +722,7 @@
       closeAllLists();
       if (!input.value) return false;
       const val = input.value.toUpperCase();
+      console.log(`🔍 Autocomplete input changed: "${val}"`);
       const list = document.createElement('div');
       list.setAttribute('id', inputId + '-autocomplete-list');
       list.setAttribute('class', 'autocomplete-items');
@@ -740,6 +742,7 @@
           if (count >= 10) break;
         }
       }
+      console.log(`🟢 Autocomplete suggestions shown: ${count}`);
     });
 
     document.addEventListener('click', (e) => {
@@ -754,4 +757,3 @@
 </script>
 </body>
 </html>
-

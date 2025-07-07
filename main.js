@@ -329,19 +329,19 @@ async function lookupGreyMarket() {
     }
     let html = `<table id="greyMarketTable"><thead>
       <tr>
-        <th>Date Entered</th>
-        <th>Year</th>
-        <th>Model</th>
-        <th>Model Name</th>
-        <th>Nickname or Dial</th>
-        <th>Bracelet</th>
-        <th>Bracelet Metal/Color</th>
-        <th>Price</th>
-        <th>Full Set</th>
-        <th>Retail Ready</th>
-        <th>Current Retail</th>
-        <th>Dealer</th>
-        <th>Comments</th>
+        <th onclick="sortTable(0)">Date Entered</th>
+        <th onclick="sortTable(1)">Year</th>
+        <th onclick="sortTable(2)">Model</th>
+        <th onclick="sortTable(3)">Model Name</th>
+        <th onclick="sortTable(4)">Nickname or Dial</th>
+        <th onclick="sortTable(5)">Bracelet</th>
+        <th onclick="sortTable(6)">Bracelet Metal/Color</th>
+        <th onclick="sortTable(7)">Price</th>
+        <th onclick="sortTable(8)">Full Set</th>
+        <th onclick="sortTable(9)">Retail Ready</th>
+        <th onclick="sortTable(10)">Current Retail</th>
+        <th onclick="sortTable(11)">Dealer</th>
+        <th onclick="sortTable(12)">Comments</th>
         <th>Actions</th>
       </tr>
       </thead><tbody>`;
@@ -413,3 +413,6 @@ function sortTable(n) {
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchGreyMarketData();
 });
+
+// ---- RESTORE GLOBAL ACCESS FOR sortTable ----
+window.sortTable = sortTable;

@@ -9,6 +9,7 @@
     .container { background: rgba(0, 0, 0, 0.7); padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-width: 900px; margin: 0 auto; }
     .logo { max-width: 200px; height: auto; display: block; margin: 0 auto 20px auto; }
     h1 { font-size: 1.8rem; color: #d4af37; margin-bottom: 30px; text-align: center; }
+    label { display: block; margin-top: 10px; font-weight: bold; color: #d4af37; }
     input, button, textarea { padding: 10px; font-size: 1rem; margin: 5px 0; width: 100%; box-sizing: border-box; border-radius: 6px; }
     input, textarea { border: 1px solid #555; background: #222; color: #fff; }
     input::placeholder { color: #aaa; }
@@ -55,7 +56,6 @@
         if (response.ok) {
           const data = await response.json();
           window.searchResults = data;
-          console.log('✅ Final returned data:', data);
 
           if (!Array.isArray(data) || data.length === 0) {
             resultsDiv.innerHTML = `
@@ -65,7 +65,6 @@
             `;
           } else {
             resultsDiv.innerHTML = data.map((item, index) => {
-              console.log(`🖼️ Images for ${item.reference}:`, item.images);
               const imagesHtml = (item.images || []).map(filename => `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`).join('');
               return `
                 <div class="card" id="card-${index}">
@@ -88,8 +87,7 @@
             }).join('');
           }
         } else {
-          const error = await response.json();
-          resultsDiv.innerHTML = `<div class="message">${error.message || 'No matches found.'}</div>`;
+          resultsDiv.innerHTML = `<div class="message">No matches found.</div>`;
         }
       } catch (err) {
         console.error(err);
@@ -98,25 +96,24 @@
     }
 
     function enableEdit(index) {
-      console.log('✏️ Edit clicked for index:', index);
       const item = window.searchResults[index];
-      console.log('🔍 Editing item:', item);
-
-      const container = document.getElementById(`text-${index}`);
       const imagesInputs = (item.images || []).map((filename, i) =>
         `<div><input id="image-${index}-${i}" value="${filename}" /><button onclick="removeImage(${index}, ${i})">Remove</button></div>`
       ).join('');
 
+      const container = document.getElementById(`text-${index}`);
       container.innerHTML = `
-        <input value="${item.reference}" id="ref-${index}" placeholder="Reference" />
-        <input value="${item.collection || ''}" id="collection-${index}" placeholder="Collection" />
-        <input value="${item.retail_price || ''}" id="price-${index}" placeholder="Retail Price" />
-        <input value="${item.dial || ''}" id="dial-${index}" placeholder="Dial" />
-        <input value="${item.case || ''}" id="case-${index}" placeholder="Case" />
-        <input value="${item.bracelet || ''}" id="bracelet-${index}" placeholder="Bracelet" />
-        <input value="${item.movement || ''}" id="movement-${index}" placeholder="Movement" />
-        <input value="${item.year_introduced || ''}" id="year-${index}" placeholder="Year Introduced" />
-        <textarea id="notes-${index}" placeholder="Notes">${item.notes || ''}</textarea>
+        <label>Reference</label><input value="${item.reference}" id="ref-${index}" />
+        <label>Manufacturer</label><input value="${item.manufacturer || ''}" id="manufacturer-${index}" />
+        <label>Collection</label><input value="${item.collection || ''}" id="collection-${index}" />
+        <label>Retail Price</label><input value="${item.retail_price || ''}" id="price-${index}" />
+        <label>Dial</label><input value="${item.dial || ''}" id="dial-${index}" />
+        <label>Case</label><input value="${item.case || ''}" id="case-${index}" />
+        <label>Bracelet</label><input value="${item.bracelet || ''}" id="bracelet-${index}" />
+        <label>Movement</label><input value="${item.movement || ''}" id="movement-${index}" />
+        <label>Year Introduced</label><input value="${item.year_introduced || ''}" id="year-${index}" />
+        <label>Notes</label><textarea id="notes-${index}">${item.notes || ''}</textarea>
+        <label>Images</label>
         <div id="images-${index}">${imagesInputs}</div>
         <button onclick="addImageInput(${index})">Add Image</button>
         <button onclick="saveEdit(${index}, '${item.reference}')">Save</button>
@@ -147,6 +144,7 @@
 
       const fields = {
         reference: document.getElementById(`ref-${index}`).value.trim(),
+        manufacturer: document.getElementById(`manufacturer-${index}`).value.trim() || 'N/A',
         collection: document.getElementById(`collection-${index}`).value.trim() || 'N/A',
         retail_price: document.getElementById(`price-${index}`).value.trim() || 'N/A',
         dial: document.getElementById(`dial-${index}`).value.trim() || 'N/A',
@@ -158,9 +156,7 @@
         images: images
       };
 
-      console.log('💾 Saving edit:', fields);
-
-      const res = await fetch('/.netlify/functions/update', {
+      await fetch('/.netlify/functions/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,42 +165,35 @@
         })
       });
 
-      const json = await res.json();
-      console.log('✅ Update response:', json);
       lookupReference();
     }
 
     async function deleteRef(reference) {
-      const confirmDelete = confirm(`Are you sure you want to delete ${reference}? This cannot be undone.`);
-      if (!confirmDelete) return;
+      if (!confirm(`Are you sure you want to delete ${reference}?`)) return;
 
-      console.log(`🗑️ Deleting ${reference}...`);
-
-      const res = await fetch('/.netlify/functions/delete', {
+      await fetch('/.netlify/functions/delete', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reference })
       });
 
-      const json = await res.json();
-      console.log('✅ Delete response:', json);
       lookupReference();
     }
 
     function showAddForm() {
-      console.log('➕ Showing Add Form');
       const formDiv = document.getElementById('addForm');
       formDiv.innerHTML = `
-        <input id="newRef" placeholder="Reference" />
-        <input id="newCollection" placeholder="Collection" />
-        <input id="newRetailPrice" placeholder="Retail Price" />
-        <input id="newDial" placeholder="Dial" />
-        <input id="newCase" placeholder="Case" />
-        <input id="newBracelet" placeholder="Bracelet" />
-        <input id="newMovement" placeholder="Movement" />
-        <input id="newYear" placeholder="Year Introduced" />
-        <textarea id="newNotes" placeholder="Notes"></textarea>
-        <textarea id="newImages" placeholder="Images (comma-separated)"></textarea>
+        <label>Reference</label><input id="newRef" />
+        <label>Manufacturer</label><input id="newManufacturer" />
+        <label>Collection</label><input id="newCollection" />
+        <label>Retail Price</label><input id="newRetailPrice" />
+        <label>Dial</label><input id="newDial" />
+        <label>Case</label><input id="newCase" />
+        <label>Bracelet</label><input id="newBracelet" />
+        <label>Movement</label><input id="newMovement" />
+        <label>Year Introduced</label><input id="newYear" />
+        <label>Notes</label><textarea id="newNotes"></textarea>
+        <label>Images (comma-separated)</label><textarea id="newImages"></textarea>
         <button onclick="saveNew()">Save</button>
       `;
     }
@@ -212,6 +201,7 @@
     async function saveNew() {
       const newDoc = {
         reference: document.getElementById('newRef').value.trim(),
+        manufacturer: document.getElementById('newManufacturer').value.trim() || 'N/A',
         collection: document.getElementById('newCollection').value.trim() || 'N/A',
         retail_price: document.getElementById('newRetailPrice').value.trim() || 'N/A',
         dial: document.getElementById('newDial').value.trim() || 'N/A',
@@ -223,16 +213,12 @@
         images: document.getElementById('newImages').value.trim().split(',').map(s => s.trim())
       };
 
-      console.log('➕ Adding new reference:', newDoc);
-
-      const res = await fetch('/.netlify/functions/add', {
+      await fetch('/.netlify/functions/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newDoc)
       });
 
-      const json = await res.json();
-      console.log('✅ Add response:', json);
       lookupReference();
     }
   </script>

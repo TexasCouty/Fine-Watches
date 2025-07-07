@@ -578,12 +578,15 @@
       return;
     }
 
+    console.log(`🟢 Searching Grey Market for reference: "${ref}"`);
     resultsDiv.innerHTML = '<div>Searching Grey Market...</div>';
 
     try {
       const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
+      console.log(`🟢 Lookup response status: ${res.status}`);
       if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
+      console.log(`🟢 Lookup returned ${data.length} results`);
 
       if (!Array.isArray(data) || data.length === 0) {
         resultsDiv.innerHTML = `<div>No Grey Market matches found.</div>`;
@@ -683,17 +686,21 @@
   let modelNameSuggestions = [];
 
   async function fetchModelNameSuggestions() {
+    console.log('🟡 Fetching Model Name Suggestions...');
     try {
       const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
+      console.log(`🟡 Fetch response status: ${res.status}`);
       if (!res.ok) throw new Error('Failed to load model names');
       const data = await res.json();
+      console.log(`🟡 Received ${data.length} entries for autocomplete`);
       const namesSet = new Set();
       data.forEach(item => {
         if (item['Model Name']) namesSet.add(item['Model Name'].toUpperCase());
       });
       modelNameSuggestions = Array.from(namesSet).sort();
+      console.log('🟡 Autocomplete model names:', modelNameSuggestions);
     } catch (e) {
-      console.error('Error fetching model name suggestions', e);
+      console.error('🛑 Error fetching model name suggestions:', e);
     }
   }
 

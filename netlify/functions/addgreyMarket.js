@@ -7,7 +7,7 @@ exports.handler = async (event) => {
   console.log('➕ Add Grey Market Function STARTED');
 
   if (event.httpMethod !== 'POST') {
-    console.log('❌ Invalid HTTP method:', event.httpMethod);
+    console.warn(`❌ Invalid HTTP method: ${event.httpMethod}`);
     return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
@@ -16,6 +16,7 @@ exports.handler = async (event) => {
     console.log('✅ Parsed body:', body);
 
     if (!body.Model) {
+      console.warn('❌ Missing Model field in body');
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing Model field' }) };
     }
 
@@ -25,12 +26,12 @@ exports.handler = async (event) => {
       console.log('✅ MongoDB CONNECTED');
     }
 
-    const db = cachedClient.db('test'); // adjust DB name
+    const db = cachedClient.db('test');
     const collection = db.collection('grey_market_refs');
 
     const exists = await collection.findOne({ Model: body.Model });
     if (exists) {
-      console.log('⚠️ Model already exists:', body.Model);
+      console.warn('⚠️ Model already exists:', body.Model);
       return { statusCode: 409, body: JSON.stringify({ error: 'Model already exists' }) };
     }
 
@@ -39,7 +40,7 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, body: JSON.stringify({ message: 'Added successfully', id: result.insertedId }) };
   } catch (err) {
-    console.error('💥 ERROR during add:', err);
+    console.error('💥 ERROR during addgreyMarket:', err);
     return { statusCode: 500, body: JSON.stringify({ error: 'Internal Server Error' }) };
   }
 };

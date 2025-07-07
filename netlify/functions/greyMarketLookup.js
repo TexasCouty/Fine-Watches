@@ -26,12 +26,10 @@ exports.handler = async (event) => {
       console.log('♻️ Using cached MongoDB client');
     }
 
-    const db = cachedClient.db('test'); // adjust as needed
+    const db = cachedClient.db('test');
     const collection = db.collection('grey_market_refs');
 
-    // If ref empty, query all documents
     const query = ref ? { Model: { $regex: ref, $options: 'i' } } : {};
-
     console.log('📡 Running query:', JSON.stringify(query));
 
     const results = await collection.find(query).toArray();
@@ -50,4 +48,5 @@ exports.handler = async (event) => {
     };
   }
 };
+
 

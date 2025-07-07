@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,7 @@
 <title>LuxeTime Watches Lookup</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-  /* === Shared Styles === */
+  /* Your existing styles */
   body {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
@@ -298,7 +297,7 @@
 </div>
 
 <script>
-  // ===== Reference Lookup JS =====
+  // Reference Lookup JS (unchanged)
   let currentEditingRef = null;
 
   function showAddReferenceForm() {
@@ -454,7 +453,7 @@
     }
   }
 
-  // ===== Grey Market Lookup + CRUD JS =====
+  // Grey Market Lookup + CRUD JS
   async function fetchGreyMarketData() {
     console.log('Fetching full grey market data...');
     try {
@@ -548,19 +547,21 @@
 
   function autofillGreyMarketForm(record) {
     console.log('Autofilling form for selected record:', record);
-    document.getElementById('gm_date_entered').value = record['Date Entered'] || '';
-    document.getElementById('gm_year').value = record.Year || '';
+    document.getElementById('gm_date_entered').value = '';  // Clear these fields as requested
+    document.getElementById('gm_year').value = '';
+    document.getElementById('gm_price').value = '';
+    document.getElementById('gm_full_set').value = '';
+    document.getElementById('gm_retail_ready').value = '';
+    document.getElementById('gm_dealer').value = '';
+    document.getElementById('gm_comments').value = '';
+
+    // Fill these normally
     document.getElementById('gm_model').value = record.Model || '';
     document.getElementById('gm_model_name').value = record['Model Name'] || '';
     document.getElementById('gm_nickname').value = record['Nickname or Dial'] || '';
     document.getElementById('gm_bracelet').value = record.Bracelet || '';
     document.getElementById('gm_bracelet_metal_color').value = record['Bracelet Metal/Color'] || '';
-    document.getElementById('gm_price').value = record.Price || '';
-    document.getElementById('gm_full_set').value = record['Full Set'] || '';
-    document.getElementById('gm_retail_ready').value = record['Retail Ready'] || '';
-    document.getElementById('gm_current_retail').value = record['Current Retail (Not Inc Tax)'] || '';
-    document.getElementById('gm_dealer').value = record.Dealer || '';
-    document.getElementById('gm_comments').value = record.Comments || '';
+
     document.getElementById('gm_delete_button').style.display = 'inline-block';
     currentEditingGMModel = record.Model;
   }

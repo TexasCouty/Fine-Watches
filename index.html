@@ -61,16 +61,24 @@
       background: #222;
       color: #fff;
     }
-    input::placeholder { color: #aaa; }
+    input::placeholder {
+      color: #aaa;
+    }
     button {
-      background: #d4af37; color: #000; border: none;
-      cursor: pointer; transition: background 0.3s ease, transform 0.2s ease;
+      background: #d4af37;
+      color: #000;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
     button:hover {
-      background: #b9972f; transform: translateY(-2px);
+      background: #b9972f;
+      transform: translateY(-2px);
     }
     .results {
-      margin-top: 40px; text-align: left; overflow-x: auto;
+      margin-top: 40px;
+      text-align: left;
+      overflow-x: auto;
     }
     .card {
       background: #111;
@@ -78,12 +86,26 @@
       border-radius: 6px;
       padding: 20px;
       margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
     }
     .manufacturer-line {
       font-weight: bold;
       font-size: 1rem;
       color: #d4af37;
       margin: 0 0 10px 0;
+    }
+    .card-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 150px;
+    }
+    .watch-image {
+      width: 100%;
+      border-radius: 6px;
+      display: block;
     }
     table {
       width: 100%;
@@ -92,10 +114,17 @@
       table-layout: fixed;
     }
     table th {
-      background: #d4af37; color: #000; padding: 10px; cursor: pointer;
+      background: #d4af37;
+      color: #000;
+      padding: 10px;
+      cursor: pointer;
     }
     table td {
-      background: #111; border: 1px solid #333; padding: 10px; word-wrap: break-word; white-space: normal;
+      background: #111;
+      border: 1px solid #333;
+      padding: 10px;
+      word-wrap: break-word;
+      white-space: normal;
     }
   </style>
 </head>
@@ -134,25 +163,40 @@
 
       resultsDiv.innerHTML = '<div>Searching...</div>';
 
-      const res = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
+        if (!res.ok) throw new Error('Network response was not ok');
+        const data = await res.json();
 
-      if (!Array.isArray(data) || data.length === 0) {
-        resultsDiv.innerHTML = `<div>No Reference matches found.</div>`;
-        return;
+        if (!Array.isArray(data) || data.length === 0) {
+          resultsDiv.innerHTML = `<div>No Reference matches found.</div>`;
+          return;
+        }
+
+        resultsDiv.innerHTML = data.map(item => {
+          const imagesHtml = (item.images || []).map(filename => 
+            `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`
+          ).join('');
+
+          return `
+            <div class="card">
+              <div class="card-images">${imagesHtml}</div>
+              <div>
+                <p class="manufacturer-line">${item.manufacturer || 'N/A'} — Ref: ${item.reference}</p>
+                <p>Collection: ${item.collection || 'N/A'}</p>
+                <p>Retail Price: ${item.retail_price || 'N/A'}</p>
+                <p>Dial: ${item.dial || 'N/A'}</p>
+                <p>Case: ${item.case || 'N/A'}</p>
+                <p>Bracelet: ${item.bracelet || 'N/A'}</p>
+                <p>Movement: ${item.movement || 'N/A'}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        resultsDiv.innerHTML = `<div>Error fetching reference data.</div>`;
+        console.error(err);
       }
-
-      resultsDiv.innerHTML = data.map(item => `
-        <div class="card">
-          <p class="manufacturer-line">${item.manufacturer || 'N/A'} — Ref: ${item.reference}</p>
-          <p>Collection: ${item.collection || 'N/A'}</p>
-          <p>Retail Price: ${item.retail_price || 'N/A'}</p>
-          <p>Dial: ${item.dial || 'N/A'}</p>
-          <p>Case: ${item.case || 'N/A'}</p>
-          <p>Bracelet: ${item.bracelet || 'N/A'}</p>
-          <p>Movement: ${item.movement || 'N/A'}</p>
-        </div>
-      `).join('');
     }
 
     async function lookupGreyMarket() {
@@ -167,84 +211,98 @@
 
       resultsDiv.innerHTML = '<div>Searching Grey Market...</div>';
 
-      const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
+        if (!res.ok) throw new Error('Network response was not ok');
+        const data = await res.json();
 
-      if (!Array.isArray(data) || data.length === 0) {
-        resultsDiv.innerHTML = `<div>No Grey Market matches found.</div>`;
-        return;
+        if (!Array.isArray(data) || data.length === 0) {
+          resultsDiv.innerHTML = `<div>No Grey Market matches found.</div>`;
+          return;
+        }
+
+        let html = `<table id="greyMarketTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">Date Entered</th>
+              <th onclick="sortTable(1)">Year</th>
+              <th onclick="sortTable(2)">Model</th>
+              <th onclick="sortTable(3)">Model Name</th>
+              <th onclick="sortTable(4)">Nickname or Dial</th>
+              <th onclick="sortTable(5)">Bracelet</th>
+              <th onclick="sortTable(6)">Bracelet Metal/Color</th>
+              <th onclick="sortTable(7)">Price</th>
+              <th onclick="sortTable(8)">Full Set</th>
+              <th onclick="sortTable(9)">Retail Ready</th>
+              <th onclick="sortTable(10)">Current Retail</th>
+              <th onclick="sortTable(11)">Dealer</th>
+              <th onclick="sortTable(12)">Comments</th>
+            </tr>
+          </thead><tbody>`;
+
+        data.forEach(item => {
+          html += `<tr>
+            <td>${item["Date Entered"] || ''}</td>
+            <td>${item.Year || ''}</td>
+            <td>${item.Model || ''}</td>
+            <td>${item["Model Name"] || ''}</td>
+            <td>${item["Nickname or Dial"] || ''}</td>
+            <td>${item.Bracelet || ''}</td>
+            <td>${item["Bracelet Metal/Color"] || ''}</td>
+            <td>${item.Price || ''}</td>
+            <td>${item["Full Set"] || ''}</td>
+            <td>${item["Retail Ready"] || ''}</td>
+            <td>${item["Current Retail (Not Inc Tax)"] || ''}</td>
+            <td>${item.Dealer || ''}</td>
+            <td>${item.Comments || ''}</td>
+          </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        resultsDiv.innerHTML = html;
+      } catch (err) {
+        resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
+        console.error(err);
       }
-
-      let html = `<table id="greyMarketTable">
-        <thead>
-          <tr>
-            <th onclick="sortTable(0)">Date Entered</th>
-            <th onclick="sortTable(1)">Year</th>
-            <th onclick="sortTable(2)">Model</th>
-            <th onclick="sortTable(3)">Model Name</th>
-            <th onclick="sortTable(4)">Nickname or Dial</th>
-            <th onclick="sortTable(5)">Bracelet</th>
-            <th onclick="sortTable(6)">Bracelet Metal/Color</th>
-            <th onclick="sortTable(7)">Price</th>
-            <th onclick="sortTable(8)">Full Set</th>
-            <th onclick="sortTable(9)">Retail Ready</th>
-            <th onclick="sortTable(10)">Current Retail</th>
-            <th onclick="sortTable(11)">Dealer</th>
-            <th onclick="sortTable(12)">Comments</th>
-          </tr>
-        </thead><tbody>`;
-
-      data.forEach(item => {
-        html += `<tr>
-          <td>${item["Date Entered"] || ''}</td>
-          <td>${item.Year || ''}</td>
-          <td>${item.Model || ''}</td>
-          <td>${item["Model Name"] || ''}</td>
-          <td>${item["Nickname or Dial"] || ''}</td>
-          <td>${item.Bracelet || ''}</td>
-          <td>${item["Bracelet Metal/Color"] || ''}</td>
-          <td>${item.Price || ''}</td>
-          <td>${item["Full Set"] || ''}</td>
-          <td>${item["Retail Ready"] || ''}</td>
-          <td>${item["Current Retail (Not Inc Tax)"] || ''}</td>
-          <td>${item.Dealer || ''}</td>
-          <td>${item.Comments || ''}</td>
-        </tr>`;
-      });
-
-      html += `</tbody></table>`;
-      resultsDiv.innerHTML = html;
     }
 
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
-      let switching = true, dir = "asc", switchcount = 0;
+      let switching = true;
+      let dir = "asc";
+      let switchcount = 0;
 
       while (switching) {
         switching = false;
         const rows = table.rows;
-        let shouldSwitch = false, i = 1;
+        let shouldSwitch;
+        let i = 1;
 
         for (; i < (rows.length - 1); i++) {
           shouldSwitch = false;
           let x = rows[i].getElementsByTagName("TD")[n];
           let y = rows[i + 1].getElementsByTagName("TD")[n];
+
           if (dir === "asc") {
             if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-              shouldSwitch = true; break;
+              shouldSwitch = true;
+              break;
             }
           } else if (dir === "desc") {
             if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-              shouldSwitch = true; break;
+              shouldSwitch = true;
+              break;
             }
           }
         }
         if (shouldSwitch) {
           rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true; switchcount++;
+          switching = true;
+          switchcount++;
         } else {
           if (switchcount === 0 && dir === "asc") {
-            dir = "desc"; switching = true;
+            dir = "desc";
+            switching = true;
           }
         }
       }

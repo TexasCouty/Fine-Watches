@@ -1,505 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>LuxeTime Watches Lookup</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    /* your existing styles here, unchanged */
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      margin: 0;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #000000, #434343);
-      color: #fff;
-    }
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .logo {
-      max-width: 200px;
-      display: block;
-      margin: 0 auto 20px auto;
-    }
-    h1 {
-      text-align: center;
-      font-size: 1.8rem;
-      color: #d4af37;
-      margin-bottom: 40px;
-    }
-    .lookup-grid {
-      display: flex;
-      gap: 40px;
-      flex-wrap: wrap;
-    }
-    .lookup-section {
-      flex: 1;
-      min-width: 320px;
-      background: #121212;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #d4af37aa;
-      max-height: 900px;
-      overflow-y: auto;
-      position: relative;
-    }
-    .lookup-section h2 {
-      color: #d4af37;
-      margin-top: 0;
-      font-weight: 700;
-      text-shadow: 0 0 5px #b9972f;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: 700;
-      color: #d4af37;
-    }
-    input, textarea, button {
-      padding: 10px;
-      font-size: 1rem;
-      margin-top: 5px;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 6px;
-      border: 1px solid #d4af37;
-      background: #222;
-      color: #eee;
-      resize: vertical;
-      transition: border-color 0.3s ease;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #f7df72;
-      box-shadow: 0 0 5px #f7df72;
-      background: #1c1c1c;
-    }
-    button {
-      background: transparent;
-      border: 2px solid #d4af37;
-      color: #d4af37;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-      padding: 12px 20px;
-      border-radius: 6px;
-      width: 100%;
-      box-sizing: border-box;
-      margin-top: 15px;
-    }
-    button:hover {
-      background: #d4af37;
-      color: #000;
-      box-shadow: 0 0 15px #d4af37;
-      transform: translateY(-2px);
-    }
-    .results {
-      margin-top: 40px;
-      text-align: left;
-      overflow-x: auto;
-    }
-    .card {
-      background: #121212;
-      border: 1px solid #d4af37;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      box-shadow: 0 0 10px #d4af37aa;
-    }
-    .manufacturer-line {
-      font-weight: bold;
-      font-size: 1rem;
-      color: #d4af37;
-      margin: 0 0 10px 0;
-    }
-    .card-images {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      max-width: 150px;
-    }
-    .watch-image {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid #d4af37;
-      display: block;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      table-layout: fixed;
-    }
-    table th {
-      background: transparent;
-      border-bottom: 2px solid #d4af37;
-      color: #d4af37;
-      font-weight: 700;
-      padding: 12px 8px;
-      text-align: left;
-      user-select: none;
-    }
-    table td {
-      background: #111;
-      border: 1px solid #333;
-      padding: 12px 8px;
-      color: #eee;
-      word-wrap: break-word;
-      white-space: normal;
-    }
-    /* Autocomplete styles */
-    .autocomplete-items {
-      position: absolute;
-      border: 1px solid #d4af37;
-      border-top: none;
-      z-index: 99;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: #222;
-      color: #eee;
-      max-height: 200px;
-      overflow-y: auto;
-      border-radius: 0 0 8px 8px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .autocomplete-items div {
-      padding: 10px;
-      cursor: pointer;
-      color: #eee;
-    }
-    .autocomplete-items div:hover {
-      background: #d4af37;
-      color: #000;
-    }
-    .autocomplete-items::-webkit-scrollbar {
-      width: 8px;
-    }
-    .autocomplete-items::-webkit-scrollbar-thumb {
-      background-color: #d4af37aa;
-      border-radius: 4px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>LuxeTime Watches Lookup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  /* Your existing styles */
+  body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #000000, #434343);
+    color: #fff;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .logo {
+    max-width: 200px;
+    display: block;
+    margin: 0 auto 20px auto;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #d4af37;
+    margin-bottom: 40px;
+  }
+  .lookup-grid {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .lookup-section {
+    flex: 1;
+    min-width: 320px;
+    background: #121212;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px #d4af37aa;
+    max-height: 900px;
+    overflow-y: auto;
+    position: relative;
+  }
+  .lookup-section h2 {
+    color: #d4af37;
+    margin-top: 0;
+    font-weight: 700;
+    text-shadow: 0 0 5px #b9972f;
+  }
+  label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 700;
+    color: #d4af37;
+  }
+  input, textarea, button {
+    padding: 10px;
+    font-size: 1rem;
+    margin-top: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 6px;
+    border: 1px solid #d4af37;
+    background: #222;
+    color: #eee;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: #f7df72;
+    box-shadow: 0 0 5px #f7df72;
+    background: #1c1c1c;
+  }
+  button {
+    background: transparent;
+    border: 2px solid #d4af37;
+    color: #d4af37;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    padding: 12px 20px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 15px;
+  }
+  button:hover {
+    background: #d4af37;
+    color: #000;
+    box-shadow: 0 0 15px #d4af37;
+    transform: translateY(-2px);
+  }
+  .results {
+    margin-top: 40px;
+    text-align: left;
+    overflow-x: auto;
+  }
+  .card {
+    background: #121212;
+    border: 1px solid #d4af37;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    box-shadow: 0 0 10px #d4af37aa;
+  }
+  .manufacturer-line {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #d4af37;
+    margin: 0 0 10px 0;
+  }
+  .card-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 150px;
+  }
+  .watch-image {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #d4af37;
+    display: block;
+  }
+  /* Autocomplete styles */
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4af37;
+    border-top: none;
+    z-index: 1001;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #222;
+    color: #eee;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 0 0 8px 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    color: #eee;
+  }
+  .autocomplete-items div:hover {
+    background: #d4af37;
+    color: #000;
+  }
+  /* Multi-record picker popup */
+  #recordPicker {
+    position: absolute;
+    z-index: 1100;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: #222;
+    border: 1px solid #d4af37;
+    border-radius: 0 0 8px 8px;
+    box-sizing: border-box;
+  }
+  #recordPicker div {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #d4af37aa;
+    color: #eee;
+  }
+  #recordPicker div:hover {
+    background: #d4af37;
+    color: #000;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
-    <h1>LuxeTime Watches Lookup</h1>
+<div class="container">
+  <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
+  <h1>LuxeTime Watches Lookup</h1>
 
-    <div class="lookup-grid">
-      <!-- Reference Lookup Section -->
-      <div class="lookup-section">
-        <h2>Reference Lookup</h2>
-        <input type="text" id="refInput" placeholder="Enter Reference Number" />
-        <button onclick="lookupReference()">Search Reference</button>
-        <button onclick="showAddReferenceForm()">Add New Reference</button>
+  <div class="lookup-grid">
+    <!-- Grey Market Lookup Section -->
+    <div class="lookup-section" style="position:relative;">
+      <h2>Grey Market Lookup</h2>
+      <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
+      <button onclick="lookupGreyMarket()">Search Grey Market</button>
+      <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
 
-        <div id="refFormContainer" style="margin-top:20px; display:none;">
-          <h3 id="formTitle">Add New Reference</h3>
+      <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
+        <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
 
-          <label for="ref_reference">Reference</label>
-          <input id="ref_reference" type="text" />
+        <label for="gm_date_entered">Date Entered</label>
+        <input type="date" id="gm_date_entered" />
 
-          <label for="ref_manufacturer">Manufacturer</label>
-          <input id="ref_manufacturer" type="text" />
+        <label for="gm_year">Year</label>
+        <input type="text" id="gm_year" />
 
-          <label for="ref_collection">Collection</label>
-          <input id="ref_collection" type="text" />
+        <label for="gm_model">Model</label>
+        <input type="text" id="gm_model" />
 
-          <label for="ref_retail_price">Retail Price</label>
-          <input id="ref_retail_price" type="text" />
+        <label for="gm_model_name" autocomplete="off">Model Name</label>
+        <input type="text" id="gm_model_name" />
 
-          <label for="ref_dial">Dial</label>
-          <input id="ref_dial" type="text" />
+        <div id="recordPicker" style="display:none;"></div>
 
-          <label for="ref_case">Case</label>
-          <input id="ref_case" type="text" />
+        <label for="gm_nickname">Nickname or Dial</label>
+        <input type="text" id="gm_nickname" />
 
-          <label for="ref_bracelet">Bracelet</label>
-          <input id="ref_bracelet" type="text" />
+        <label for="gm_bracelet">Bracelet</label>
+        <input type="text" id="gm_bracelet" />
 
-          <label for="ref_movement">Movement</label>
-          <input id="ref_movement" type="text" />
+        <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
+        <input type="text" id="gm_bracelet_metal_color" />
 
-          <label for="ref_year_introduced">Year Introduced</label>
-          <input id="ref_year_introduced" type="text" />
+        <label for="gm_price">Price</label>
+        <input type="text" id="gm_price" />
 
-          <label for="ref_notes">Notes</label>
-          <textarea id="ref_notes" rows="3"></textarea>
+        <label for="gm_full_set">Full Set</label>
+        <input type="text" id="gm_full_set" />
 
-          <label for="ref_images">Images (comma-separated filenames)</label>
-          <input id="ref_images" type="text" placeholder="e.g. 127335-0001.avif, 127335-0002.jpg" />
+        <label for="gm_retail_ready">Retail Ready</label>
+        <input type="text" id="gm_retail_ready" />
 
-          <button onclick="saveReference()">Save</button>
-          <button onclick="cancelReferenceForm()">Cancel</button>
-          <button id="deleteButton" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteReference()">Delete</button>
-        </div>
+        <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
+        <input type="text" id="gm_current_retail" />
+
+        <label for="gm_dealer">Dealer</label>
+        <input type="text" id="gm_dealer" />
+
+        <label for="gm_comments">Comments</label>
+        <textarea id="gm_comments" rows="3"></textarea>
+
+        <button onclick="saveGreyMarketEntry()">Save</button>
+        <button onclick="cancelGreyMarketForm()">Cancel</button>
+        <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
       </div>
-
-      <!-- Grey Market Lookup Section -->
-      <div class="lookup-section" style="position:relative;">
-        <h2>Grey Market Lookup</h2>
-        <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
-        <button onclick="lookupGreyMarket()">Search Grey Market</button>
-        <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
-
-        <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
-          <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
-
-          <label for="gm_date_entered">Date Entered</label>
-          <input type="date" id="gm_date_entered" />
-
-          <label for="gm_year">Year</label>
-          <input type="text" id="gm_year" />
-
-          <label for="gm_model">Model</label>
-          <input type="text" id="gm_model" />
-
-          <label for="gm_model_name">Model Name</label>
-          <input type="text" id="gm_model_name" autocomplete="off" />
-
-          <label for="gm_nickname">Nickname or Dial</label>
-          <input type="text" id="gm_nickname" />
-
-          <label for="gm_bracelet">Bracelet</label>
-          <input type="text" id="gm_bracelet" />
-
-          <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
-          <input type="text" id="gm_bracelet_metal_color" />
-
-          <label for="gm_price">Price</label>
-          <input type="text" id="gm_price" />
-
-          <label for="gm_full_set">Full Set</label>
-          <input type="text" id="gm_full_set" />
-
-          <label for="gm_retail_ready">Retail Ready</label>
-          <input type="text" id="gm_retail_ready" />
-
-          <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
-          <input type="text" id="gm_current_retail" />
-
-          <label for="gm_dealer">Dealer</label>
-          <input type="text" id="gm_dealer" />
-
-          <label for="gm_comments">Comments</label>
-          <textarea id="gm_comments" rows="3"></textarea>
-
-          <button onclick="saveGreyMarketEntry()">Save</button>
-          <button onclick="cancelGreyMarketForm()">Cancel</button>
-          <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
-        </div>
-      </div>
-
     </div>
-
-    <div id="results" class="results"></div>
   </div>
 
+  <div id="results" class="results"></div>
+</div>
+
 <script>
-  // Reference Lookup CRUD
-  let currentEditingRef = null;
-
-  function showAddReferenceForm() {
-    currentEditingRef = null;
-    document.getElementById('formTitle').innerText = 'Add New Reference';
-    clearReferenceForm();
-    document.getElementById('deleteButton').style.display = 'none';
-    document.getElementById('refFormContainer').style.display = 'block';
-  }
-
-  function showEditReferenceForm(data) {
-    currentEditingRef = data.reference;
-    document.getElementById('formTitle').innerText = 'Edit Reference';
-    document.getElementById('ref_reference').value = data.reference || '';
-    document.getElementById('ref_manufacturer').value = data.manufacturer || '';
-    document.getElementById('ref_collection').value = data.collection || '';
-    document.getElementById('ref_retail_price').value = data.retail_price || '';
-    document.getElementById('ref_dial').value = data.dial || '';
-    document.getElementById('ref_case').value = data.case || '';
-    document.getElementById('ref_bracelet').value = data.bracelet || '';
-    document.getElementById('ref_movement').value = data.movement || '';
-    document.getElementById('ref_year_introduced').value = data.year_introduced || '';
-    document.getElementById('ref_notes').value = data.notes || '';
-    document.getElementById('ref_images').value = (data.images || []).join(', ');
-    document.getElementById('deleteButton').style.display = 'inline-block';
-    document.getElementById('refFormContainer').style.display = 'block';
-  }
-
-  function clearReferenceForm() {
-    const fields = ['ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial','ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes','ref_images'];
-    fields.forEach(id => document.getElementById(id).value = '');
-  }
-
-  function cancelReferenceForm() {
-    document.getElementById('refFormContainer').style.display = 'none';
-  }
-
-  async function saveReference() {
-    const imagesRaw = document.getElementById('ref_images').value.trim();
-    const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()) : [];
-
-    const data = {
-      reference: document.getElementById('ref_reference').value.trim(),
-      manufacturer: document.getElementById('ref_manufacturer').value.trim(),
-      collection: document.getElementById('ref_collection').value.trim(),
-      retail_price: document.getElementById('ref_retail_price').value.trim(),
-      dial: document.getElementById('ref_dial').value.trim(),
-      case: document.getElementById('ref_case').value.trim(),
-      bracelet: document.getElementById('ref_bracelet').value.trim(),
-      movement: document.getElementById('ref_movement').value.trim(),
-      year_introduced: document.getElementById('ref_year_introduced').value.trim(),
-      notes: document.getElementById('ref_notes').value.trim(),
-      images: images
-    };
-
-    if (!data.reference) {
-      alert('Reference is required!');
-      return;
-    }
-
-    try {
-      let url = '/.netlify/functions/add';
-      let method = 'POST';
-      let body = JSON.stringify(data);
-
-      if (currentEditingRef) {
-        url = '/.netlify/functions/update';
-        body = JSON.stringify({ reference: currentEditingRef, fields: data });
-      }
-
-      const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
-      if (!res.ok) throw new Error('Network response was not ok');
-
-      alert(currentEditingRef ? 'Reference updated' : 'Reference added');
-      cancelReferenceForm();
-      lookupReference();
-
-    } catch (err) {
-      alert('Error saving reference: ' + err.message);
-      console.error(err);
-    }
-  }
-
-  async function deleteReference() {
-    if (!currentEditingRef) return;
-    if (!confirm(`Are you sure you want to delete reference "${currentEditingRef}"?`)) return;
-
-    try {
-      const res = await fetch('/.netlify/functions/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reference: currentEditingRef })
-      });
-      if (!res.ok) throw new Error('Network response was not ok');
-
-      alert('Reference deleted');
-      cancelReferenceForm();
-      lookupReference();
-
-    } catch (err) {
-      alert('Error deleting reference: ' + err.message);
-      console.error(err);
-    }
-  }
-
-  async function lookupReference() {
-    const ref = document.getElementById('refInput').value.trim();
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '';
-
-    if (!ref) {
-      alert('Please enter a reference number.');
-      return;
-    }
-
-    resultsDiv.innerHTML = '<div>Searching...</div>';
-
-    try {
-      const res = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
-      if (!res.ok) throw new Error('Network response was not ok');
-      const data = await res.json();
-
-      if (!Array.isArray(data) || data.length === 0) {
-        resultsDiv.innerHTML = `<div>No Reference matches found.</div><button onclick="showAddReferenceForm()">Add New Reference</button>`;
-        return;
-      }
-
-      resultsDiv.innerHTML = data.map(item => {
-        const imagesHtml = (item.images || []).map(filename => 
-          `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`
-        ).join('');
-
-        return `
-          <div class="card">
-            <div class="card-images">${imagesHtml}</div>
-            <div>
-              <p class="manufacturer-line">${item.manufacturer || 'N/A'} — Ref: ${item.reference}</p>
-              <p>Collection: ${item.collection || 'N/A'}</p>
-              <p>Retail Price: ${item.retail_price || 'N/A'}</p>
-              <p>Dial: ${item.dial || 'N/A'}</p>
-              <p>Case: ${item.case || 'N/A'}</p>
-              <p>Bracelet: ${item.bracelet || 'N/A'}</p>
-              <p>Movement: ${item.movement || 'N/A'}</p>
-              <p><strong>Notes:</strong> ${item.notes || ''}</p>
-              <button onclick='showEditReferenceForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    } catch (err) {
-      resultsDiv.innerHTML = `<div>Error fetching reference data.</div>`;
-      console.error(err);
-    }
-  }
-
-  // Grey Market CRUD
+  let greyMarketData = [];
+  let modelNameSuggestions = [];
   let currentEditingGMModel = null;
 
-  function showAddGreyMarketForm() {
-    currentEditingGMModel = null;
-    document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
-    clearGreyMarketForm();
-    document.getElementById('gm_delete_button').style.display = 'none';
-    document.getElementById('greyMarketFormContainer').style.display = 'block';
-  }
+  async function fetchGreyMarketData() {
+    console.log('Fetching full grey market data...');
+    try {
+      const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
+      if (!res.ok) throw new Error('Failed to fetch grey market data');
+      greyMarketData = await res.json();
 
-  function showEditGreyMarketForm(data) {
-    currentEditingGMModel = data.Model;
-    document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
-    document.getElementById('gm_date_entered').value = data["Date Entered"] || '';
-    document.getElementById('gm_year').value = data.Year || '';
-    document.getElementById('gm_model').value = data.Model || '';
-    document.getElementById('gm_model_name').value = data["Model Name"] || '';
-    document.getElementById('gm_nickname').value = data["Nickname or Dial"] || '';
-    document.getElementById('gm_bracelet').value = data.Bracelet || '';
-    document.getElementById('gm_bracelet_metal_color').value = data["Bracelet Metal/Color"] || '';
-    document.getElementById('gm_price').value = data.Price || '';
-    document.getElementById('gm_full_set').value = data["Full Set"] || '';
-    document.getElementById('gm_retail_ready').value = data["Retail Ready"] || '';
-    document.getElementById('gm_current_retail').value = data["Current Retail (Not Inc Tax)"] || '';
-    document.getElementById('gm_dealer').value = data.Dealer || '';
-    document.getElementById('gm_comments').value = data.Comments || '';
-    document.getElementById('gm_delete_button').style.display = 'inline-block';
-    document.getElementById('greyMarketFormContainer').style.display = 'block';
+      const namesSet = new Set();
+      greyMarketData.forEach(item => {
+        if (item['Model Name']) namesSet.add(item['Model Name'].toUpperCase());
+      });
+      modelNameSuggestions = Array.from(namesSet).sort();
+      console.log('Loaded model names:', modelNameSuggestions);
+    } catch (e) {
+      console.error('Error loading grey market data:', e);
+    }
   }
 
   function clearGreyMarketForm() {
-    const fields = ['gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname','gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set','gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'];
-    fields.forEach(id => document.getElementById(id).value = '');
+    const fields = [
+      'gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname',
+      'gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set',
+      'gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'
+    ];
+    fields.forEach(id => {
+      if(id !== 'gm_model_name')
+        document.getElementById(id).value = '';
+    });
+    currentEditingGMModel = null;
+    document.getElementById('gm_delete_button').style.display = 'none';
+    hideRecordPicker();
+  }
+
+  function showAddGreyMarketForm() {
+    document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
+    clearGreyMarketForm();
+    document.getElementById('greyMarketFormContainer').style.display = 'block';
   }
 
   function cancelGreyMarketForm() {
     document.getElementById('greyMarketFormContainer').style.display = 'none';
+    hideRecordPicker();
+  }
+
+  const modelNameInput = document.getElementById('gm_model_name');
+  const recordPicker = document.getElementById('recordPicker');
+
+  modelNameInput.addEventListener('input', function() {
+    const val = this.value.trim().toUpperCase();
+    if (!val) {
+      hideRecordPicker();
+      return;
+    }
+
+    const filteredNames = modelNameSuggestions.filter(name => name.startsWith(val));
+    if (filteredNames.length === 0) {
+      hideRecordPicker();
+      return;
+    }
+
+    showRecordPickerForModelName(filteredNames[0]);
+  });
+
+  function showRecordPickerForModelName(modelName) {
+    const matches = greyMarketData.filter(item => 
+      item['Model Name'] && item['Model Name'].toUpperCase() === modelName.toUpperCase()
+    );
+
+    if (matches.length === 0) {
+      hideRecordPicker();
+      return;
+    }
+
+    recordPicker.innerHTML = '';
+    matches.forEach(record => {
+      const div = document.createElement('div');
+      div.textContent = `${record.Model} | ${record['Nickname or Dial'] || ''} | ${record.Bracelet || ''}`;
+      div.addEventListener('click', () => {
+        autofillGreyMarketForm(record);
+        hideRecordPicker();
+      });
+      recordPicker.appendChild(div);
+    });
+    recordPicker.style.display = 'block';
+  }
+
+  function hideRecordPicker() {
+    recordPicker.style.display = 'none';
+    recordPicker.innerHTML = '';
+  }
+
+  function autofillGreyMarketForm(record) {
+    console.log('Autofilling form for selected record:', record);
+    document.getElementById('gm_date_entered').value = record['Date Entered'] || '';
+    document.getElementById('gm_year').value = record.Year || '';
+    document.getElementById('gm_model').value = record.Model || '';
+    document.getElementById('gm_model_name').value = record['Model Name'] || '';
+    document.getElementById('gm_nickname').value = record['Nickname or Dial'] || '';
+    document.getElementById('gm_bracelet').value = record.Bracelet || '';
+    document.getElementById('gm_bracelet_metal_color').value = record['Bracelet Metal/Color'] || '';
+    document.getElementById('gm_price').value = record.Price || '';
+    document.getElementById('gm_full_set').value = record['Full Set'] || '';
+    document.getElementById('gm_retail_ready').value = record['Retail Ready'] || '';
+    document.getElementById('gm_current_retail').value = record['Current Retail (Not Inc Tax)'] || '';
+    document.getElementById('gm_dealer').value = record.Dealer || '';
+    document.getElementById('gm_comments').value = record.Comments || '';
+    document.getElementById('gm_delete_button').style.display = 'inline-block';
+    currentEditingGMModel = record.Model;
   }
 
   async function saveGreyMarketEntry() {
@@ -684,75 +543,8 @@
     }
   }
 
-  // Autocomplete for Model Name in Grey Market form
-  let modelNameSuggestions = [];
-
-  async function fetchModelNameSuggestions() {
-    console.log('🟡 Fetching Model Name Suggestions...');
-    try {
-      const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
-      console.log(`🟡 Fetch response status: ${res.status}`);
-      if (!res.ok) throw new Error('Failed to load model names');
-      const data = await res.json();
-      console.log(`🟡 Received ${data.length} entries for autocomplete`);
-      const namesSet = new Set();
-      data.forEach(item => {
-        if (item['Model Name']) namesSet.add(item['Model Name'].toUpperCase());
-      });
-      modelNameSuggestions = Array.from(namesSet).sort();
-      console.log('🟡 Autocomplete model names:', modelNameSuggestions);
-    } catch (e) {
-      console.error('🛑 Error fetching model name suggestions:', e);
-    }
-  }
-
-  function setupAutocomplete(inputId) {
-    const input = document.getElementById(inputId);
-
-    function closeAllLists(elmnt) {
-      const items = document.getElementsByClassName('autocomplete-items');
-      for (let i = items.length - 1; i >= 0; i--) {
-        if (elmnt != items[i] && elmnt != input) {
-          items[i].parentNode.removeChild(items[i]);
-        }
-      }
-    }
-
-    input.addEventListener('input', () => {
-      closeAllLists();
-      if (!input.value) return false;
-      const val = input.value.toUpperCase();
-      console.log(`🔍 Autocomplete input changed: "${val}"`);
-      const list = document.createElement('div');
-      list.setAttribute('id', inputId + '-autocomplete-list');
-      list.setAttribute('class', 'autocomplete-items');
-      input.insertAdjacentElement('afterend', list);
-
-      let count = 0;
-      for (let name of modelNameSuggestions) {
-        if (name.startsWith(val)) {
-          const item = document.createElement('div');
-          item.innerHTML = `<strong>${name.substr(0, val.length)}</strong>${name.substr(val.length)}`;
-          item.addEventListener('click', () => {
-            input.value = name;
-            closeAllLists();
-          });
-          list.appendChild(item);
-          count++;
-          if (count >= 10) break;
-        }
-      }
-      console.log(`🟢 Autocomplete suggestions shown: ${count}`);
-    });
-
-    document.addEventListener('click', (e) => {
-      closeAllLists(e.target);
-    });
-  }
-
   window.addEventListener('DOMContentLoaded', async () => {
-    await fetchModelNameSuggestions();
-    setupAutocomplete('gm_model_name');
+    await fetchGreyMarketData();
   });
 </script>
 </body>

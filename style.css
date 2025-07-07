@@ -194,3 +194,54 @@ table td {
   background: #d4af37;
   color: #000;
 }
+/*--- Table Polish ---*/
+#greyMarketTable th,
+#greyMarketTable td {
+  vertical-align: middle;
+  padding: 14px 10px;
+}
+
+#greyMarketTable th,
+#greyMarketTable td {
+  /* Don’t allow breaking words in headers/short fields */
+  white-space: nowrap;
+}
+
+#greyMarketTable td {
+  /* For dealer, comments, etc. allow normal wrapping */
+  white-space: normal;
+}
+
+/* For Model Name, Bracelet, etc. -- prefer no wrap, but allow if too small */
+#greyMarketTable td:nth-child(3),
+#greyMarketTable td:nth-child(4),
+#greyMarketTable td:nth-child(6),
+#greyMarketTable td:nth-child(7) {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 120px;
+}
+
+/* For Edit button cell */
+#greyMarketTable td:last-child {
+  text-align: center;
+}
+
+#greyMarketTable button {
+  min-width: 60px;
+  padding: 8px 0;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 2px solid #d4af37;
+  background: transparent;
+  color: #d4af37;
+  transition: background 0.3s, color 0.3s;
+}
+
+#greyMarketTable button:hover {
+  background: #d4af37;
+  color: #000;
+}
+

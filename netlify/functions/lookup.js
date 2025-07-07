@@ -1,23 +1,31 @@
 const { MongoClient } = require('mongodb');
 
-const uri = process.env.MONGO_URI; // Make sure this is set in Netlify!
+const uri = process.env.MONGO_URI; // Ensure this is set correctly in Netlify environment variables
 let cachedClient = null;
 
 exports.handler = async function (event) {
   console.log('⚙️ Lookup Function STARTED');
 
-  const ref = event.queryStringParameters.ref;
-  console.log(`🔍 Received query ref: ${ref}`);
-
-  if (!ref) {
-    console.log('❌ No reference provided.');
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'No reference provided.' }),
-    };
-  }
-
   try {
+    if (event.httpMethod !== 'GET') {
+      console.log('❌ Invalid HTTP method:', event.httpMethod);
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: 'Method not allowed. Use GET.' }),
+      };
+    }
+
+    const ref = event.queryStringParameters?.ref;
+    console.log(`🔍 Received query ref: ${ref}`);
+
+    if (!ref || typeof ref !== 'string' || ref.trim() === '') {
+      console.log('❌ No valid reference provided.');
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'No valid reference provided.' }),
+      };
+    }
+
     if (!cachedClient) {
       console.log('🧩 Connecting to MongoDB...');
       cachedClient = new MongoClient(uri);
@@ -27,18 +35,21 @@ exports.handler = async function (event) {
       console.log('♻️ Using cached MongoDB client.');
     }
 
-    // ✅ Correct DB name — match your live cluster!
+    // Replace 'test' with your actual database name if different
     const db = cachedClient.db('test');
     const collection = db.collection('watch_refs');
 
-    console.log(`📡 Running regex query for: ${ref}`);
+    console.log(`📡 Running regex query for reference matching: "${ref}"`);
 
+    // Perform case-insensitive partial match on 'reference' field
     const results = await collection.find({
       reference: { $regex: ref, $options: 'i' },
     }).toArray();
 
     console.log(`✅ Query returned ${results.length} result(s)`);
-    console.log(`📦 Results JSON: ${JSON.stringify(results, null, 2)}`);
+    if (results.length > 0) {
+      console.log(`📦 Sample result: ${JSON.stringify(results[0], null, 2)}`);
+    }
 
     return {
       statusCode: 200,

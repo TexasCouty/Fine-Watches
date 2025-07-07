@@ -335,6 +335,7 @@
               <p>Case: ${item.case || 'N/A'}</p>
               <p>Bracelet: ${item.bracelet || 'N/A'}</p>
               <p>Movement: ${item.movement || 'N/A'}</p>
+              <p><strong>Notes:</strong> ${item.notes || ''}</p>
               <button onclick='showEditReferenceForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button>
             </div>
           </div>
@@ -457,4 +458,3 @@
 </script>
 </body>
 </html>
-

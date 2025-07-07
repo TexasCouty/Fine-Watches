@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ✅ README: Styles for page layout, colors, dark theme, table styling -->
   <style>
     body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 40px 20px; background: linear-gradient(135deg, #000000, #434343); color: #fff; }
     .container { background: rgba(0, 0, 0, 0.7); padding: 40px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); max-width: 1200px; margin: 0 auto; }
@@ -35,18 +37,21 @@
     <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>Fine Watches Reference Lookup</h1>
 
-    <!-- ✅ Reference Search -->
+    <!-- ✅ README: Reference Lookup Input & Button -->
     <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
     <button onclick="lookupReference()">Search</button>
 
-    <!-- ✅ Grey Market Search -->
+    <!-- ✅ README: Grey Market Lookup Input & Button -->
     <input type="text" id="greyMarketInput" placeholder="Enter Reference Number for Grey Market Price" />
     <button onclick="lookupGreyMarket()">Search Grey Market</button>
 
+    <!-- ✅ README: Results area for both lookups -->
     <div id="results" class="results"></div>
   </div>
 
+  <!-- ✅ README: JavaScript logic for both lookups, edit & save -->
   <script>
+    // ✅ Reference Lookup — unchanged
     async function lookupReference() {
       const ref = document.getElementById('refInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -103,6 +108,7 @@
       }
     }
 
+    // ✅ Grey Market Lookup — all 16 fields in same order as Excel, sortable
     async function lookupGreyMarket() {
       const ref = document.getElementById('greyMarketInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -127,16 +133,22 @@
               <table id="greyMarketTable">
                 <thead>
                   <tr>
-                    <th onclick="sortTable(0)">Model</th>
-                    <th onclick="sortTable(1)">Model Name</th>
-                    <th onclick="sortTable(2)">Nickname/Dial</th>
-                    <th onclick="sortTable(3)">Bracelet</th>
-                    <th onclick="sortTable(4)">Metal/Color</th>
-                    <th onclick="sortTable(5)">Price</th>
-                    <th onclick="sortTable(6)">Current Retail</th>
-                    <th onclick="sortTable(7)">Dealer</th>
-                    <th onclick="sortTable(8)">Comments</th>
-                    <th onclick="sortTable(9)">Date Entered</th>
+                    <th onclick="sortTable(0)">Date Entered</th>
+                    <th onclick="sortTable(1)">Year</th>
+                    <th onclick="sortTable(2)">Model</th>
+                    <th onclick="sortTable(3)">Model Name</th>
+                    <th onclick="sortTable(4)">Nickname or Dial</th>
+                    <th onclick="sortTable(5)">Bracelet</th>
+                    <th onclick="sortTable(6)">Bracelet Metal/Color</th>
+                    <th onclick="sortTable(7)">Price</th>
+                    <th onclick="sortTable(8)">Full Set</th>
+                    <th onclick="sortTable(9)">Retail Ready</th>
+                    <th onclick="sortTable(10)">Current Retail (Not Inc Tax)</th>
+                    <th onclick="sortTable(11)">Dealer</th>
+                    <th onclick="sortTable(12)">Comments</th>
+                    <th onclick="sortTable(13)">Date Posted</th>
+                    <th onclick="sortTable(14)">Watch Year</th>
+                    <th onclick="sortTable(15)">reference</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -144,16 +156,22 @@
 
             table += data.map(item => `
               <tr>
+                <td>${item["Date Entered"] || 'N/A'}</td>
+                <td>${item.Year || 'N/A'}</td>
                 <td>${item.Model || 'N/A'}</td>
                 <td>${item["Model Name"] || 'N/A'}</td>
                 <td>${item["Nickname or Dial"] || 'N/A'}</td>
                 <td>${item.Bracelet || 'N/A'}</td>
                 <td>${item["Bracelet Metal/Color"] || 'N/A'}</td>
                 <td>${item.Price || 'N/A'}</td>
+                <td>${item["Full Set"] || 'N/A'}</td>
+                <td>${item["Retail Ready"] || 'N/A'}</td>
                 <td>${item["Current Retail (Not Inc Tax)"] || 'N/A'}</td>
                 <td>${item.Dealer || 'N/A'}</td>
                 <td>${item.Comments || ''}</td>
-                <td>${item["Date Entered"] || 'N/A'}</td>
+                <td>${item["Date Posted"] || 'N/A'}</td>
+                <td>${item["Watch Year"] || 'N/A'}</td>
+                <td>${item.reference || 'N/A'}</td>
               </tr>
             `).join('');
 
@@ -169,6 +187,7 @@
       }
     }
 
+    // ✅ README: Sorts the Grey Market table by clicking column headers
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
       let switching = true;
@@ -210,7 +229,8 @@
       }
     }
 
-    // Your enableEdit, saveEdit, deleteRef, showAddForm, saveNew stay unchanged
+    // ✅ README: Your edit/save/delete/add new logic below stays unchanged
+    // enableEdit, saveEdit, deleteRef, showAddForm, saveNew...
   </script>
 </body>
 </html>

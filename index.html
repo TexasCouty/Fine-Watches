@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
   <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ README: LuxeTime theme + balanced fixed table -->
+  <!-- ✅ README: LuxeTime dark theme + table with balanced columns -->
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -34,13 +35,7 @@
       margin-bottom: 30px;
       text-align: center;
     }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-      color: #d4af37;
-    }
-    input, button, textarea {
+    input, button {
       padding: 10px;
       font-size: 1rem;
       margin: 5px 0;
@@ -48,7 +43,7 @@
       box-sizing: border-box;
       border-radius: 6px;
     }
-    input, textarea {
+    input {
       border: 1px solid #555;
       background: #222;
       color: #fff;
@@ -92,12 +87,6 @@
       overflow-wrap: break-word;
       white-space: normal;
     }
-    @media (max-width: 700px) {
-      .card { flex-direction: column; }
-      .card-text, .card-images { flex: 1 1 100%; padding: 0; }
-      .card-images { grid-template-columns: repeat(2, 1fr); }
-      .watch-image { width: 100%; }
-    }
   </style>
 </head>
 <body>
@@ -117,11 +106,7 @@
   </div>
 
   <script>
-    // ✅ Reference Lookup unchanged...
-    async function lookupReference() {
-      /* Your working code here... (omitted for brevity) */
-    }
-
+    // ✅ Grey Market Lookup
     async function lookupGreyMarket() {
       const ref = document.getElementById('greyMarketInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -194,11 +179,11 @@
       }
     }
 
-    // ✅ FINAL over-logged sortTable
+    // ✅ FINAL sortTable — bulletproof scope
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
       let switching = true;
-      let dir = "asc"; 
+      let dir = "asc";
       let switchcount = 0;
 
       console.log(`📌 sortTable START column ${n}`);
@@ -208,10 +193,10 @@
         const rows = table.rows;
         console.log(`🔍 Checking ${rows.length} rows`);
 
-        let shouldSwitch = false; // declared outside for scope
-        let i;
+        let shouldSwitch = false;
+        let i = 1; // ✅ declared outside for
 
-        for (i = 1; i < (rows.length - 1); i++) {
+        for (; i < (rows.length - 1); i++) {
           shouldSwitch = false;
           console.log(`Row ${i} compare`);
 

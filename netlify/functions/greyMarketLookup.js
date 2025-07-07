@@ -1,5 +1,3 @@
-// /netlify/functions/greyMarketLookup.js
-
 const { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGO_URI;
@@ -32,12 +30,14 @@ exports.handler = async function (event) {
     console.log('♻️ Reusing cached MongoDB client');
   }
 
-  const db = cachedClient.db('test'); // or your DB name
+  const db = cachedClient.db('test'); // or your actual DB name
   const collection = db.collection('grey_market_refs');
 
-  const results = await collection.find({ "Reference Number": ref }).toArray();
+  const results = await collection.find({
+    "Model": { $regex: `^${ref}$`, $options: "i" }
+  }).toArray();
 
-  console.log(`✅ Found ${results.length} records for ${ref}`);
+  console.log(`✅ Found ${results.length} records for ${ref} in Model`);
 
   return {
     statusCode: 200,

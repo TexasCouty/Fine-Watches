@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fine Watches Reference & Grey Market Lookup</title>
+  <title>LuxeTime Watches Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -22,20 +23,35 @@
     }
     .logo {
       max-width: 200px;
-      height: auto;
       display: block;
       margin: 0 auto 20px auto;
     }
     h1 {
+      text-align: center;
       font-size: 1.8rem;
       color: #d4af37;
-      margin-bottom: 30px;
-      text-align: center;
+      margin-bottom: 40px;
+    }
+    .lookup-grid {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .lookup-section {
+      flex: 1;
+      min-width: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .lookup-section h2 {
+      color: #d4af37;
+      margin-top: 0;
     }
     input, button {
       padding: 10px;
       font-size: 1rem;
-      margin: 5px 0;
+      margin: 10px 0;
       width: 100%;
       box-sizing: border-box;
       border-radius: 6px;
@@ -54,17 +70,26 @@
       background: #b9972f; transform: translateY(-2px);
     }
     .results {
-      margin-top: 30px; text-align: left; overflow-x: auto;
+      margin-top: 40px; text-align: left; overflow-x: auto;
     }
     .card {
-      background: #111; border: 1px solid #333; border-radius: 6px;
-      padding: 20px; margin-bottom: 20px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
     .manufacturer-line {
-      font-weight: bold; font-size: 1rem; color: #d4af37; margin: 0 0 10px 0;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #d4af37;
+      margin: 0 0 10px 0;
     }
     table {
-      width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      table-layout: fixed;
     }
     table th {
       background: #d4af37; color: #000; padding: 10px; cursor: pointer;
@@ -77,15 +102,21 @@
 <body>
   <div class="container">
     <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
-    <h1>Fine Watches Reference & Grey Market Lookup</h1>
+    <h1>LuxeTime Watches Lookup</h1>
 
-    <h2>Reference Lookup</h2>
-    <input type="text" id="refInput" placeholder="Enter Reference Number" />
-    <button onclick="lookupReference()">Search Reference</button>
+    <div class="lookup-grid">
+      <div class="lookup-section">
+        <h2>Reference Lookup</h2>
+        <input type="text" id="refInput" placeholder="Enter Reference Number" />
+        <button onclick="lookupReference()">Search Reference</button>
+      </div>
 
-    <h2>Grey Market Lookup</h2>
-    <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
-    <button onclick="lookupGreyMarket()">Search Grey Market</button>
+      <div class="lookup-section">
+        <h2>Grey Market Lookup</h2>
+        <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
+        <button onclick="lookupGreyMarket()">Search Grey Market</button>
+      </div>
+    </div>
 
     <div id="results" class="results"></div>
   </div>
@@ -221,3 +252,4 @@
   </script>
 </body>
 </html>
+

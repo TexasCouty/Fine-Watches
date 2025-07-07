@@ -1,46 +1,28 @@
 const { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGO_URI;
-let cachedClient = null;
 
-exports.handler = async function (event) {
-  console.log('🔍 Grey Market Lookup STARTED');
+exports.handler = async (event) => {
+  const client = new MongoClient(uri);
+  try {
+    const ref = event.queryStringParameters.reference || '';
+    await client.connect();
+    const db = client.db('test'); // replace 'test' if your DB name is different
+    const coll = db.collection('grey_market'); // replace with your collection name
 
-  if (event.httpMethod !== 'GET') {
+    const results = await coll.find({
+      Model: { $regex: ref, $options: 'i' } // ✅ partial match, case-insensitive
+    }).sort({ "Date Entered": 1 }).toArray();
+
     return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      statusCode: 200,
+      body: JSON.stringify(results) // ✅ returns _id by default!
     };
+
+  } catch (err) {
+    console.error(err);
+    return { statusCode: 500, body: JSON.stringify({ error: err.toString() }) };
+  } finally {
+    await client.close();
   }
-
-  const ref = event.queryStringParameters.reference;
-
-  if (!ref) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Missing reference query param' }),
-    };
-  }
-
-  if (!cachedClient) {
-    cachedClient = new MongoClient(uri);
-    await cachedClient.connect();
-    console.log('✅ MongoDB connected');
-  } else {
-    console.log('♻️ Reusing cached MongoDB client');
-  }
-
-  const db = cachedClient.db('test'); // or your actual DB name
-  const collection = db.collection('grey_market_refs');
-
-  const results = await collection.find({
-    "Model": { $regex: `^${ref}$`, $options: "i" }
-  }).toArray();
-
-  console.log(`✅ Found ${results.length} records for ${ref} in Model`);
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify(results),
-  };
 };

@@ -5,7 +5,7 @@
   <title>Fine Watches Reference Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ✅ README: Styles for LuxeTime theme, clean table, fixed layout -->
+  <!-- ✅ README: LuxeTime styling, fixed layout table -->
   <style>
     body {
       font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -122,7 +122,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      table-layout: fixed; /* ✅ Forces equal column widths */
+      table-layout: fixed; /* ✅ Even column widths */
     }
     table th {
       background: #d4af37;
@@ -136,7 +136,7 @@
       padding: 10px;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      white-space: normal; /* ✅ Wraps long text in cells */
+      white-space: normal; /* ✅ Wrap text */
     }
     @media (max-width: 700px) {
       .card { flex-direction: column; }
@@ -151,20 +151,19 @@
     <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>Fine Watches Reference Lookup</h1>
 
-    <!-- ✅ README: Reference Lookup Input & Button -->
+    <!-- ✅ Reference Lookup Input -->
     <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
     <button onclick="lookupReference()">Search</button>
 
-    <!-- ✅ README: Grey Market Lookup Input & Button -->
+    <!-- ✅ Grey Market Lookup Input -->
     <input type="text" id="greyMarketInput" placeholder="Enter Reference Number for Grey Market Price" />
     <button onclick="lookupGreyMarket()">Search Grey Market</button>
 
-    <!-- ✅ README: Results output -->
     <div id="results" class="results"></div>
   </div>
 
   <script>
-    // ✅ Reference Lookup stays the same
+    // ✅ Standard Reference Lookup
     async function lookupReference() {
       const ref = document.getElementById('refInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -221,7 +220,7 @@
       }
     }
 
-    // ✅ Grey Market Lookup — 13 final columns, balanced layout
+    // ✅ Grey Market Lookup — Final, clean, balanced
     async function lookupGreyMarket() {
       const ref = document.getElementById('greyMarketInput').value.trim();
       const resultsDiv = document.getElementById('results');
@@ -294,7 +293,7 @@
       }
     }
 
-    // ✅ Sorts Grey Market table by column
+    // ✅ Fixed sortTable — shouldSwitch declared INSIDE loop!
     function sortTable(n) {
       const table = document.getElementById("greyMarketTable");
       let switching = true;
@@ -306,7 +305,7 @@
         let rows = table.rows;
 
         for (let i = 1; i < (rows.length - 1); i++) {
-          let shouldSwitch = false;
+          let shouldSwitch = false; // ✅ Correct scope!
           let x = rows[i].getElementsByTagName("TD")[n];
           let y = rows[i + 1].getElementsByTagName("TD")[n];
 
@@ -336,7 +335,7 @@
       }
     }
 
-    // ✅ Other functions: enableEdit, saveEdit, deleteRef, showAddForm, saveNew stay unchanged
+    // ✅ Other functions: enableEdit, saveEdit, deleteRef stay unchanged
   </script>
 </body>
 </html>

@@ -10,6 +10,7 @@ function showAddReferenceForm() {
   document.getElementById('deleteButton').style.display = 'none';
   document.getElementById('refFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
+  // CLOSE grey market form
   document.getElementById('greyMarketFormContainer').style.display = 'none';
 }
 
@@ -29,6 +30,8 @@ function showEditReferenceForm(data) {
   document.getElementById('ref_images').value = (data.images || []).join(', ');
   document.getElementById('deleteButton').style.display = 'inline-block';
   document.getElementById('refFormContainer').style.display = 'block';
+  // CLOSE grey market form
+  document.getElementById('greyMarketFormContainer').style.display = 'none';
 }
 
 function clearReferenceForm() {
@@ -109,6 +112,10 @@ async function deleteReference() {
 }
 
 async function lookupReference() {
+  // Close both forms for clean UI
+  document.getElementById('refFormContainer').style.display = 'none';
+  document.getElementById('greyMarketFormContainer').style.display = 'none';
+
   const ref = document.getElementById('refInput').value.trim();
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
@@ -196,8 +203,8 @@ function showAddGreyMarketForm() {
   clearGreyMarketForm();
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
+  // CLOSE reference form
   document.getElementById('refFormContainer').style.display = 'none';
-
 }
 
 function cancelGreyMarketForm() {
@@ -341,6 +348,10 @@ async function deleteGreyMarketEntry() {
 }
 
 async function lookupGreyMarket() {
+  // Close both forms for clean UI
+  document.getElementById('refFormContainer').style.display = 'none';
+  document.getElementById('greyMarketFormContainer').style.display = 'none';
+
   const ref = document.getElementById('greyMarketInput').value.trim();
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';

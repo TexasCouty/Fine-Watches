@@ -168,6 +168,8 @@
       max-height: 200px;
       overflow-y: auto;
       border-radius: 0 0 8px 8px;
+      width: 100%;  /* ensure it matches input width */
+      box-sizing: border-box;
     }
     .autocomplete-items div {
       padding: 10px;
@@ -193,7 +195,6 @@
     <h1>LuxeTime Watches Lookup</h1>
 
     <div class="lookup-grid">
-
       <!-- Reference Lookup Section -->
       <div class="lookup-section">
         <h2>Reference Lookup</h2>

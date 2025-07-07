@@ -140,21 +140,17 @@ button:hover {
 }
 
 #greyMarketTable th {
-  /* Allow wrapping for header text */
   white-space: normal;
   background: #111;
-  /* sticky header! */
   position: sticky;
   top: 0;
   z-index: 2;
 }
 
 #greyMarketTable td {
-  /* By default, allow wrapping except for specific columns */
   white-space: normal;
 }
 
-/* Prevent wrap and ellipsis for Model, Model Name, Bracelet, Price, Action (Edit) columns */
 #greyMarketTable td:nth-child(3),  /* Model */
 #greyMarketTable td:nth-child(4),  /* Model Name */
 #greyMarketTable td:nth-child(6),  /* Bracelet */
@@ -168,14 +164,12 @@ button:hover {
   max-width: 120px;
 }
 
-/* Align numeric columns right for easy reading */
 #greyMarketTable td:nth-child(8),   /* Price */
 #greyMarketTable td:nth-child(11)   /* Current Retail */
 {
   text-align: right;
 }
 
-/* For Edit button cell */
 #greyMarketTable td:last-child {
   text-align: center;
 }
@@ -191,26 +185,20 @@ button:hover {
   color: #d4af37;
   transition: background 0.3s, color 0.3s;
 }
-
 #greyMarketTable button:hover {
   background: #d4af37;
   color: #000;
 }
 
-/* Striped rows */
 #greyMarketTable tbody tr:nth-child(even) {
   background: #181818;
 }
 #greyMarketTable tbody tr:nth-child(odd) {
   background: #121212;
 }
-
-/* Row hover */
 #greyMarketTable tbody tr:hover {
   background: #232323;
 }
-
-/* Softer borders */
 #greyMarketTable td, #greyMarketTable th {
   border-bottom: 1px solid #222;
 }
@@ -264,4 +252,67 @@ button:hover {
 #gmRecordPicker div:hover {
   background: #d4af37;
   color: #000;
+}
+
+/* --- Mobile Responsive: Table as Stacked Cards --- */
+@media (max-width: 700px) {
+  .lookup-grid {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .lookup-section {
+    max-height: none;
+    min-width: 0;
+    padding: 15px;
+  }
+  #greyMarketTable, #greyMarketTable thead, #greyMarketTable tbody, #greyMarketTable th, #greyMarketTable td, #greyMarketTable tr {
+    display: block;
+    width: 100%;
+  }
+
+  #greyMarketTable thead {
+    display: none;
+  }
+
+  #greyMarketTable tr {
+    margin-bottom: 28px;
+    border-radius: 10px;
+    box-shadow: 0 0 8px #222;
+    background: #171717;
+    border: 1px solid #222;
+    padding: 12px;
+  }
+
+  #greyMarketTable td {
+    border: none;
+    position: relative;
+    padding-left: 48%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-height: 32px;
+    text-align: left;
+    font-size: 1.04rem;
+    background: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid #232323;
+  }
+
+  #greyMarketTable td:last-child {
+    text-align: right;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  #greyMarketTable td::before {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 44%;
+    white-space: nowrap;
+    font-weight: bold;
+    color: #d4af37;
+    content: attr(data-label);
+    font-size: 0.99rem;
+    text-align: left;
+  }
 }

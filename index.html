@@ -172,7 +172,7 @@
         const response = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
         if (response.ok) {
           const data = await response.json();
-          window.searchResults = data; // Save results globally
+          window.searchResults = data;
           console.log('✅ Final returned data:', data);
 
           if (!Array.isArray(data) || data.length === 0) {
@@ -226,13 +226,13 @@
       const container = document.getElementById(`text-${index}`);
       container.innerHTML = `
         <input value="${item.reference}" id="ref-${index}" placeholder="Reference" />
-        <input value="${item.collection}" id="collection-${index}" placeholder="Collection" />
-        <input value="${item.retail_price}" id="price-${index}" placeholder="Retail Price" />
-        <input value="${item.dial}" id="dial-${index}" placeholder="Dial" />
-        <input value="${item.case}" id="case-${index}" placeholder="Case" />
-        <input value="${item.bracelet}" id="bracelet-${index}" placeholder="Bracelet" />
-        <input value="${item.movement}" id="movement-${index}" placeholder="Movement" />
-        <input value="${item.year_introduced}" id="year-${index}" placeholder="Year Introduced" />
+        <input value="${item.collection || ''}" id="collection-${index}" placeholder="Collection" />
+        <input value="${item.retail_price || ''}" id="price-${index}" placeholder="Retail Price" />
+        <input value="${item.dial || ''}" id="dial-${index}" placeholder="Dial" />
+        <input value="${item.case || ''}" id="case-${index}" placeholder="Case" />
+        <input value="${item.bracelet || ''}" id="bracelet-${index}" placeholder="Bracelet" />
+        <input value="${item.movement || ''}" id="movement-${index}" placeholder="Movement" />
+        <input value="${item.year_introduced || ''}" id="year-${index}" placeholder="Year Introduced" />
         <textarea id="notes-${index}" placeholder="Notes">${item.notes || ''}</textarea>
         <button onclick="saveEdit(${index}, '${item.reference}')">Save</button>
         <button onclick="lookupReference()">Cancel</button>
@@ -242,14 +242,14 @@
     async function saveEdit(index, originalRef) {
       const fields = {
         reference: document.getElementById(`ref-${index}`).value.trim(),
-        collection: document.getElementById(`collection-${index}`).value.trim(),
-        retail_price: document.getElementById(`price-${index}`).value.trim(),
-        dial: document.getElementById(`dial-${index}`).value.trim(),
-        case: document.getElementById(`case-${index}`).value.trim(),
-        bracelet: document.getElementById(`bracelet-${index}`).value.trim(),
-        movement: document.getElementById(`movement-${index}`).value.trim(),
-        year_introduced: document.getElementById(`year-${index}`).value.trim(),
-        notes: document.getElementById(`notes-${index}`).value.trim()
+        collection: document.getElementById(`collection-${index}`).value.trim() || 'N/A',
+        retail_price: document.getElementById(`price-${index}`).value.trim() || 'N/A',
+        dial: document.getElementById(`dial-${index}`).value.trim() || 'N/A',
+        case: document.getElementById(`case-${index}`).value.trim() || 'N/A',
+        bracelet: document.getElementById(`bracelet-${index}`).value.trim() || 'N/A',
+        movement: document.getElementById(`movement-${index}`).value.trim() || 'N/A',
+        year_introduced: document.getElementById(`year-${index}`).value.trim() || 'N/A',
+        notes: document.getElementById(`notes-${index}`).value.trim() || ''
       };
 
       console.log('💾 Saving edit:', fields);
@@ -289,14 +289,14 @@
     async function saveNew() {
       const newDoc = {
         reference: document.getElementById('newRef').value.trim(),
-        collection: document.getElementById('newCollection').value.trim(),
-        retail_price: document.getElementById('newRetailPrice').value.trim(),
-        dial: document.getElementById('newDial').value.trim(),
-        case: document.getElementById('newCase').value.trim(),
-        bracelet: document.getElementById('newBracelet').value.trim(),
-        movement: document.getElementById('newMovement').value.trim(),
-        year_introduced: document.getElementById('newYear').value.trim(),
-        notes: document.getElementById('newNotes').value.trim(),
+        collection: document.getElementById('newCollection').value.trim() || 'N/A',
+        retail_price: document.getElementById('newRetailPrice').value.trim() || 'N/A',
+        dial: document.getElementById('newDial').value.trim() || 'N/A',
+        case: document.getElementById('newCase').value.trim() || 'N/A',
+        bracelet: document.getElementById('newBracelet').value.trim() || 'N/A',
+        movement: document.getElementById('newMovement').value.trim() || 'N/A',
+        year_introduced: document.getElementById('newYear').value.trim() || 'N/A',
+        notes: document.getElementById('newNotes').value.trim() || '',
         images: document.getElementById('newImages').value.trim().split(',').map(s => s.trim())
       };
 
@@ -315,5 +315,4 @@
   </script>
 </body>
 </html>
-
 

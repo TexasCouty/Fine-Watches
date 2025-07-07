@@ -3,28 +3,21 @@ const { MongoClient } = require('mongodb');
 const uri = process.env.MONGO_URI;
 let cachedClient = null;
 
-exports.handler = async function (event) {
+exports.handler = async function(event) {
   console.log('➕ Add Function STARTED');
 
   if (event.httpMethod !== 'POST') {
     console.log('❌ Invalid HTTP method:', event.httpMethod);
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
+    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
-    console.log('🗂️ Raw event body:', event.body);
     const body = JSON.parse(event.body);
     console.log('✅ Parsed body:', body);
 
     if (!body.reference) {
       console.log('❌ Missing reference');
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Missing reference' }),
-      };
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing reference' }) };
     }
 
     if (!cachedClient) {
@@ -36,23 +29,22 @@ exports.handler = async function (event) {
       console.log('♻️ Reusing cached MongoDB client');
     }
 
-    const db = cachedClient.db('test'); // adjust if needed
+    const db = cachedClient.db('test'); // adjust DB name
     const collection = db.collection('watch_refs');
 
-    const result = await collection.insertOne(body);
+    // Prevent duplicate reference insertions by checking first
+    const exists = await collection.findOne({ reference: body.reference });
+    if (exists) {
+      console.log('⚠️ Reference already exists:', body.reference);
+      return { statusCode: 409, body: JSON.stringify({ error: 'Reference already exists' }) };
+    }
 
+    const result = await collection.insertOne(body);
     console.log('✅ Inserted new doc:', result.insertedId);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ message: 'Added successfully', id: result.insertedId }),
-    };
-
+    return { statusCode: 200, body: JSON.stringify({ message: 'Added successfully', id: result.insertedId }) };
   } catch (err) {
     console.error('💥 ERROR during insert:', err);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Internal Server Error' }),
-    };
+    return { statusCode: 500, body: JSON.stringify({ error: 'Internal Server Error' }) };
   }
 };

@@ -10,6 +10,7 @@ function showAddReferenceForm() {
   document.getElementById('deleteButton').style.display = 'none';
   document.getElementById('refFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
+  document.getElementById('greyMarketFormContainer').style.display = 'none';
 }
 
 function showEditReferenceForm(data) {
@@ -195,6 +196,7 @@ function showAddGreyMarketForm() {
   clearGreyMarketForm();
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
+  document.getElementById('refFormContainer').style.display = 'none';
 
 }
 

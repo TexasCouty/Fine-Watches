@@ -1,241 +1,163 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fine Watches Reference Lookup</title>
+  <title>Grey Market Lookup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <!-- ✅ README: LuxeTime dark theme + table with balanced columns -->
   <style>
-    body {
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      margin: 0;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #000000, #434343);
-      color: #fff;
-    }
-    .container {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .logo {
-      max-width: 200px;
-      height: auto;
-      display: block;
-      margin: 0 auto 20px auto;
-    }
-    h1 {
-      font-size: 1.8rem;
-      color: #d4af37;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 1rem;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
-      border-radius: 6px;
-    }
-    input {
-      border: 1px solid #555;
-      background: #222;
-      color: #fff;
-    }
-    input::placeholder {
-      color: #aaa;
-    }
-    button {
-      background: #d4af37;
-      color: #000;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-    button:hover {
-      background: #b9972f;
-      transform: translateY(-2px);
-    }
-    .results {
-      margin-top: 30px;
-      text-align: left;
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      table-layout: fixed;
-    }
-    table th {
-      background: #d4af37;
-      color: #000;
-      padding: 10px;
-      cursor: pointer;
-    }
-    table td {
-      background: #111;
-      border: 1px solid #333;
-      padding: 10px;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      white-space: normal;
-    }
+    body { font-family: sans-serif; padding: 20px; background: #111; color: #fff; }
+    .container { max-width: 1200px; margin: auto; }
+    input, button { padding: 8px; margin: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; }
+    th, td { border: 1px solid #333; padding: 8px; word-break: break-word; }
+    th { background: #d4af37; color: #000; cursor: pointer; }
+    td input { width: 95%; }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="assets/LuxeTime Circle Black Logo.png" alt="LuxeTime Logo" class="logo" />
-    <h1>Fine Watches Reference Lookup</h1>
+    <h1>Grey Market Lookup</h1>
+    <input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
+    <button onclick="lookupGreyMarket()">Search</button>
 
-    <!-- ✅ Reference Lookup -->
-    <input type="text" id="refInput" placeholder="Enter Reference Number (partial or complete)" />
-    <button onclick="lookupReference()">Search</button>
-
-    <!-- ✅ Grey Market Lookup -->
-    <input type="text" id="greyMarketInput" placeholder="Enter Reference Number for Grey Market Price" />
-    <button onclick="lookupGreyMarket()">Search Grey Market</button>
-
-    <div id="results" class="results"></div>
+    <div id="results"></div>
   </div>
 
-  <script>
-    // ✅ Grey Market Lookup
-    async function lookupGreyMarket() {
-      const ref = document.getElementById('greyMarketInput').value.trim();
-      const resultsDiv = document.getElementById('results');
-      resultsDiv.innerHTML = '';
+<script>
+let greyMarketData = [];
 
-      if (!ref) {
-        alert('Please enter a reference number.');
-        return;
-      }
+async function lookupGreyMarket() {
+  const ref = document.getElementById('greyMarketInput').value.trim();
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = '';
 
-      resultsDiv.innerHTML = '<div class="message">Searching Grey Market DB...</div>';
+  if (!ref) { alert('Enter a model number.'); return; }
 
-      try {
-        const response = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
-        if (response.ok) {
-          const data = await response.json();
+  resultsDiv.innerHTML = 'Searching...';
 
-          if (!Array.isArray(data) || data.length === 0) {
-            resultsDiv.innerHTML = `<div class="message">No Grey Market matches found.</div>`;
-          } else {
-            let table = `
-              <table id="greyMarketTable">
-                <thead>
-                  <tr>
-                    <th onclick="sortTable(0)">Date Entered</th>
-                    <th onclick="sortTable(1)">Year</th>
-                    <th onclick="sortTable(2)">Model</th>
-                    <th onclick="sortTable(3)">Model Name</th>
-                    <th onclick="sortTable(4)">Nickname or Dial</th>
-                    <th onclick="sortTable(5)">Bracelet</th>
-                    <th onclick="sortTable(6)">Bracelet Metal/Color</th>
-                    <th onclick="sortTable(7)">Price</th>
-                    <th onclick="sortTable(8)">Full Set</th>
-                    <th onclick="sortTable(9)">Retail Ready</th>
-                    <th onclick="sortTable(10)">Current Retail (Not Inc Tax)</th>
-                    <th onclick="sortTable(11)">Dealer</th>
-                    <th onclick="sortTable(12)">Comments</th>
-                  </tr>
-                </thead>
-                <tbody>
-            `;
+  const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
+  const data = await res.json();
+  greyMarketData = data;
 
-            table += data.map(item => `
-              <tr>
-                <td>${item["Date Entered"] || 'N/A'}</td>
-                <td>${item.Year || 'N/A'}</td>
-                <td>${item.Model || 'N/A'}</td>
-                <td>${item["Model Name"] || 'N/A'}</td>
-                <td>${item["Nickname or Dial"] || 'N/A'}</td>
-                <td>${item.Bracelet || 'N/A'}</td>
-                <td>${item["Bracelet Metal/Color"] || 'N/A'}</td>
-                <td>${item.Price || 'N/A'}</td>
-                <td>${item["Full Set"] || 'N/A'}</td>
-                <td>${item["Retail Ready"] || 'N/A'}</td>
-                <td>${item["Current Retail (Not Inc Tax)"] || 'N/A'}</td>
-                <td>${item.Dealer || 'N/A'}</td>
-                <td>${item.Comments || ''}</td>
-              </tr>
-            `).join('');
+  if (!data.length) {
+    resultsDiv.innerHTML = 'No results found.';
+    return;
+  }
 
-            table += `</tbody></table>`;
-            resultsDiv.innerHTML = table;
-          }
-        } else {
-          resultsDiv.innerHTML = `<div class="message">No Grey Market matches found.</div>`;
-        }
-      } catch (err) {
-        console.error(err);
-        resultsDiv.innerHTML = '<div class="message">Error connecting to the server.</div>';
-      }
-    }
+  let html = `<table id="greyMarketTable">
+    <thead>
+      <tr>
+        <th onclick="sortTable(0)">Date Entered</th>
+        <th>Year</th>
+        <th>Model</th>
+        <th>Model Name</th>
+        <th>Nickname or Dial</th>
+        <th>Bracelet</th>
+        <th>Bracelet Metal/Color</th>
+        <th>Price</th>
+        <th>Full Set</th>
+        <th>Retail Ready</th>
+        <th>Current Retail</th>
+        <th>Dealer</th>
+        <th>Comments</th>
+        <th>Actions</th>
+      </tr>
+    </thead><tbody>`;
 
-    // ✅ FINAL sortTable — bulletproof scope
-    function sortTable(n) {
-      const table = document.getElementById("greyMarketTable");
-      let switching = true;
-      let dir = "asc";
-      let switchcount = 0;
+  data.forEach((item, idx) => {
+    html += `<tr id="row-${idx}">
+      <td>${item["Date Entered"] || ''}</td>
+      <td>${item.Year || ''}</td>
+      <td>${item.Model || ''}</td>
+      <td>${item["Model Name"] || ''}</td>
+      <td>${item["Nickname or Dial"] || ''}</td>
+      <td>${item.Bracelet || ''}</td>
+      <td>${item["Bracelet Metal/Color"] || ''}</td>
+      <td>${item.Price || ''}</td>
+      <td>${item["Full Set"] || ''}</td>
+      <td>${item["Retail Ready"] || ''}</td>
+      <td>${item["Current Retail (Not Inc Tax)"] || ''}</td>
+      <td>${item.Dealer || ''}</td>
+      <td>${item.Comments || ''}</td>
+      <td><button onclick="editRow(${idx})">Edit</button></td>
+    </tr>`;
+  });
 
-      console.log(`📌 sortTable START column ${n}`);
+  html += `</tbody></table>`;
 
-      while (switching) {
-        switching = false;
-        const rows = table.rows;
-        console.log(`🔍 Checking ${rows.length} rows`);
+  // Add New Row form
+  html += `<h3>Add New Row</h3>
+    <div id="addRow">
+      ${['Date Entered','Year','Model','Model Name','Nickname or Dial','Bracelet',
+        'Bracelet Metal/Color','Price','Full Set','Retail Ready',
+        'Current Retail (Not Inc Tax)','Dealer','Comments']
+        .map(f => `<label>${f}: <input id="new-${f.replace(/[^a-z0-9]/gi,'')}" /></label>`).join('<br>')}
+      <button onclick="saveNewRow()">Save New Row</button>
+    </div>`;
 
-        let shouldSwitch = false;
-        let i = 1; // ✅ declared outside for
+  resultsDiv.innerHTML = html;
+}
 
-        for (; i < (rows.length - 1); i++) {
-          shouldSwitch = false;
-          console.log(`Row ${i} compare`);
+function editRow(idx) {
+  const item = greyMarketData[idx];
+  const row = document.getElementById(`row-${idx}`);
+  row.innerHTML = `
+    <td><input id="edit-DateEntered-${idx}" value="${item["Date Entered"]||''}"></td>
+    <td><input id="edit-Year-${idx}" value="${item.Year||''}"></td>
+    <td><input id="edit-Model-${idx}" value="${item.Model||''}"></td>
+    <td><input id="edit-ModelName-${idx}" value="${item["Model Name"]||''}"></td>
+    <td><input id="edit-Nickname-${idx}" value="${item["Nickname or Dial"]||''}"></td>
+    <td><input id="edit-Bracelet-${idx}" value="${item.Bracelet||''}"></td>
+    <td><input id="edit-BraceletMetal-${idx}" value="${item["Bracelet Metal/Color"]||''}"></td>
+    <td><input id="edit-Price-${idx}" value="${item.Price||''}"></td>
+    <td><input id="edit-FullSet-${idx}" value="${item["Full Set"]||''}"></td>
+    <td><input id="edit-RetailReady-${idx}" value="${item["Retail Ready"]||''}"></td>
+    <td><input id="edit-CurrentRetail-${idx}" value="${item["Current Retail (Not Inc Tax)"]||''}"></td>
+    <td><input id="edit-Dealer-${idx}" value="${item.Dealer||''}"></td>
+    <td><input id="edit-Comments-${idx}" value="${item.Comments||''}"></td>
+    <td><button onclick="saveEdit(${idx})">Save</button></td>
+  `;
+}
 
-          let x = rows[i].getElementsByTagName("TD")[n];
-          let y = rows[i + 1].getElementsByTagName("TD")[n];
-          console.log(` x: "${x.innerHTML.trim()}" | y: "${y.innerHTML.trim()}"`);
+async function saveEdit(idx) {
+  const item = greyMarketData[idx];
+  const updated = {
+    "Date Entered": document.getElementById(`edit-DateEntered-${idx}`).value,
+    "Year": document.getElementById(`edit-Year-${idx}`).value,
+    "Model": document.getElementById(`edit-Model-${idx}`).value,
+    "Model Name": document.getElementById(`edit-ModelName-${idx}`).value,
+    "Nickname or Dial": document.getElementById(`edit-Nickname-${idx}`).value,
+    "Bracelet": document.getElementById(`edit-Bracelet-${idx}`).value,
+    "Bracelet Metal/Color": document.getElementById(`edit-BraceletMetal-${idx}`).value,
+    "Price": document.getElementById(`edit-Price-${idx}`).value,
+    "Full Set": document.getElementById(`edit-FullSet-${idx}`).value,
+    "Retail Ready": document.getElementById(`edit-RetailReady-${idx}`).value,
+    "Current Retail (Not Inc Tax)": document.getElementById(`edit-CurrentRetail-${idx}`).value,
+    "Dealer": document.getElementById(`edit-Dealer-${idx}`).value,
+    "Comments": document.getElementById(`edit-Comments-${idx}`).value,
+  };
+  await fetch('/.netlify/functions/updateGreyMarket', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: item._id, fields: updated })
+  });
+  lookupGreyMarket();
+}
 
-          if (dir === "asc") {
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-              shouldSwitch = true;
-              console.log(`  ✅ Will switch ASC`);
-              break;
-            }
-          } else if (dir === "desc") {
-            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-              shouldSwitch = true;
-              console.log(`  ✅ Will switch DESC`);
-              break;
-            }
-          }
-        }
-
-        console.log(`➡️ shouldSwitch after loop: ${shouldSwitch}`);
-        if (shouldSwitch) {
-          console.log(`🔄 Swapping rows ${i} and ${i + 1}`);
-          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true;
-          switchcount++;
-        } else {
-          if (switchcount === 0 && dir === "asc") {
-            dir = "desc";
-            switching = true;
-            console.log(`↕️ Switching direction to DESC`);
-          }
-        }
-      }
-
-      console.log(`✅ sortTable DONE`);
-    }
-  </script>
+async function saveNewRow() {
+  const newRow = {};
+  ['DateEntered','Year','Model','ModelName','NicknameorDial','Bracelet','BraceletMetalColor',
+   'Price','FullSet','RetailReady','CurrentRetailNotIncTax','Dealer','Comments']
+   .forEach(f => {
+     newRow[f.replace(/([A-Z])/g,' $1').trim().replace(/Not Inc Tax/, '(Not Inc Tax)').replace(/or Dial/, 'or Dial').replace(/Metal Color/,'Metal/Color')] = document.getElementById(`new-${f}`).value;
+   });
+  await fetch('/.netlify/functions/addGreyMarket', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newRow)
+  });
+  lookupGreyMarket();
+}
+</script>
 </body>
 </html>

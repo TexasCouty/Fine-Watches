@@ -1,32 +1,72 @@
 const { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGO_URI;
+let cachedClient = null;
 
 exports.handler = async (event) => {
-  const client = new MongoClient(uri);
+  console.log('⚙️ Grey Market Lookup Function STARTED');
+
   try {
-    const ref = event.queryStringParameters.reference || '';
-    console.log('🔍 Searching for:', ref);
+    if (event.httpMethod !== 'GET') {
+      console.log('❌ Invalid HTTP method:', event.httpMethod);
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: 'Method not allowed. Use GET.' }),
+      };
+    }
 
-    await client.connect();
-    const db = client.db('test');
-    const coll = db.collection('grey_market');
+    const refRaw = event.queryStringParameters?.reference || '';
+    const ref = refRaw.trim();
+    console.log(`🔍 Received query parameter (raw): "${refRaw}"`);
+    console.log(`🔍 Trimmed query parameter: "${ref}"`);
 
-    const results = await coll.find({
-      Model: { $regex: ref, $options: 'i' }
-    }).sort({ "Date Entered": 1 }).toArray();
+    if (!ref) {
+      console.log('❌ Empty reference parameter');
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Reference parameter is required.' }),
+      };
+    }
 
-    console.log('✅ Results found:', results.length);
+    if (!cachedClient) {
+      console.log('🧩 Connecting to MongoDB...');
+      cachedClient = new MongoClient(uri);
+      await cachedClient.connect();
+      console.log('✅ MongoDB CONNECTED');
+    } else {
+      console.log('♻️ Using cached MongoDB client');
+    }
 
+    const db = cachedClient.db('test'); // Adjust to your actual DB name
+    const collection = db.collection('grey_market');
+
+    const totalCount = await collection.countDocuments();
+    console.log(`🗃️ Total documents in grey_market collection: ${totalCount}`);
+
+    // Try exact match first (debug step)
+    let results = await collection.find({ Model: ref }).toArray();
+    console.log(`🔎 Exact match query returned ${results.length} result(s)`);
+
+    // If no results, try regex partial match
+    if (results.length === 0) {
+      console.log(`🔎 No exact match results, trying regex partial match...`);
+      results = await collection.find({
+        Model: { $regex: ref, $options: 'i' }
+      }).toArray();
+      console.log(`🔎 Regex partial match query returned ${results.length} result(s)`);
+    }
+
+    console.log('✅ Returning results');
     return {
       statusCode: 200,
-      body: JSON.stringify(results)
+      body: JSON.stringify(results),
     };
 
   } catch (err) {
-    console.error(err);
-    return { statusCode: 500, body: JSON.stringify({ error: err.toString() }) };
-  } finally {
-    await client.close();
+    console.error('💥 ERROR in greyMarketLookup:', err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Internal Server Error' }),
+    };
   }
 };

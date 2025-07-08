@@ -306,6 +306,11 @@ async function saveGreyMarketEntry() {
   const rawModelName = document.getElementById('gm_model_name').value.trim();
   const newModel = document.getElementById('gm_model').value.trim();
 
+  console.log('Saving Grey Market Entry');
+  console.log('Input Model:', newModel);
+  console.log('Input Model Name:', rawModelName);
+  console.log('Current Editing Model:', currentEditingGMModel);
+
   const data = {
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
@@ -332,16 +337,19 @@ async function saveGreyMarketEntry() {
     let method = 'POST';
     let body = JSON.stringify(data);
 
-    // Only update if editing existing and Model field is unchanged
     if (currentEditingGMModel && currentEditingGMModel === newModel) {
+      console.log('Updating existing grey market entry');
       url = '/.netlify/functions/updateGreyMarket';
       body = JSON.stringify({ Model: currentEditingGMModel, fields: data });
     } else {
-      // Treat as new add if Model changed or not editing
+      console.log('Adding new grey market entry');
       currentEditingGMModel = null;
     }
 
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
+
+    console.log('Fetch response status:', res.status);
+
     if (!res.ok) throw new Error('Network response was not ok');
 
     alert(currentEditingGMModel ? 'Grey Market entry updated' : 'Grey Market entry added');
@@ -353,6 +361,7 @@ async function saveGreyMarketEntry() {
     console.error(err);
   }
 }
+
 
 async function deleteGreyMarketEntry() {
   if (!currentEditingGMModel) return;

@@ -5,7 +5,7 @@ let currentEditingGMModel = null;
 let greyMarketData = [];
 let modelNameSuggestions = [];
 
-// Reference Lookup CRUD functions
+// --- Reference Lookup CRUD ---
 function showAddReferenceForm() {
   currentEditingRef = null;
   document.getElementById('formTitle').innerText = 'Add New Reference';
@@ -14,7 +14,6 @@ function showAddReferenceForm() {
   document.getElementById('refFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
 }
-
 function showEditReferenceForm(data) {
   currentEditingRef = data.reference;
   document.getElementById('formTitle').innerText = 'Edit Reference';
@@ -33,18 +32,15 @@ function showEditReferenceForm(data) {
   document.getElementById('refFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
 }
-
 function clearReferenceForm() {
   [
     'ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial',
     'ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes','ref_images'
   ].forEach(id => document.getElementById(id).value = '');
 }
-
 function cancelReferenceForm() {
   document.getElementById('refFormContainer').style.display = 'none';
 }
-
 async function saveReference() {
   const imagesRaw = document.getElementById('ref_images').value.trim();
   const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()) : [];
@@ -83,7 +79,6 @@ async function saveReference() {
     console.error(err);
   }
 }
-
 async function deleteReference() {
   if (!currentEditingRef) return;
   if (!confirm(`Are you sure you want to delete reference "${currentEditingRef}"?`)) return;
@@ -102,7 +97,6 @@ async function deleteReference() {
     console.error(err);
   }
 }
-
 async function lookupReference() {
   const ref = document.getElementById('refInput').value.trim();
   const resultsDiv = document.getElementById('results');
@@ -147,7 +141,7 @@ async function lookupReference() {
   }
 }
 
-// Grey Market Lookup + CRUD JS
+// --- Grey Market CRUD & Autocomplete ---
 async function fetchGreyMarketData() {
   try {
     const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
@@ -162,7 +156,6 @@ async function fetchGreyMarketData() {
     console.error('Error loading grey market data:', e);
   }
 }
-
 function clearGreyMarketForm() {
   [
     'gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname',
@@ -176,19 +169,35 @@ function clearGreyMarketForm() {
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
 }
-
 function showAddGreyMarketForm() {
   document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
   clearGreyMarketForm();
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   document.getElementById('results').innerHTML = '';
 }
-
+function showEditGreyMarketForm(record) {
+  currentEditingGMModel = record.Model;
+  document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
+  document.getElementById('greyMarketFormContainer').style.display = 'block';
+  document.getElementById('gm_date_entered').value = record["Date Entered"] || '';
+  document.getElementById('gm_year').value = record.Year || '';
+  document.getElementById('gm_model').value = record.Model || '';
+  document.getElementById('gm_model_name').value = record["Model Name"] || '';
+  document.getElementById('gm_nickname').value = record["Nickname or Dial"] || '';
+  document.getElementById('gm_bracelet').value = record.Bracelet || '';
+  document.getElementById('gm_bracelet_metal_color').value = record["Bracelet Metal/Color"] || '';
+  document.getElementById('gm_price').value = record.Price || '';
+  document.getElementById('gm_full_set').value = record["Full Set"] || '';
+  document.getElementById('gm_retail_ready').value = record["Retail Ready"] || '';
+  document.getElementById('gm_current_retail').value = record["Current Retail (Not Inc Tax)"] || '';
+  document.getElementById('gm_dealer').value = record.Dealer || '';
+  document.getElementById('gm_comments').value = record.Comments || '';
+  document.getElementById('gm_delete_button').style.display = 'inline-block';
+}
 function cancelGreyMarketForm() {
   document.getElementById('greyMarketFormContainer').style.display = 'none';
   hideRecordPicker();
 }
-
 const modelNameInput = document.getElementById('gm_model_name');
 const recordPicker = document.getElementById('gmRecordPicker');
 
@@ -198,13 +207,41 @@ modelNameInput.addEventListener('input', function() {
     hideRecordPicker();
     return;
   }
+  // Filter suggestions to those that start with the typed text
   const filteredNames = modelNameSuggestions.filter(name => name.startsWith(val));
   if (filteredNames.length === 0) {
     hideRecordPicker();
     return;
   }
-  showRecordPickerForModelName(filteredNames[0]);
+
+  // Show picker with all matching suggestions, allowing user to pick or ignore
+  showRecordPickerWithList(filteredNames);
 });
+
+function showRecordPickerWithList(names) {
+  recordPicker.innerHTML = '';
+  // For each matching model name, find all greyMarketData records for it
+  const matchedRecords = [];
+  names.forEach(name => {
+    const recs = greyMarketData.filter(item => item['Model Name'] && item['Model Name'].toUpperCase() === name);
+    matchedRecords.push(...recs);
+  });
+  if (matchedRecords.length === 0) {
+    hideRecordPicker();
+    return;
+  }
+  matchedRecords.forEach(record => {
+    const div = document.createElement('div');
+    div.textContent = `${record.Model} | ${record['Nickname or Dial'] || ''} | ${record.Bracelet || ''}`;
+    div.addEventListener('click', () => {
+      autofillGreyMarketForm(record);
+      hideRecordPicker();
+    });
+    recordPicker.appendChild(div);
+  });
+  recordPicker.style.display = 'block';
+}
+
 
 function showRecordPickerForModelName(modelName) {
   const matches = greyMarketData.filter(item => 
@@ -226,12 +263,10 @@ function showRecordPickerForModelName(modelName) {
   });
   recordPicker.style.display = 'block';
 }
-
 function hideRecordPicker() {
   recordPicker.style.display = 'none';
   recordPicker.innerHTML = '';
 }
-
 function autofillGreyMarketForm(record) {
   document.getElementById('gm_date_entered').value = '';
   document.getElementById('gm_year').value = '';
@@ -248,7 +283,6 @@ function autofillGreyMarketForm(record) {
   document.getElementById('gm_delete_button').style.display = 'inline-block';
   currentEditingGMModel = record.Model;
 }
-
 async function saveGreyMarketEntry() {
   const rawModelName = document.getElementById('gm_model_name').value.trim();
   const data = {
@@ -288,7 +322,6 @@ async function saveGreyMarketEntry() {
     console.error(err);
   }
 }
-
 async function deleteGreyMarketEntry() {
   if (!currentEditingGMModel) return;
   if (!confirm(`Are you sure you want to delete model "${currentEditingGMModel}"?`)) return;
@@ -307,7 +340,6 @@ async function deleteGreyMarketEntry() {
     console.error(err);
   }
 }
-
 async function lookupGreyMarket() {
   const ref = document.getElementById('greyMarketInput').value.trim();
   const resultsDiv = document.getElementById('results');
@@ -333,7 +365,7 @@ async function lookupGreyMarket() {
     ];
     let html = `<table id="greyMarketTable">
       <thead><tr>
-        ${headers.map(h => `<th>${h}</th>`).join('')}
+        ${headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')}
       </tr></thead>
       <tbody>`;
     data.forEach(item => {
@@ -362,6 +394,7 @@ async function lookupGreyMarket() {
   }
 }
 
+// --- Sortable Table ---
 function sortTable(n) {
   const table = document.getElementById("greyMarketTable");
   if (!table) return;
@@ -378,12 +411,12 @@ function sortTable(n) {
       let x = rows[i].getElementsByTagName("TD")[n];
       let y = rows[i + 1].getElementsByTagName("TD")[n];
       if (dir === "asc") {
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+        if ((x.textContent || x.innerText).toLowerCase() > (y.textContent || y.innerText).toLowerCase()) {
           shouldSwitch = true;
           break;
         }
       } else if (dir === "desc") {
-        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+        if ((x.textContent || x.innerText).toLowerCase() < (y.textContent || y.innerText).toLowerCase()) {
           shouldSwitch = true;
           break;
         }
@@ -402,9 +435,12 @@ function sortTable(n) {
   }
 }
 
+// --- DOMContentLoaded ---
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchGreyMarketData();
 });
 
+// --- Expose edit functions and sortTable globally (for inline handlers) ---
 window.showEditReferenceForm = showEditReferenceForm;
 window.showEditGreyMarketForm = showEditGreyMarketForm;
+window.sortTable = sortTable;

@@ -15,6 +15,7 @@ exports.handler = async (event) => {
     console.log('✅ Parsed body:', body);
 
     const { Model, fields } = body;
+    console.log('Fields to update:', fields);
     if (!Model || !fields) {
       return { statusCode: 400, body: JSON.stringify({ error: 'Missing Model or fields' }) };
     }

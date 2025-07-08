@@ -1,5 +1,6 @@
 // main.js
 
+
 let currentEditingRef = null;
 let currentEditingGMModel = null;
 let greyMarketData = [];
@@ -303,6 +304,7 @@ function autofillGreyMarketForm(record) {
 }
 
 async function saveGreyMarketEntry() {
+console.log('saveGreyMarketEntry called');
   const rawModelName = document.getElementById('gm_model_name').value.trim();
   const newModel = document.getElementById('gm_model').value.trim();
 
@@ -485,3 +487,4 @@ window.addEventListener('DOMContentLoaded', async () => {
 window.showEditReferenceForm = showEditReferenceForm;
 window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.sortTable = sortTable;
+window.saveGreyMarketEntry = saveGreyMarketEntry;

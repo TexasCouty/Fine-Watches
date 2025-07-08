@@ -8,7 +8,6 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-
 .logo {
   max-width: 200px;
   display: block;
@@ -19,16 +18,12 @@ h1 {
   font-size: 1.8rem;
   color: #d4af37;
   margin-bottom: 40px;
-  font-weight: bold;
-  letter-spacing: 1px;
 }
-
 .lookup-grid {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
 }
-
 .lookup-section {
   flex: 1;
   min-width: 320px;
@@ -39,17 +34,13 @@ h1 {
   max-height: 900px;
   overflow-y: auto;
   position: relative;
-  margin-bottom: 30px;
 }
 .lookup-section h2 {
   color: #d4af37;
   margin-top: 0;
   font-weight: 700;
   text-shadow: 0 0 5px #b9972f;
-  font-size: 1.4rem;
-  letter-spacing: .5px;
 }
-
 label {
   display: block;
   margin-top: 12px;
@@ -81,7 +72,7 @@ button {
   color: #d4af37;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   padding: 12px 20px;
   border-radius: 6px;
   width: 100%;
@@ -99,7 +90,6 @@ button:hover {
   text-align: left;
   overflow-x: auto;
 }
-
 .card {
   background: #121212;
   border: 1px solid #d4af37;
@@ -131,138 +121,170 @@ button:hover {
   display: block;
 }
 
-/* --- TABLE STYLES --- */
-table {
+/* ------------------ TABLE STYLES ------------------ */
+
+/* Desktop: Fix table layout, ellipsis, column widths, smaller font */
+#greyMarketTable {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
-  table-layout: fixed;        /* Fixed layout for even columns */
-  background: transparent;
+  background: #121212;
 }
 
-th, td {
-  text-align: left;
-  padding: 12px 8px;
-  border: none;
-  color: #fff;
+#greyMarketTable th,
+#greyMarketTable td {
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: top;
+  padding: 7px 6px;
+  border: 1px solid #333;
+  font-size: 0.93rem;      /* Smaller font just for the table */
+  color: #eee;
 }
 
-th {
+#greyMarketTable th {
   background: transparent;
+  border-bottom: 2px solid #d4af37;
   color: #d4af37;
   font-weight: 700;
-  font-size: 1.05rem;
-  border-bottom: 2px solid #d4af37;
-  white-space: nowrap;
+  user-select: none;
+  font-size: 1.01rem;
 }
 
-td {
-  background: #111;
-  font-size: 0.98rem;
-  white-space: nowrap;
-  max-width: 120px;
+#greyMarketTable th,
+#greyMarketTable td {
+  max-width: 90px;
 }
 
-td[data-label="Dealer"], td[data-label="Comments"] {
-  max-width: 170px;
-  white-space: normal;
-  word-break: break-word;
+#greyMarketTable th:nth-child(4),
+#greyMarketTable td:nth-child(4),
+#greyMarketTable th:nth-child(12),
+#greyMarketTable td:nth-child(12),
+#greyMarketTable th:nth-child(13),
+#greyMarketTable td:nth-child(13) {
+  max-width: 150px;
 }
 
-td[data-label="Model Name"] {
-  max-width: 100px;
-}
-td[data-label="Bracelet"] {
-  max-width: 70px;
-}
-td[data-label="Bracelet Metal/Color"] {
-  max-width: 120px;
-}
-td[data-label="Date Entered"] {
-  max-width: 85px;
-}
-td[data-label="Actions"] {
-  text-align: right;
-  min-width: 75px;
-  max-width: 100px;
-  white-space: nowrap;
+/* Let "Dealer" and "Comments" be even wider if possible */
+#greyMarketTable th:nth-child(12),
+#greyMarketTable td:nth-child(12),
+#greyMarketTable th:nth-child(13),
+#greyMarketTable td:nth-child(13) {
+  max-width: 180px;
 }
 
-#greyMarketTable button {
-  min-width: 60px;
-  padding: 8px 18px;
-  font-size: 1.08rem;
-  margin: 0;
+/* Edit button in Actions column */
+#greyMarketTable td:last-child button {
+  min-width: 64px;
+  font-size: 1rem;
+  padding: 7px 0;
+  display: block;
+  margin: 0 auto;
 }
 
-.results {
-  overflow-x: auto;
+#greyMarketTable td:last-child {
+  text-align: center;
+  vertical-align: middle;
 }
 
-@media (max-width: 900px) {
-  td, th {
-    font-size: 0.93rem;
-    padding: 7px 4px;
-    max-width: 80px;
-  }
-}
-
-@media (max-width: 650px) {
-  /* (Keep your previous mobile table styles) */
-  table, thead, tbody, th, td, tr {
+/* Responsive: Stack on mobile */
+@media (max-width: 899px) {
+  #greyMarketTable,
+  #greyMarketTable thead,
+  #greyMarketTable tbody,
+  #greyMarketTable th,
+  #greyMarketTable td,
+  #greyMarketTable tr {
     display: block;
   }
-  thead {
-    display: none;
-  }
-  tr {
-    margin-bottom: 16px;
-    border-bottom: 1px solid #222;
-    background: #181818;
-  }
-  td {
-    max-width: 100%;
-    min-width: 100%;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-    font-size: 1.1rem;
+  #greyMarketTable tr {
+    margin-bottom: 20px;
     border: none;
-    padding: 9px 12px;
-    position: relative;
   }
-  td[data-label]:before {
-    content: attr(data-label) ": ";
-    font-weight: bold;
+  #greyMarketTable th {
+    text-align: left;
+    border-bottom: none;
+    font-size: 1rem;
+  }
+  #greyMarketTable td {
+    white-space: normal;
+    max-width: 100%;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 12px 8px;
+    font-size: 1.1rem;
+    text-align: left;
+  }
+  #greyMarketTable td:before {
+    content: attr(data-label);
+    font-weight: 700;
     color: #d4af37;
     display: block;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
-  td[data-label="Actions"] {
-    text-align: left;
+  #greyMarketTable th,
+  #greyMarketTable td {
+    background: transparent;
+  }
+}
+
+/* Autocomplete styles for pickers */
+.autocomplete-wrapper { position: relative; }
+#gmRecordPicker {
+  position: absolute;
+  z-index: 1100;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background: #222;
+  border: 1px solid #d4af37;
+  border-radius: 0 0 8px 8px;
+  box-sizing: border-box;
+}
+#gmRecordPicker div {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #d4af37aa;
+  color: #eee;
+}
+#gmRecordPicker div:hover {
+  background: #d4af37;
+  color: #000;
+}
+
+/* Hide scrollbars but allow scroll */
+.results::-webkit-scrollbar {
+  width: 0.7em;
+  background: transparent;
+}
+.results::-webkit-scrollbar-thumb {
+  background: #222;
+}
+
+/* General improvements */
+@media (max-width: 600px) {
+  body {
+    padding: 10px 2px;
+  }
+  .lookup-section {
     min-width: unset;
-    max-width: unset;
+    padding: 7px;
+    font-size: 1rem;
   }
-  #greyMarketTable button {
-    width: 100%;
-    font-size: 1.12rem;
-    margin-top: 6px;
-    margin-bottom: 3px;
+  .card-images {
+    gap: 7px;
+    max-width: 170px;
   }
 }
 
-
-/* Misc: Minor shadow for inputs/forms */
-input, textarea {
-  box-shadow: 0 1px 4px #000a inset;
-}
-
-/* Misc: spacing below form buttons on mobile */
-@media (max-width: 650px) {
-  button {
-    margin-bottom: 12px;
+/* Small improvements for table headers on desktop for less wrapping */
+@media (min-width: 900px) {
+  #greyMarketTable th,
+  #greyMarketTable td {
+    padding: 7px 4px;
+    font-size: 0.91rem;
+    line-height: 1.2;
   }
 }

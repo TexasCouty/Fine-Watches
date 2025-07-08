@@ -8,22 +8,26 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+
 .logo {
   max-width: 200px;
   display: block;
   margin: 0 auto 20px auto;
 }
+
 h1 {
   text-align: center;
   font-size: 1.8rem;
   color: #d4af37;
   margin-bottom: 40px;
 }
+
 .lookup-grid {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
 }
+
 .lookup-section {
   flex: 1;
   min-width: 320px;
@@ -35,18 +39,21 @@ h1 {
   overflow-y: auto;
   position: relative;
 }
+
 .lookup-section h2 {
   color: #d4af37;
   margin-top: 0;
   font-weight: 700;
   text-shadow: 0 0 5px #b9972f;
 }
+
 label {
   display: block;
   margin-top: 12px;
   font-weight: 700;
   color: #d4af37;
 }
+
 input, textarea, button {
   padding: 10px;
   font-size: 1rem;
@@ -60,12 +67,14 @@ input, textarea, button {
   resize: vertical;
   transition: border-color 0.3s ease;
 }
+
 input:focus, textarea:focus {
   outline: none;
   border-color: #f7df72;
   box-shadow: 0 0 5px #f7df72;
   background: #1c1c1c;
 }
+
 button {
   background: transparent;
   border: 2px solid #d4af37;
@@ -79,17 +88,20 @@ button {
   box-sizing: border-box;
   margin-top: 15px;
 }
+
 button:hover {
   background: #d4af37;
   color: #000;
   box-shadow: 0 0 15px #d4af37;
   transform: translateY(-2px);
 }
+
 .results {
   margin-top: 40px;
   text-align: left;
   overflow-x: auto;
 }
+
 .card {
   background: #121212;
   border: 1px solid #d4af37;
@@ -101,18 +113,21 @@ button:hover {
   align-items: flex-start;
   box-shadow: 0 0 10px #d4af37aa;
 }
+
 .manufacturer-line {
   font-weight: bold;
   font-size: 1rem;
   color: #d4af37;
   margin: 0 0 10px 0;
 }
+
 .card-images {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   max-width: 300px;
 }
+
 .watch-image {
   width: 100%;
   height: auto;
@@ -121,9 +136,7 @@ button:hover {
   display: block;
 }
 
-/* ------------------ TABLE STYLES ------------------ */
-
-/* Desktop: Fix table layout, ellipsis, column widths, smaller font */
+/* TABLE STYLES */
 #greyMarketTable {
   table-layout: fixed;
   width: 100%;
@@ -138,7 +151,7 @@ button:hover {
   text-overflow: ellipsis;
   padding: 7px 6px;
   border: 1px solid #333;
-  font-size: 0.93rem;      /* Smaller font just for the table */
+  font-size: 0.93rem;
   color: #eee;
 }
 
@@ -165,7 +178,6 @@ button:hover {
   max-width: 150px;
 }
 
-/* Let "Dealer" and "Comments" be even wider if possible */
 #greyMarketTable th:nth-child(12),
 #greyMarketTable td:nth-child(12),
 #greyMarketTable th:nth-child(13),
@@ -173,7 +185,6 @@ button:hover {
   max-width: 180px;
 }
 
-/* Edit button in Actions column */
 #greyMarketTable td:last-child button {
   min-width: 64px;
   font-size: 1rem;
@@ -187,7 +198,7 @@ button:hover {
   vertical-align: middle;
 }
 
-/* Responsive: Stack on mobile */
+/* Responsive stacking for mobile */
 @media (max-width: 899px) {
   #greyMarketTable,
   #greyMarketTable thead,
@@ -228,7 +239,7 @@ button:hover {
   }
 }
 
-/* Autocomplete styles for pickers */
+/* Autocomplete picker styles */
 .autocomplete-wrapper { position: relative; }
 #gmRecordPicker {
   position: absolute;
@@ -254,7 +265,7 @@ button:hover {
   color: #000;
 }
 
-/* Hide scrollbars but allow scroll */
+/* Scrollbar styling */
 .results::-webkit-scrollbar {
   width: 0.7em;
   background: transparent;
@@ -263,7 +274,7 @@ button:hover {
   background: #222;
 }
 
-/* General improvements */
+/* General improvements for smaller screens */
 @media (max-width: 600px) {
   body {
     padding: 10px 2px;
@@ -279,7 +290,7 @@ button:hover {
   }
 }
 
-/* Small improvements for table headers on desktop for less wrapping */
+/* Table header & cell padding for large screens */
 @media (min-width: 900px) {
   #greyMarketTable th,
   #greyMarketTable td {

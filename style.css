@@ -8,6 +8,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+
 .logo {
   max-width: 200px;
   display: block;
@@ -18,12 +19,16 @@ h1 {
   font-size: 1.8rem;
   color: #d4af37;
   margin-bottom: 40px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
+
 .lookup-grid {
   display: flex;
   gap: 40px;
   flex-wrap: wrap;
 }
+
 .lookup-section {
   flex: 1;
   min-width: 320px;
@@ -34,13 +39,17 @@ h1 {
   max-height: 900px;
   overflow-y: auto;
   position: relative;
+  margin-bottom: 30px;
 }
 .lookup-section h2 {
   color: #d4af37;
   margin-top: 0;
   font-weight: 700;
   text-shadow: 0 0 5px #b9972f;
+  font-size: 1.4rem;
+  letter-spacing: .5px;
 }
+
 label {
   display: block;
   margin-top: 12px;
@@ -72,7 +81,7 @@ button {
   color: #d4af37;
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
   padding: 12px 20px;
   border-radius: 6px;
   width: 100%;
@@ -90,6 +99,7 @@ button:hover {
   text-align: left;
   overflow-x: auto;
 }
+
 .card {
   background: #121212;
   border: 1px solid #d4af37;
@@ -121,49 +131,130 @@ button:hover {
   display: block;
 }
 
-/* ----- Table Styles (Desktop) ----- */
+/* --- TABLE STYLES --- */
 table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  table-layout: fixed;
-  background: #161616;
-  border-radius: 12px;
-  overflow: hidden;
-}
-table th, table td {
-  padding: 12px 10px;
-  text-align: left;
-  border: none;
-}
-table th {
+  table-layout: auto;
   background: transparent;
-  border-bottom: 2px solid #d4af37;
+}
+th, td {
+  text-align: left;
+  padding: 12px 8px;
+  border: none;
+  color: #fff;
+}
+th {
+  background: transparent;
   color: #d4af37;
   font-weight: 700;
-  font-size: 1.07rem;
-  user-select: none;
+  font-size: 1.05rem;
+  border-bottom: 2px solid #d4af37;
+  white-space: nowrap;            /* <--- Prevent header wrap */
 }
-table td {
-  color: #eee;
-  font-size: 1.03rem;
-  border-bottom: 1px solid #232323;
+td {
+  background: #111;
+  font-size: 0.98rem;
+  white-space: nowrap;           /* <--- Prevent wrapping in cells */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;              /* <--- Set a max width for each column */
+}
+td[data-label="Dealer"], td[data-label="Comments"] {
+  max-width: 160px;
+  white-space: normal;           /* Allow wrapping for long dealer/comments, but not too early */
   word-break: break-word;
 }
-table td[data-label="Actions"] {
-  min-width: 90px;
+td[data-label="Actions"] {
+  text-align: right;
+  min-width: 85px;
+  max-width: 100px;
+  white-space: nowrap;
 }
-table td button {
-  width: 80px;
-  padding: 7px 10px;
-  font-size: 1.05rem;
+#greyMarketTable button {
+  min-width: 65px;
+  padding: 8px 18px;
+  font-size: 1.08rem;
   margin: 0;
 }
-
-/* Autocomplete styles */
-.autocomplete-wrapper {
-  position: relative;
+@media (max-width: 1200px) {
+  .lookup-grid {
+    flex-direction: column;
+    gap: 20px;
+  }
 }
+@media (max-width: 900px) {
+  td, th {
+    font-size: 0.94rem;
+    padding: 7px 5px;
+    max-width: 95px;
+  }
+  .lookup-section {
+    min-width: 250px;
+    padding: 10px;
+  }
+}
+@media (max-width: 650px) {
+  .lookup-grid {
+    flex-direction: column;
+    gap: 12px;
+    padding: 0;
+  }
+  .lookup-section {
+    min-width: unset;
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  h1 {
+    font-size: 1.22rem;
+    margin-bottom: 18px;
+  }
+  /* --- Responsive Table --- */
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  thead {
+    display: none;
+  }
+  tr {
+    margin-bottom: 16px;
+    border-bottom: 1px solid #222;
+    background: #181818;
+  }
+  td {
+    max-width: 100%;
+    min-width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    font-size: 1.1rem;
+    border: none;
+    padding: 9px 12px;
+    position: relative;
+  }
+  td[data-label]:before {
+    content: attr(data-label) ": ";
+    font-weight: bold;
+    color: #d4af37;
+    display: block;
+    margin-bottom: 3px;
+  }
+  td[data-label="Actions"] {
+    text-align: left;
+    min-width: unset;
+    max-width: unset;
+  }
+  #greyMarketTable button {
+    width: 100%;
+    font-size: 1.12rem;
+    margin-top: 6px;
+    margin-bottom: 3px;
+  }
+}
+/* Autocomplete styles */
+.autocomplete-wrapper { position: relative; }
 #gmRecordPicker {
   position: absolute;
   z-index: 1100;
@@ -187,84 +278,21 @@ table td button {
   background: #d4af37;
   color: #000;
 }
-
-/* ----- Mobile Table: Card Layout ----- */
+/* Hide scrollbars on mobile table for better feel */
 @media (max-width: 700px) {
-  .lookup-grid {
-    flex-direction: column;
-    gap: 20px;
-  }
-  table, thead, tbody, th, tr {
-    display: block;
-    width: 100%;
-  }
-  thead {
-    display: none;
-  }
-  #greyMarketTable tr {
-    display: block;
-    background: #161616;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px #0008;
-    margin-bottom: 24px;
-    border: 1px solid #242424;
-    padding: 10px 0 0 0;
-  }
-  #greyMarketTable td {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    width: 100%;
-    min-height: 52px;
-    border: none;
-    border-bottom: 1px solid #232323;
-    padding: 12px 8px 12px 0;
-    font-size: 1.08rem;
-    background: transparent;
-    text-align: left !important;
-    justify-content: flex-start;
-    word-break: break-word;
-  }
-  #greyMarketTable td:last-child {
-    border-bottom: none;
-  }
-  #greyMarketTable td::before {
-    content: attr(data-label);
-    flex: 0 0 47%;
-    color: #d4af37;
-    font-weight: 700;
-    font-size: 1.03rem;
-    text-align: left;
-    padding-right: 10px;
-    white-space: pre-line;
-    display: block;
-  }
-  #greyMarketTable td[data-label="Actions"] {
-    min-height: 60px;
-  }
-  #greyMarketTable td[data-label="Actions"] button {
-    margin-top: 7px;
-    margin-bottom: 7px;
-    width: 100%;
-    display: block;
-  }
-}
-
-/* Table scroll on very small screens */
-@media (max-width: 480px) {
   .results {
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 }
 
-/* Card cleanup for mobile */
-@media (max-width: 700px) {
-  .card {
-    flex-direction: column;
-    gap: 10px;
-    padding: 14px;
-    max-width: 100%;
-    box-shadow: 0 1px 6px #d4af3750;
+/* Misc: Minor shadow for inputs/forms */
+input, textarea {
+  box-shadow: 0 1px 4px #000a inset;
+}
+
+/* Misc: spacing below form buttons on mobile */
+@media (max-width: 650px) {
+  button {
+    margin-bottom: 12px;
   }
 }

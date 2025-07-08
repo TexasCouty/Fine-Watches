@@ -136,82 +136,82 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
-  table-layout: auto;
+  table-layout: fixed;        /* Fixed layout for even columns */
   background: transparent;
 }
+
 th, td {
   text-align: left;
   padding: 12px 8px;
   border: none;
   color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: top;
 }
+
 th {
   background: transparent;
   color: #d4af37;
   font-weight: 700;
   font-size: 1.05rem;
   border-bottom: 2px solid #d4af37;
-  white-space: nowrap;            /* <--- Prevent header wrap */
+  white-space: nowrap;
 }
+
 td {
   background: #111;
   font-size: 0.98rem;
-  white-space: nowrap;           /* <--- Prevent wrapping in cells */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 130px;              /* <--- Set a max width for each column */
+  white-space: nowrap;
+  max-width: 120px;
 }
+
 td[data-label="Dealer"], td[data-label="Comments"] {
-  max-width: 160px;
-  white-space: normal;           /* Allow wrapping for long dealer/comments, but not too early */
+  max-width: 170px;
+  white-space: normal;
   word-break: break-word;
+}
+
+td[data-label="Model Name"] {
+  max-width: 100px;
+}
+td[data-label="Bracelet"] {
+  max-width: 70px;
+}
+td[data-label="Bracelet Metal/Color"] {
+  max-width: 120px;
+}
+td[data-label="Date Entered"] {
+  max-width: 85px;
 }
 td[data-label="Actions"] {
   text-align: right;
-  min-width: 85px;
+  min-width: 75px;
   max-width: 100px;
   white-space: nowrap;
 }
+
 #greyMarketTable button {
-  min-width: 65px;
+  min-width: 60px;
   padding: 8px 18px;
   font-size: 1.08rem;
   margin: 0;
 }
-@media (max-width: 1200px) {
-  .lookup-grid {
-    flex-direction: column;
-    gap: 20px;
-  }
+
+.results {
+  overflow-x: auto;
 }
+
 @media (max-width: 900px) {
   td, th {
-    font-size: 0.94rem;
-    padding: 7px 5px;
-    max-width: 95px;
-  }
-  .lookup-section {
-    min-width: 250px;
-    padding: 10px;
+    font-size: 0.93rem;
+    padding: 7px 4px;
+    max-width: 80px;
   }
 }
+
 @media (max-width: 650px) {
-  .lookup-grid {
-    flex-direction: column;
-    gap: 12px;
-    padding: 0;
-  }
-  .lookup-section {
-    min-width: unset;
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-  }
-  h1 {
-    font-size: 1.22rem;
-    margin-bottom: 18px;
-  }
-  /* --- Responsive Table --- */
+  /* (Keep your previous mobile table styles) */
   table, thead, tbody, th, td, tr {
     display: block;
   }
@@ -253,37 +253,7 @@ td[data-label="Actions"] {
     margin-bottom: 3px;
   }
 }
-/* Autocomplete styles */
-.autocomplete-wrapper { position: relative; }
-#gmRecordPicker {
-  position: absolute;
-  z-index: 1100;
-  top: calc(100% + 5px);
-  left: 0;
-  right: 0;
-  max-height: 250px;
-  overflow-y: auto;
-  background: #222;
-  border: 1px solid #d4af37;
-  border-radius: 0 0 8px 8px;
-  box-sizing: border-box;
-}
-#gmRecordPicker div {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #d4af37aa;
-  color: #eee;
-}
-#gmRecordPicker div:hover {
-  background: #d4af37;
-  color: #000;
-}
-/* Hide scrollbars on mobile table for better feel */
-@media (max-width: 700px) {
-  .results {
-    overflow-x: hidden;
-  }
-}
+
 
 /* Misc: Minor shadow for inputs/forms */
 input, textarea {

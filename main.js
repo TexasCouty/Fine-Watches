@@ -189,6 +189,27 @@ function cancelGreyMarketForm() {
   hideRecordPicker();
 }
 
+function showEditGreyMarketForm(data) {
+  currentEditingGMModel = data.Model;
+  document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
+  document.getElementById('gm_date_entered').value = data["Date Entered"] || '';
+  document.getElementById('gm_year').value = data.Year || '';
+  document.getElementById('gm_model').value = data.Model || '';
+  document.getElementById('gm_model_name').value = data["Model Name"] || '';
+  document.getElementById('gm_nickname').value = data["Nickname or Dial"] || '';
+  document.getElementById('gm_bracelet').value = data.Bracelet || '';
+  document.getElementById('gm_bracelet_metal_color').value = data["Bracelet Metal/Color"] || '';
+  document.getElementById('gm_price').value = data.Price || '';
+  document.getElementById('gm_full_set').value = data["Full Set"] || '';
+  document.getElementById('gm_retail_ready').value = data["Retail Ready"] || '';
+  document.getElementById('gm_current_retail').value = data["Current Retail (Not Inc Tax)"] || '';
+  document.getElementById('gm_dealer').value = data.Dealer || '';
+  document.getElementById('gm_comments').value = data.Comments || '';
+  document.getElementById('gm_delete_button').style.display = 'inline-block';
+  document.getElementById('greyMarketFormContainer').style.display = 'block';
+  document.getElementById('results').innerHTML = '';
+}
+
 const modelNameInput = document.getElementById('gm_model_name');
 const recordPicker = document.getElementById('gmRecordPicker');
 
@@ -402,6 +423,7 @@ function sortTable(n) {
   }
 }
 
+// --- Make Edit Functions Global for Table Onclicks ---
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchGreyMarketData();
 });

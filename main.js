@@ -317,7 +317,7 @@ console.log('saveGreyMarketEntry called');
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
     "Model": newModel,
-    "Model Name": rawModelName.toUpperCase(),
+    "Model Name": rawModelName,
     "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
     "Bracelet": document.getElementById('gm_bracelet').value.trim(),
     "Bracelet Metal/Color": document.getElementById('gm_bracelet_metal_color').value.trim(),

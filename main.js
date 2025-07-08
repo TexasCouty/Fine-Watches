@@ -198,6 +198,8 @@ function cancelGreyMarketForm() {
   document.getElementById('greyMarketFormContainer').style.display = 'none';
   hideRecordPicker();
 }
+
+
 const modelNameInput = document.getElementById('gm_model_name');
 const recordPicker = document.getElementById('gmRecordPicker');
 
@@ -207,20 +209,29 @@ modelNameInput.addEventListener('input', function() {
     hideRecordPicker();
     return;
   }
-  // Filter suggestions to those that start with the typed text
   const filteredNames = modelNameSuggestions.filter(name => name.startsWith(val));
   if (filteredNames.length === 0) {
     hideRecordPicker();
     return;
   }
-
-  // Show picker with all matching suggestions, allowing user to pick or ignore
   showRecordPickerWithList(filteredNames);
+});
+
+modelNameInput.addEventListener('blur', function() {
+  // Delay hiding so clicks on picker register
+  setTimeout(() => {
+    hideRecordPicker();
+  }, 150);
+});
+
+document.addEventListener('click', function(event) {
+  if (!recordPicker.contains(event.target) && event.target !== modelNameInput) {
+    hideRecordPicker();
+  }
 });
 
 function showRecordPickerWithList(names) {
   recordPicker.innerHTML = '';
-  // For each matching model name, find all greyMarketData records for it
   const matchedRecords = [];
   names.forEach(name => {
     const recs = greyMarketData.filter(item => item['Model Name'] && item['Model Name'].toUpperCase() === name);
@@ -233,13 +244,20 @@ function showRecordPickerWithList(names) {
   matchedRecords.forEach(record => {
     const div = document.createElement('div');
     div.textContent = `${record.Model} | ${record['Nickname or Dial'] || ''} | ${record.Bracelet || ''}`;
-    div.addEventListener('click', () => {
+    div.addEventListener('mousedown', (e) => {
+      // mousedown, not click, to avoid blur hiding picker before event fires
+      e.preventDefault(); 
       autofillGreyMarketForm(record);
       hideRecordPicker();
     });
     recordPicker.appendChild(div);
   });
   recordPicker.style.display = 'block';
+}
+
+function hideRecordPicker() {
+  recordPicker.style.display = 'none';
+  recordPicker.innerHTML = '';
 }
 
 

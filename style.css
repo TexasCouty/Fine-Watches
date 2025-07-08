@@ -288,6 +288,9 @@ button:hover {
     gap: 7px;
     max-width: 170px;
   }
+#greyMarketTable thead {
+    display: none;
+  }
 }
 
 /* Table header & cell padding for large screens */

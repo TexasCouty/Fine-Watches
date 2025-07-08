@@ -283,12 +283,15 @@ function autofillGreyMarketForm(record) {
   document.getElementById('gm_delete_button').style.display = 'inline-block';
   currentEditingGMModel = record.Model;
 }
+
 async function saveGreyMarketEntry() {
   const rawModelName = document.getElementById('gm_model_name').value.trim();
+  const newModel = document.getElementById('gm_model').value.trim();
+
   const data = {
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
-    "Model": document.getElementById('gm_model').value.trim(),
+    "Model": newModel,
     "Model Name": rawModelName.toUpperCase(),
     "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
     "Bracelet": document.getElementById('gm_bracelet').value.trim(),
@@ -300,28 +303,39 @@ async function saveGreyMarketEntry() {
     "Dealer": document.getElementById('gm_dealer').value.trim(),
     "Comments": document.getElementById('gm_comments').value.trim()
   };
+
   if (!data.Model) {
     alert('Model is required!');
     return;
   }
+
   try {
     let url = '/.netlify/functions/addgreyMarket';
     let method = 'POST';
     let body = JSON.stringify(data);
-    if (currentEditingGMModel) {
+
+    // Only update if editing existing and Model field is unchanged
+    if (currentEditingGMModel && currentEditingGMModel === newModel) {
       url = '/.netlify/functions/updateGreyMarket';
       body = JSON.stringify({ Model: currentEditingGMModel, fields: data });
+    } else {
+      // Treat as new add if Model changed or not editing
+      currentEditingGMModel = null;
     }
+
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
     if (!res.ok) throw new Error('Network response was not ok');
+
     alert(currentEditingGMModel ? 'Grey Market entry updated' : 'Grey Market entry added');
     cancelGreyMarketForm();
     lookupGreyMarket();
+
   } catch (err) {
     alert('Error saving Grey Market entry: ' + err.message);
     console.error(err);
   }
 }
+
 async function deleteGreyMarketEntry() {
   if (!currentEditingGMModel) return;
   if (!confirm(`Are you sure you want to delete model "${currentEditingGMModel}"?`)) return;

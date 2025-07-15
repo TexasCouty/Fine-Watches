@@ -194,18 +194,18 @@ async function lookupGreyMarket() {
             ${img}
             <div>
               <p><strong>Model:</strong> ${item.Model}</p>
-              <p><strong>Date Entered: ${item["Date Entered"]}</p>
-              <p><strong>Year: ${item.Year}</p>
-              <p><strong>Model Name: ${item["Model Name"]}</p>
-              <p><strong>Nickname/Dial: ${item["Nickname or Dial"]}</p>
-              <p><strong>Bracelet: ${item.Bracelet}</p>
-              <p><strong>Bracelet Metal/Color: ${item["Bracelet Metal/Color"]}</p>
-              <p><strong>Full Set: ${item["Full Set"]}</p>
-              <p><strong>Retail Ready: ${item["Retail Ready"]}</p>
+              <p><strong>Date Entered:</strong> ${item["Date Entered"]}</p>
+              <p><strong>Year:</strong> ${item.Year}</p>
+              <p><strong>Model Name:</strong> ${item["Model Name"]}</p>
+              <p><strong>Nickname/Dial:</strong> ${item["Nickname or Dial"]}</p>
+              <p><strong>Bracelet:</strong> ${item.Bracelet}</p>
+              <p><strong>Bracelet Metal/Color:</strong> ${item["Bracelet Metal/Color"]}</p>
+              <p><strong>Full Set:</strong> ${item["Full Set"]}</p>
+              <p><strong>Retail Ready:</strong> ${item["Retail Ready"]}</p>
               <p><strong>Grey Market Price:</strong> ${item.Price || ''}</p>
-              <p><strong>Current Retail: ${item["Current Retail (Not Inc Tax)"]}</p>
-              <p><strong>Dealer: ${item.Dealer}</p>
-              <p><strong>Comments: ${item.Comments}</p>
+              <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
+              <p><strong>Dealer:</strong> ${item.Dealer}</p>
+              <p><strong>Comments:</strong> ${item.Comments}</p>
               <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
             </div>
           </div>`;

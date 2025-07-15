@@ -202,6 +202,7 @@ async function lookupGreyMarket() {
               <p>Bracelet Metal/Color: ${item["Bracelet Metal/Color"]}</p>
               <p>Full Set: ${item["Full Set"]}</p>
               <p>Retail Ready: ${item["Retail Ready"]}</p>
+              <p><strong>Grey Market Price:</strong> ${item.Price || ''}</p>
               <p>Current Retail: ${item["Current Retail (Not Inc Tax)"]}</p>
               <p>Dealer: ${item.Dealer}</p>
               <p>Comments: ${item.Comments}</p>
@@ -212,9 +213,9 @@ async function lookupGreyMarket() {
     } else {
       // Mobile: existing table layout
       const headers = [
-        "Date Entered","Year","Model","Model Name","Nickname or Dial",
-        "Bracelet","Bracelet Metal/Color","Price","Full Set","Retail Ready",
-        "Current Retail","Dealer","Comments","Actions"
+  	"Date Entered","Year","Model","Model Name","Nickname or Dial",
+  	"Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
+  	"Current Retail","Dealer","Comments","Actions"
       ];
       html = `<table id="greyMarketTable"><thead><tr>${
         headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
@@ -232,7 +233,7 @@ async function lookupGreyMarket() {
           <td data-label="Nickname or Dial">${item["Nickname or Dial"]||''}</td>
           <td data-label="Bracelet">${item.Bracelet||''}</td>
           <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"]||''}</td>
-          <td data-label="Price">${item.Price||''}</td>
+	  <td data-label="Grey Market Price">${item.Price||''}</td>
           <td data-label="Full Set">${item["Full Set"]||''}</td>
           <td data-label="Retail Ready">${item["Retail Ready"]||''}</td>
           <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>

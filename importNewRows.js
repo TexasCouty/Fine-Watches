@@ -1,6 +1,7 @@
 const fs = require('fs');
 const csv = require('csv-parser');
 const { MongoClient } = require('mongodb');
+const path = require('path');
 
 const MONGO_URI = process.env.MONGO_URI; // Use your existing environment variable
 const CSV_FILE = 'grey_market_refs.csv';  // Keep your actual CSV filename
@@ -27,13 +28,30 @@ async function importNewRows() {
         console.log(`Loaded ${records.length} records from CSV`);
 
         for (const record of records) {
+          // ✅ Match your real folder name exactly
+          const expectedImage = `${record['Unique ID']}-001.jpg`;
+          const imagePath = path.join(__dirname, 'assets/Grey Market Assets', expectedImage);
+          if (fs.existsSync(imagePath)) {
+            record['ImageFilename'] = expectedImage;
+          }
+
           if (!record['Unique ID']) {
             console.log('Skipping record without Unique ID:', record);
             continue;
           }
+
           const exists = await collection.findOne({ 'Unique ID': record['Unique ID'] });
+
           if (exists) {
-            console.log(`Skipping existing Unique ID: ${record['Unique ID']}`);
+            if (!exists.ImageFilename && record.ImageFilename) {
+              await collection.updateOne(
+                { 'Unique ID': record['Unique ID'] },
+                { $set: { ImageFilename: record.ImageFilename } }
+              );
+              console.log(`Updated ImageFilename for Unique ID: ${record['Unique ID']}`);
+            } else {
+              console.log(`Skipping existing Unique ID: ${record['Unique ID']}`);
+            }
           } else {
             await collection.insertOne(record);
             console.log(`Inserted new Unique ID: ${record['Unique ID']}`);

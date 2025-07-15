@@ -1,6 +1,5 @@
 // main.js
 
-
 let currentEditingRef = null;
 let currentEditingGMModel = null;
 let greyMarketData = [];
@@ -116,7 +115,7 @@ async function lookupReference() {
       return;
     }
     resultsDiv.innerHTML = data.map(item => {
-      const imagesHtml = (item.images || []).map(filename => 
+      const imagesHtml = (item.images || []).map(filename =>
         `<img src="assets/${filename}" alt="${item.reference} image" class="watch-image" />`
       ).join('');
       return `
@@ -163,8 +162,7 @@ function clearGreyMarketForm() {
     'gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set',
     'gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'
   ].forEach(id => {
-    if(id !== 'gm_model_name')
-      document.getElementById(id).value = '';
+    if(id !== 'gm_model_name') document.getElementById(id).value = '';
   });
   currentEditingGMModel = null;
   document.getElementById('gm_delete_button').style.display = 'none';
@@ -200,7 +198,6 @@ function cancelGreyMarketForm() {
   hideRecordPicker();
 }
 
-
 const modelNameInput = document.getElementById('gm_model_name');
 const recordPicker = document.getElementById('gmRecordPicker');
 
@@ -217,20 +214,14 @@ modelNameInput.addEventListener('input', function() {
   }
   showRecordPickerWithList(filteredNames);
 });
-
 modelNameInput.addEventListener('blur', function() {
-  // Delay hiding so clicks on picker register
-  setTimeout(() => {
-    hideRecordPicker();
-  }, 150);
+  setTimeout(() => hideRecordPicker(), 150);
 });
-
 document.addEventListener('click', function(event) {
   if (!recordPicker.contains(event.target) && event.target !== modelNameInput) {
     hideRecordPicker();
   }
 });
-
 function showRecordPickerWithList(names) {
   recordPicker.innerHTML = '';
   const matchedRecords = [];
@@ -238,46 +229,11 @@ function showRecordPickerWithList(names) {
     const recs = greyMarketData.filter(item => item['Model Name'] && item['Model Name'].toUpperCase() === name);
     matchedRecords.push(...recs);
   });
-  if (matchedRecords.length === 0) {
-    hideRecordPicker();
-    return;
-  }
+  if (matchedRecords.length === 0) return hideRecordPicker();
   matchedRecords.forEach(record => {
     const div = document.createElement('div');
     div.textContent = `${record.Model} | ${record['Nickname or Dial'] || ''} | ${record.Bracelet || ''}`;
-    div.addEventListener('mousedown', (e) => {
-      // mousedown, not click, to avoid blur hiding picker before event fires
-      e.preventDefault(); 
-      autofillGreyMarketForm(record);
-      hideRecordPicker();
-    });
-    recordPicker.appendChild(div);
-  });
-  recordPicker.style.display = 'block';
-}
-
-function hideRecordPicker() {
-  recordPicker.style.display = 'none';
-  recordPicker.innerHTML = '';
-}
-
-
-function showRecordPickerForModelName(modelName) {
-  const matches = greyMarketData.filter(item => 
-    item['Model Name'] && item['Model Name'].toUpperCase() === modelName.toUpperCase()
-  );
-  if (matches.length === 0) {
-    hideRecordPicker();
-    return;
-  }
-  recordPicker.innerHTML = '';
-  matches.forEach(record => {
-    const div = document.createElement('div');
-    div.textContent = `${record.Model} | ${record['Nickname or Dial'] || ''} | ${record.Bracelet || ''}`;
-    div.addEventListener('click', () => {
-      autofillGreyMarketForm(record);
-      hideRecordPicker();
-    });
+    div.addEventListener('mousedown', e => { e.preventDefault(); autofillGreyMarketForm(record); hideRecordPicker(); });
     recordPicker.appendChild(div);
   });
   recordPicker.style.display = 'block';
@@ -287,13 +243,9 @@ function hideRecordPicker() {
   recordPicker.innerHTML = '';
 }
 function autofillGreyMarketForm(record) {
-  document.getElementById('gm_date_entered').value = '';
-  document.getElementById('gm_year').value = '';
-  document.getElementById('gm_price').value = '';
-  document.getElementById('gm_full_set').value = '';
-  document.getElementById('gm_retail_ready').value = '';
-  document.getElementById('gm_dealer').value = '';
-  document.getElementById('gm_comments').value = '';
+  ['gm_date_entered','gm_year','gm_price','gm_full_set','gm_retail_ready','gm_dealer','gm_comments'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
   document.getElementById('gm_model').value = record.Model || '';
   document.getElementById('gm_model_name').value = record['Model Name'] || '';
   document.getElementById('gm_nickname').value = record['Nickname or Dial'] || '';
@@ -304,14 +256,10 @@ function autofillGreyMarketForm(record) {
 }
 
 async function saveGreyMarketEntry() {
-console.log('saveGreyMarketEntry called');
+  console.log('saveGreyMarketEntry called');
   const rawModelName = document.getElementById('gm_model_name').value.trim();
   const newModel = document.getElementById('gm_model').value.trim();
-
-  console.log('Saving Grey Market Entry');
-  console.log('Input Model:', newModel);
-  console.log('Input Model Name:', rawModelName);
-  console.log('Current Editing Model:', currentEditingGMModel);
+  console.log('Saving Grey Market Entry', rawModelName, newModel, currentEditingGMModel);
 
   const data = {
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
@@ -349,9 +297,7 @@ console.log('saveGreyMarketEntry called');
     }
 
     const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
-
     console.log('Fetch response status:', res.status);
-
     if (!res.ok) throw new Error('Network response was not ok');
 
     alert(currentEditingGMModel ? 'Grey Market entry updated' : 'Grey Market entry added');
@@ -363,7 +309,6 @@ console.log('saveGreyMarketEntry called');
     console.error(err);
   }
 }
-
 
 async function deleteGreyMarketEntry() {
   if (!currentEditingGMModel) return;
@@ -383,6 +328,8 @@ async function deleteGreyMarketEntry() {
     console.error(err);
   }
 }
+
+// --- Grey Market Lookup (updated: cards on desktop, table on mobile) ---
 async function lookupGreyMarket() {
   const ref = document.getElementById('greyMarketInput').value.trim();
   const resultsDiv = document.getElementById('results');
@@ -400,40 +347,67 @@ async function lookupGreyMarket() {
       resultsDiv.innerHTML = `<div>No Grey Market matches found.</div>`;
       return;
     }
-    // Table headers and data-labels for mobile!
-    const headers = [
-      "Date Entered", "Year", "Model", "Model Name", "Nickname or Dial",
-      "Bracelet", "Bracelet Metal/Color", "Price", "Full Set", "Retail Ready",
-      "Current Retail", "Dealer", "Comments", "Actions"
-    ];
-    let html = `<table id="greyMarketTable">
-      <thead><tr>
-        ${headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')}
-      </tr></thead>
-      <tbody>`;
-    data.forEach(item => {
-      html += `<tr>
-	<td data-label="Date Entered">${item["Date Entered"] || ''}</td>
-	<td data-label="Year">${item.Year || ''}</td>
-	<td data-label="Model">
- 	 ${item.Model || ''}
- 	 ${item.ImageFilename ? `<br><img src="assets/grey_market/${item.ImageFilename}" alt="${item.Model}" style="max-width:120px; margin-top:5px;" onerror="this.style.display='none';">` : ''}
-	</td>
-	<td data-label="Model Name">${item["Model Name"] || ''}</td>
-	<td data-label="Nickname or Dial">${item["Nickname or Dial"] || ''}</td>
-	<td data-label="Bracelet">${item.Bracelet || ''}</td>
-	<td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"] || ''}</td>
-	<td data-label="Price">${item.Price || ''}</td>
-	<td data-label="Full Set">${item["Full Set"] || ''}</td>
-	<td data-label="Retail Ready">${item["Retail Ready"] || ''}</td>
-	<td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"] || ''}</td>
-	<td data-label="Dealer">${item.Dealer || ''}</td>
-	<td data-label="Comments">${item.Comments || ''}</td>
-	<td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button></td>
 
-      </tr>`;
-    });
-    html += `</tbody></table>`;
+    let html = '';
+
+    // Desktop: card layout
+    if (window.innerWidth >= 768) {
+      html = data.map(item => {
+        const imageHTML = item.ImageFilename
+          ? `<img src="assets/grey_market/${item.ImageFilename}" alt="${item.Model}" style="max-width: 200px; margin-right: 20px; border-radius: 8px;" onerror="this.style.display='none';" />`
+          : '';
+        return `
+          <div class="card" style="display: flex; align-items: flex-start; gap: 20px; padding: 15px; margin-bottom: 20px; border: 1px solid gold; border-radius: 10px;">
+            ${imageHTML}
+            <div>
+              <p><strong>${item.Model || 'Unknown Model'}</strong></p>
+              <p>Model Name: ${item["Model Name"] || ''}</p>
+              <p>Nickname/Dial: ${item["Nickname or Dial"] || ''}</p>
+              <p>Bracelet: ${item.Bracelet || ''}</p>
+              <p>Price: ${item.Price || ''}</p>
+              <p>Dealer: ${item.Dealer || ''}</p>
+              <p>Comments: ${item.Comments || ''}</p>
+              <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      // Mobile: existing table layout
+      const headers = [
+        "Date Entered", "Year", "Model", "Model Name", "Nickname or Dial",
+        "Bracelet", "Bracelet Metal/Color", "Price", "Full Set", "Retail Ready",
+        "Current Retail", "Dealer", "Comments", "Actions"
+      ];
+      html = `<table id="greyMarketTable">
+        <thead><tr>
+          ${headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')}
+        </tr></thead>
+        <tbody>`;
+      data.forEach(item => {
+        html += `<tr>
+          <td data-label="Date Entered">${item["Date Entered"] || ''}</td>
+          <td data-label="Year">${item.Year || ''}</td>
+          <td data-label="Model">
+            ${item.Model || ''}
+            ${item.ImageFilename ? `<br><img src="assets/grey_market/${item.ImageFilename}" alt="${item.Model}" style="max-width:120px; margin-top:5px;" onerror="this.style.display='none';">` : ''}
+          </td>
+          <td data-label="Model Name">${item["Model Name"] || ''}</td>
+          <td data-label="Nickname or Dial">${item["Nickname or Dial"] || ''}</td>
+          <td data-label="Bracelet">${item.Bracelet || ''}</td>
+          <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"] || ''}</td>
+          <td data-label="Price">${item.Price || ''}</td>
+          <td data-label="Full Set">${item["Full Set"] || ''}</td>
+          <td data-label="Retail Ready">${item["Retail Ready"] || ''}</td>
+          <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"] || ''}</td>
+          <td data-label="Dealer">${item.Dealer || ''}</td>
+          <td data-label="Comments">${item.Comments || ''}</td>
+          <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    }
+
     resultsDiv.innerHTML = html;
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
@@ -445,39 +419,24 @@ async function lookupGreyMarket() {
 function sortTable(n) {
   const table = document.getElementById("greyMarketTable");
   if (!table) return;
-  let switching = true;
-  let dir = "asc";
-  let switchcount = 0;
+  let switching = true, dir = "asc", switchcount = 0;
   while (switching) {
     switching = false;
     const rows = table.rows;
-    let shouldSwitch;
-    let i = 1;
-    for (; i < (rows.length - 1); i++) {
-      shouldSwitch = false;
+    for (let i = 1; i < rows.length - 1; i++) {
+      let shouldSwitch = false;
       let x = rows[i].getElementsByTagName("TD")[n];
       let y = rows[i + 1].getElementsByTagName("TD")[n];
-      if (dir === "asc") {
-        if ((x.textContent || x.innerText).toLowerCase() > (y.textContent || y.innerText).toLowerCase()) {
-          shouldSwitch = true;
-          break;
-        }
-      } else if (dir === "desc") {
-        if ((x.textContent || x.innerText).toLowerCase() < (y.textContent || y.innerText).toLowerCase()) {
-          shouldSwitch = true;
-          break;
-        }
+      if ((dir === "asc" && (x.textContent || x.innerText).toLowerCase() > (y.textContent || y.innerText).toLowerCase()) ||
+          (dir === "desc" && (x.textContent || x.innerText).toLowerCase() < (y.textContent || y.innerText).toLowerCase())) {
+        shouldSwitch = true; break;
       }
     }
     if (shouldSwitch) {
       rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      switchcount++;
-    } else {
-      if (switchcount === 0 && dir === "asc") {
-        dir = "desc";
-        switching = true;
-      }
+      switching = true; switchcount++;
+    } else if (switchcount === 0 && dir === "asc") {
+      dir = "desc"; switching = true;
     }
   }
 }
@@ -487,7 +446,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await fetchGreyMarketData();
 });
 
-// --- Expose edit functions and sortTable globally (for inline handlers) ---
+// --- Expose for inline handlers ---
 window.showEditReferenceForm = showEditReferenceForm;
 window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.sortTable = sortTable;

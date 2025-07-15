@@ -413,20 +413,24 @@ async function lookupGreyMarket() {
       <tbody>`;
     data.forEach(item => {
       html += `<tr>
-        <td data-label="Date Entered">${item["Date Entered"] || ''}</td>
-        <td data-label="Year">${item.Year || ''}</td>
-        <td data-label="Model">${item.Model || ''}</td>
-        <td data-label="Model Name">${item["Model Name"] || ''}</td>
-        <td data-label="Nickname or Dial">${item["Nickname or Dial"] || ''}</td>
-        <td data-label="Bracelet">${item.Bracelet || ''}</td>
-        <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"] || ''}</td>
-        <td data-label="Price">${item.Price || ''}</td>
-        <td data-label="Full Set">${item["Full Set"] || ''}</td>
-        <td data-label="Retail Ready">${item["Retail Ready"] || ''}</td>
-        <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"] || ''}</td>
-        <td data-label="Dealer">${item.Dealer || ''}</td>
-        <td data-label="Comments">${item.Comments || ''}</td>
-        <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button></td>
+	<td data-label="Date Entered">${item["Date Entered"] || ''}</td>
+	<td data-label="Year">${item.Year || ''}</td>
+	<td data-label="Model">
+ 	 ${item.Model || ''}
+ 	 ${item.ImageFilename ? `<br><img src="assets/grey_market/${item.ImageFilename}" alt="${item.Model}" style="max-width:120px; margin-top:5px;" onerror="this.style.display='none';">` : ''}
+	</td>
+	<td data-label="Model Name">${item["Model Name"] || ''}</td>
+	<td data-label="Nickname or Dial">${item["Nickname or Dial"] || ''}</td>
+	<td data-label="Bracelet">${item.Bracelet || ''}</td>
+	<td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"] || ''}</td>
+	<td data-label="Price">${item.Price || ''}</td>
+	<td data-label="Full Set">${item["Full Set"] || ''}</td>
+	<td data-label="Retail Ready">${item["Retail Ready"] || ''}</td>
+	<td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"] || ''}</td>
+	<td data-label="Dealer">${item.Dealer || ''}</td>
+	<td data-label="Comments">${item.Comments || ''}</td>
+	<td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button></td>
+
       </tr>`;
     });
     html += `</tbody></table>`;

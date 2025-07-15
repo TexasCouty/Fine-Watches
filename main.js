@@ -16,18 +16,93 @@ async function fetchGreyMarketData() {
 }
 
 function clearGreyMarketForm() {
-  const ids = ['gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname','gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set','gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'];
+  const ids = [
+    'gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname','gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set','gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'
+  ];
   ids.forEach(id => { if (id !== 'gm_model_name') document.getElementById(id).value = ''; });
   currentEditingGMModel = null;
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
+  document.getElementById('greyMarketFormContainer').style.display = 'none';
 }
 
-function showAddGreyMarketForm() { /* unchanged */ }
-function showEditGreyMarketForm(record) { /* unchanged */ }
-function cancelGreyMarketForm() { /* unchanged */ }
+function showAddGreyMarketForm() {
+  clearGreyMarketForm();
+  document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
+  document.getElementById('greyMarketFormContainer').style.display = 'block';
+  currentEditingGMModel = null;
+  document.getElementById('gm_delete_button').style.display = 'none';
+}
 
-// Autocomplete functions unchanged...
+function showEditGreyMarketForm(record) {
+  document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
+  document.getElementById('greyMarketFormContainer').style.display = 'block';
+  document.getElementById('gm_date_entered').value = record['Date Entered'] || '';
+  document.getElementById('gm_year').value = record['Year'] || '';
+  document.getElementById('gm_model').value = record['Model'] || '';
+  document.getElementById('gm_model_name').value = record['Model Name'] || '';
+  document.getElementById('gm_nickname').value = record['Nickname or Dial'] || '';
+  document.getElementById('gm_bracelet').value = record['Bracelet'] || '';
+  document.getElementById('gm_bracelet_metal_color').value = record['Bracelet Metal/Color'] || '';
+  document.getElementById('gm_price').value = record['Price'] || '';
+  document.getElementById('gm_full_set').value = record['Full Set'] || '';
+  document.getElementById('gm_retail_ready').value = record['Retail Ready'] || '';
+  document.getElementById('gm_current_retail').value = record['Current Retail (Not Inc Tax)'] || '';
+  document.getElementById('gm_dealer').value = record['Dealer'] || '';
+  document.getElementById('gm_comments').value = record['Comments'] || '';
+  currentEditingGMModel = record['Model'];
+  document.getElementById('gm_delete_button').style.display = 'inline-block';
+}
+
+function cancelGreyMarketForm() {
+  clearGreyMarketForm();
+}
+
+async function saveGreyMarketEntry() {
+  // Collect form values
+  const Model = document.getElementById('gm_model').value.trim();
+  const fields = {
+    "Date Entered": document.getElementById('gm_date_entered').value.trim(),
+    "Year": document.getElementById('gm_year').value.trim(),
+    "Model": Model,
+    "Model Name": document.getElementById('gm_model_name').value.trim(),
+    "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
+    "Bracelet": document.getElementById('gm_bracelet').value.trim(),
+    "Bracelet Metal/Color": document.getElementById('gm_bracelet_metal_color').value.trim(),
+    "Price": document.getElementById('gm_price').value.trim(),
+    "Full Set": document.getElementById('gm_full_set').value.trim(),
+    "Retail Ready": document.getElementById('gm_retail_ready').value.trim(),
+    "Current Retail (Not Inc Tax)": document.getElementById('gm_current_retail').value.trim(),
+    "Dealer": document.getElementById('gm_dealer').value.trim(),
+    "Comments": document.getElementById('gm_comments').value.trim()
+  };
+
+  // Use model from the current editing context
+  const modelKey = currentEditingGMModel || Model;
+  if (!modelKey) {
+    alert('Model is required.');
+    return;
+  }
+
+  try {
+    const res = await fetch('/.netlify/functions/updateGreyMarket', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ Model: modelKey, fields })
+    });
+    const result = await res.json();
+    if (res.ok) {
+      alert('Entry updated!');
+      clearGreyMarketForm();
+      lookupGreyMarket(); // refresh results
+    } else {
+      alert('Error: ' + (result.error || 'Could not update entry'));
+    }
+  } catch (e) {
+    alert('Network or server error');
+    console.error(e);
+  }
+}
 
 // --- Grey Market Lookup (desktop: card, mobile: table) ---
 async function lookupGreyMarket() {
@@ -147,13 +222,20 @@ function sortTable(n) {
   }
 }
 
+// --- (Optional) Autocomplete/Record Picker for Model Name (if used) ---
+function hideRecordPicker() {
+  const picker = document.getElementById('gmRecordPicker');
+  if (picker) picker.style.display = 'none';
+}
+
 // --- DOMContentLoaded ---
 window.addEventListener('DOMContentLoaded', async () => {
   await fetchGreyMarketData();
 });
 
 // --- Expose for inline handlers ---
+window.showAddGreyMarketForm = showAddGreyMarketForm;
 window.showEditGreyMarketForm = showEditGreyMarketForm;
-window.sortTable = sortTable;
-// If you have save functionality, keep this exposed
+window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
+window.sortTable = sortTable;

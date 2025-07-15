@@ -1,4 +1,4 @@
-onst { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGO_URI;
 let cachedClient = null;

@@ -1,144 +1,8 @@
-// main.js
-
-let currentEditingRef = null;
-let currentEditingGMModel = null;
+// --- Grey Market CRUD & Autocomplete ---
 let greyMarketData = [];
 let modelNameSuggestions = [];
+let currentEditingGMModel = null;
 
-// --- Reference Lookup CRUD ---
-function showAddReferenceForm() {
-  currentEditingRef = null;
-  document.getElementById('formTitle').innerText = 'Add New Reference';
-  clearReferenceForm();
-  document.getElementById('deleteButton').style.display = 'none';
-  document.getElementById('refFormContainer').style.display = 'block';
-  document.getElementById('results').innerHTML = '';
-}
-function showEditReferenceForm(data) {
-  currentEditingRef = data.reference;
-  document.getElementById('formTitle').innerText = 'Edit Reference';
-  document.getElementById('ref_reference').value = data.reference || '';
-  document.getElementById('ref_manufacturer').value = data.manufacturer || '';
-  document.getElementById('ref_collection').value = data.collection || '';
-  document.getElementById('ref_retail_price').value = data.retail_price || '';
-  document.getElementById('ref_dial').value = data.dial || '';
-  document.getElementById('ref_case').value = data.case || '';
-  document.getElementById('ref_bracelet').value = data.bracelet || '';
-  document.getElementById('ref_movement').value = data.movement || '';
-  document.getElementById('ref_year_introduced').value = data.year_introduced || '';
-  document.getElementById('ref_notes').value = data.notes || '';
-  document.getElementById('ref_images').value = (data.images || []).join(', ');
-  document.getElementById('deleteButton').style.display = 'inline-block';
-  document.getElementById('refFormContainer').style.display = 'block';
-  document.getElementById('results').innerHTML = '';
-}
-function clearReferenceForm() {
-  [
-    'ref_reference','ref_manufacturer','ref_collection','ref_retail_price','ref_dial',
-    'ref_case','ref_bracelet','ref_movement','ref_year_introduced','ref_notes','ref_images'
-  ].forEach(id => document.getElementById(id).value = '');
-}
-function cancelReferenceForm() {
-  document.getElementById('refFormContainer').style.display = 'none';
-}
-async function saveReference() {
-  const imagesRaw = document.getElementById('ref_images').value.trim();
-  const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()) : [];
-  const data = {
-    reference: document.getElementById('ref_reference').value.trim(),
-    manufacturer: document.getElementById('ref_manufacturer').value.trim(),
-    collection: document.getElementById('ref_collection').value.trim(),
-    retail_price: document.getElementById('ref_retail_price').value.trim(),
-    dial: document.getElementById('ref_dial').value.trim(),
-    case: document.getElementById('ref_case').value.trim(),
-    bracelet: document.getElementById('ref_bracelet').value.trim(),
-    movement: document.getElementById('ref_movement').value.trim(),
-    year_introduced: document.getElementById('ref_year_introduced').value.trim(),
-    notes: document.getElementById('ref_notes').value.trim(),
-    images: images
-  };
-  if (!data.reference) {
-    alert('Reference is required!');
-    return;
-  }
-  try {
-    let url = '/.netlify/functions/add';
-    let method = 'POST';
-    let body = JSON.stringify(data);
-    if (currentEditingRef) {
-      url = '/.netlify/functions/update';
-      body = JSON.stringify({ reference: currentEditingRef, fields: data });
-    }
-    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body });
-    if (!res.ok) throw new Error('Network response was not ok');
-    alert(currentEditingRef ? 'Reference updated' : 'Reference added');
-    cancelReferenceForm();
-    lookupReference();
-  } catch (err) {
-    alert('Error saving reference: ' + err.message);
-    console.error(err);
-  }
-}
-async function deleteReference() {
-  if (!currentEditingRef) return;
-  if (!confirm(`Are you sure you want to delete reference "${currentEditingRef}"?`)) return;
-  try {
-    const res = await fetch('/.netlify/functions/delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reference: currentEditingRef })
-    });
-    if (!res.ok) throw new Error('Network response was not ok');
-    alert('Reference deleted');
-    cancelReferenceForm();
-    lookupReference();
-  } catch (err) {
-    alert('Error deleting reference: ' + err.message);
-    console.error(err);
-  }
-}
-async function lookupReference() {
-  const ref = document.getElementById('refInput').value.trim();
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = '';
-  if (!ref) {
-    alert('Please enter a reference number.');
-    return;
-  }
-  resultsDiv.innerHTML = '<div>Searching...</div>';
-  try {
-    const res = await fetch(`/.netlify/functions/lookup?ref=${encodeURIComponent(ref)}`);
-    if (!res.ok) throw new Error('Network response was not ok');
-    const data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) {
-      resultsDiv.innerHTML = `<div>No Reference matches found.</div><button onclick="showAddReferenceForm()">Add New Reference</button>`;
-      return;
-    }
-    resultsDiv.innerHTML = data.map(item => {
-      const imagesHtml = (item.images || []).map(fn => `<img src="assets/${fn}" class="watch-image" />`).join('');
-      return `
-        <div class="card">
-          <div class="card-images">${imagesHtml}</div>
-          <div>
-            <p class="manufacturer-line">${item.manufacturer} — Ref: ${item.reference}</p>
-            <p>Collection: ${item.collection}</p>
-            <p>Retail Price: ${item.retail_price}</p>
-            <p>Dial: ${item.dial}</p>
-            <p>Case: ${item.case}</p>
-            <p>Bracelet: ${item.bracelet}</p>
-            <p>Movement: ${item.movement}</p>
-            <p><strong>Notes:</strong> ${item.notes}</p>
-            <button onclick='showEditReferenceForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
-          </div>
-        </div>`;
-    }).join('');
-  } catch (err) {
-    resultsDiv.innerHTML = `<div>Error fetching reference data.</div>`;
-    console.error(err);
-  }
-}
-
-// --- Grey Market CRUD & Autocomplete ---
 async function fetchGreyMarketData() {
   try {
     const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
@@ -150,6 +14,7 @@ async function fetchGreyMarketData() {
     console.error('Error loading grey market data:', e);
   }
 }
+
 function clearGreyMarketForm() {
   const ids = ['gm_date_entered','gm_year','gm_model','gm_model_name','gm_nickname','gm_bracelet','gm_bracelet_metal_color','gm_price','gm_full_set','gm_retail_ready','gm_current_retail','gm_dealer','gm_comments'];
   ids.forEach(id => { if (id !== 'gm_model_name') document.getElementById(id).value = ''; });
@@ -157,6 +22,7 @@ function clearGreyMarketForm() {
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
 }
+
 function showAddGreyMarketForm() { /* unchanged */ }
 function showEditGreyMarketForm(record) { /* unchanged */ }
 function cancelGreyMarketForm() { /* unchanged */ }
@@ -211,11 +77,11 @@ async function lookupGreyMarket() {
           </div>`;
       }).join('');
     } else {
-      // Mobile: existing table layout
+      // Mobile: table layout
       const headers = [
-  	"Date Entered","Year","Model","Model Name","Nickname or Dial",
-  	"Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
-  	"Current Retail","Dealer","Comments","Actions"
+        "Date Entered","Year","Model","Model Name","Nickname or Dial",
+        "Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
+        "Current Retail","Dealer","Comments","Actions"
       ];
       html = `<table id="greyMarketTable"><thead><tr>${
         headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
@@ -233,7 +99,7 @@ async function lookupGreyMarket() {
           <td data-label="Nickname or Dial">${item["Nickname or Dial"]||''}</td>
           <td data-label="Bracelet">${item.Bracelet||''}</td>
           <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"]||''}</td>
-	  <td data-label="Grey Market Price">${item.Price||''}</td>
+          <td data-label="Grey Market Price">${item.Price||''}</td>
           <td data-label="Full Set">${item["Full Set"]||''}</td>
           <td data-label="Retail Ready">${item["Retail Ready"]||''}</td>
           <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
@@ -287,7 +153,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // --- Expose for inline handlers ---
-window.showEditReferenceForm = showEditReferenceForm;
 window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.sortTable = sortTable;
+// If you have save functionality, keep this exposed
 window.saveGreyMarketEntry = saveGreyMarketEntry;

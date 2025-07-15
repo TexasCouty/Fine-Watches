@@ -13,54 +13,7 @@
 
     <div class="lookup-grid">
 
-      <!-- Reference Lookup Section -->
-      <div class="lookup-section">
-        <h2>Reference Lookup</h2>
-        <input type="text" id="refInput" placeholder="Enter Reference Number" />
-        <button onclick="lookupReference()">Search Reference</button>
-        <button onclick="showAddReferenceForm()">Add New Reference</button>
-
-        <div id="refFormContainer" style="margin-top:20px; display:none;">
-          <h3 id="formTitle">Add New Reference</h3>
-          <label for="ref_reference">Reference</label>
-          <input id="ref_reference" type="text" />
-
-          <label for="ref_manufacturer">Manufacturer</label>
-          <input id="ref_manufacturer" type="text" />
-
-          <label for="ref_collection">Collection</label>
-          <input id="ref_collection" type="text" />
-
-          <label for="ref_retail_price">Retail Price</label>
-          <input id="ref_retail_price" type="text" />
-
-          <label for="ref_dial">Dial</label>
-          <input id="ref_dial" type="text" />
-
-          <label for="ref_case">Case</label>
-          <input id="ref_case" type="text" />
-
-          <label for="ref_bracelet">Bracelet</label>
-          <input id="ref_bracelet" type="text" />
-
-          <label for="ref_movement">Movement</label>
-          <input id="ref_movement" type="text" />
-
-          <label for="ref_year_introduced">Year Introduced</label>
-          <input id="ref_year_introduced" type="text" />
-
-          <label for="ref_notes">Notes</label>
-          <textarea id="ref_notes" rows="3"></textarea>
-
-          <label for="ref_images">Images (comma-separated filenames)</label>
-          <input id="ref_images" type="text" placeholder="e.g. 127335-0001.avif, 127335-0002.jpg" />
-
-          <button onclick="saveReference()">Save</button>
-          <button onclick="cancelReferenceForm()">Cancel</button>
-          <button id="deleteButton" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteReference()">Delete</button>
-        </div>
-      </div>
-
+      
       <!-- Grey Market Lookup Section -->
       <div class="lookup-section" style="position:relative;">
         <h2>Grey Market Lookup</h2>

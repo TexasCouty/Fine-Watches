@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+onst { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGO_URI;
 let cachedClient = null;
@@ -48,5 +48,7 @@ exports.handler = async (event) => {
     };
   }
 };
+
+
 
 

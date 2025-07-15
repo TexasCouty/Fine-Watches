@@ -193,7 +193,7 @@ async function lookupGreyMarket() {
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
             ${img}
             <div>
-              <p><strong>${item.Model}</strong></p>
+              <p><strong>$</strong>{item.Model}</p>
               <p><strong>Date Entered: ${item["Date Entered"]}</p>
               <p><strong>Year: ${item.Year}</p>
               <p><strong>Model Name: ${item["Model Name"]}</p>

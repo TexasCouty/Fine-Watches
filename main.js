@@ -53,7 +53,7 @@ function showEditGreyMarketForm(record) {
   currentEditingGMModel = record['Model'];
   document.getElementById('gm_delete_button').style.display = 'inline-block';
 
-  // ------ Add this block to handle showing the image ------
+  // Show the current image if present
   if (record.ImageFilename) {
     if (record.ImageFilename.startsWith('http')) {
       document.getElementById('gm_current_img').src = record.ImageFilename;
@@ -65,7 +65,6 @@ function showEditGreyMarketForm(record) {
     document.getElementById('gm_current_img').src = '';
     document.getElementById('gm_current_img').style.display = 'none';
   }
-  // --------------------------------------------------------
 }
 
 function cancelGreyMarketForm() {
@@ -197,7 +196,7 @@ async function lookupGreyMarket() {
           imgSrc = 'assets/grey_market/' + item.ImageFilename;
         }
         const img = imgSrc
-          ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
+          ? `<img src="${imgSrc}" class="enlargeable-img" style="max-width:200px; margin-right:20px; border-radius:8px; cursor:pointer;" onerror="this.style.display='none';" />`
           : '';
         return `
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
@@ -243,7 +242,7 @@ async function lookupGreyMarket() {
           <td data-label="Year">${item.Year||''}</td>
           <td data-label="Model">${item.Model||''}${
             imgSrc
-              ? `<br><img src="${imgSrc}" style="max-width:120px;margin-top:5px;" onerror="this.style.display='none';">`
+              ? `<br><img src="${imgSrc}" class="enlargeable-img" style="max-width:120px;margin-top:5px;cursor:pointer;" onerror="this.style.display='none';">`
               : ''
           }</td>
           <td data-label="Model Name">${item["Model Name"]||''}</td>
@@ -263,6 +262,10 @@ async function lookupGreyMarket() {
     }
 
     resultsDiv.innerHTML = html;
+
+    // Attach modal handlers for all enlargeable images
+    addImageModalHandlers();
+
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
@@ -302,6 +305,32 @@ function sortTable(n) {
 function hideRecordPicker() {
   const picker = document.getElementById('gmRecordPicker');
   if (picker) picker.style.display = 'none';
+}
+
+// --- Enlarge Image Modal ---
+document.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('imgModal');
+  const modalImg = document.getElementById('imgModalImg');
+  if (modal && modalImg) {
+    modal.onclick = () => modal.style.display = 'none';
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') modal.style.display = 'none';
+    });
+  }
+});
+
+function addImageModalHandlers() {
+  document.querySelectorAll('.enlargeable-img').forEach(img => {
+    img.onclick = function(e) {
+      e.stopPropagation();
+      const modal = document.getElementById('imgModal');
+      const modalImg = document.getElementById('imgModalImg');
+      if (modal && modalImg) {
+        modalImg.src = this.src;
+        modal.style.display = 'flex';
+      }
+    };
+  });
 }
 
 // --- DOMContentLoaded ---

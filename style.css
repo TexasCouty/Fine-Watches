@@ -305,3 +305,25 @@ button:hover {
     line-height: 1.2;
   }
 }
+/* Image Modal for click-to-enlarge feature */
+.img-modal {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.9);
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1000;
+}
+.img-modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 0 32px #222;
+  border-radius: 18px;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+

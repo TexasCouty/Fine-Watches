@@ -3,7 +3,6 @@ let greyMarketData = [];
 let modelNameSuggestions = [];
 let currentEditingGMModel = null;
 
-// Fetch all grey market data for autocomplete and lookups
 async function fetchGreyMarketData() {
   try {
     const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
@@ -41,7 +40,6 @@ function showAddGreyMarketForm() {
   document.getElementById('gm_delete_button').style.display = 'none';
 }
 
-// The robust edit function (do not change unless adding fields)
 function showEditGreyMarketForm(record) {
   document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
   document.getElementById('greyMarketFormContainer').style.display = 'block';
@@ -116,18 +114,21 @@ async function saveGreyMarketEntry() {
   if (imageInput && imageInput.files && imageInput.files[0]) {
     const data = new FormData();
     data.append('file', imageInput.files[0]);
-    data.append('upload_preset', 'unsigned_preset'); // <-- YOUR upload preset name
-    const cloudName = 'dnmycgtl'; // <-- YOUR Cloudinary cloud name
+    data.append('upload_preset', 'unsigned_preset'); // <-- your upload preset, check dashboard
+    const cloudName = 'dnmycgtl'; // <-- your cloud name, check dashboard
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
       method: 'POST',
       body: data
     });
     const imgData = await res.json();
-    imageUrl = imgData.secure_url; // This is the hosted image URL
-
-    // Show the uploaded image immediately
-    document.getElementById('gm_current_img').src = imageUrl;
-    document.getElementById('gm_current_img').style.display = 'block';
+    if (imgData.secure_url) {
+      imageUrl = imgData.secure_url;
+      document.getElementById('gm_current_img').src = imageUrl;
+      document.getElementById('gm_current_img').style.display = 'block';
+    } else {
+      alert("Image upload failed: " + (imgData.error && imgData.error.message ? imgData.error.message : "Unknown error"));
+      return;
+    }
   } else if (document.getElementById('gm_current_img').src && document.getElementById('gm_current_img').style.display !== 'none') {
     imageUrl = document.getElementById('gm_current_img').src;
   }

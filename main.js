@@ -59,15 +59,18 @@ function showEditGreyMarketForm(record) {
   currentEditingGMModel = record['Model'];
   document.getElementById('gm_delete_button').style.display = 'inline-block';
 
-  // --- Show image preview if present ---
+  // --- Show image preview for Cloudinary URL or local filename ---
+  let imgSrc = '';
   if (record.ImageFilename) {
-    document.getElementById('gm_current_img').src = record.ImageFilename;
+    imgSrc = record.ImageFilename.startsWith('http')
+      ? record.ImageFilename
+      : `assets/grey_market/${record.ImageFilename}`;
+    document.getElementById('gm_current_img').src = imgSrc;
     document.getElementById('gm_current_img').style.display = 'block';
   } else {
     document.getElementById('gm_current_img').src = '';
     document.getElementById('gm_current_img').style.display = 'none';
   }
-  // Clear file input (in case user is editing after already picking a new file)
   if (document.getElementById('gm_image')) {
     document.getElementById('gm_image').value = '';
   }
@@ -114,8 +117,8 @@ async function saveGreyMarketEntry() {
   if (imageInput && imageInput.files && imageInput.files[0]) {
     const data = new FormData();
     data.append('file', imageInput.files[0]);
-    data.append('upload_preset', 'unsigned_preset'); // <-- your upload preset, check dashboard
-    const cloudName = 'dnmycgtl'; // <-- your cloud name, check dashboard
+    data.append('upload_preset', 'unsigned_preset'); // <-- your upload preset
+    const cloudName = 'dnymcygtl'; // <-- your cloud name
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
       method: 'POST',
       body: data
@@ -185,8 +188,14 @@ async function lookupGreyMarket() {
     // Desktop: card layout
     if (window.innerWidth >= 768) {
       html = data.map(item => {
-        const img = item.ImageFilename
-          ? `<img src="${item.ImageFilename}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
+        let imgSrc = '';
+        if (item.ImageFilename) {
+          imgSrc = item.ImageFilename.startsWith('http')
+            ? item.ImageFilename
+            : `assets/grey_market/${item.ImageFilename}`;
+        }
+        const img = imgSrc
+          ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
         return `
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
@@ -220,12 +229,18 @@ async function lookupGreyMarket() {
         headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
       }</tr></thead><tbody>`;
       data.forEach(item => {
+        let imgSrc = '';
+        if (item.ImageFilename) {
+          imgSrc = item.ImageFilename.startsWith('http')
+            ? item.ImageFilename
+            : `assets/grey_market/${item.ImageFilename}`;
+        }
         html += `<tr>
           <td data-label="Date Entered">${item["Date Entered"]||''}</td>
           <td data-label="Year">${item.Year||''}</td>
           <td data-label="Model">${item.Model||''}${
-            item.ImageFilename
-              ? `<br><img src="${item.ImageFilename}" style="max-width:120px;margin-top:5px;" onerror="this.style.display='none';">`
+            imgSrc
+              ? `<br><img src="${imgSrc}" style="max-width:120px;margin-top:5px;" onerror="this.style.display='none';">`
               : ''
           }</td>
           <td data-label="Model Name">${item["Model Name"]||''}</td>

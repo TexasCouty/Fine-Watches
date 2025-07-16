@@ -65,8 +65,6 @@ function showEditGreyMarketForm(record) {
     imgSrc = record.ImageFilename.startsWith('http')
       ? record.ImageFilename
       : `assets/grey_market/${record.ImageFilename}`;
-// --- Add debugging log ---
-  console.log('[EDIT] Model:', record.Model, '| ImageFilename:', record.ImageFilename, '| imgSrc:', imgSrc);
     document.getElementById('gm_current_img').src = imgSrc;
     document.getElementById('gm_current_img').style.display = 'block';
   } else {
@@ -77,16 +75,6 @@ function showEditGreyMarketForm(record) {
     document.getElementById('gm_image').value = '';
   }
 }
-
-function showEditGreyMarketFormByModel(model) {
-  const record = greyMarketData.find(x => x.Model === model);
-  if (record) {
-    showEditGreyMarketForm(record);
-  } else {
-    alert("Could not find record for " + model);
-  }
-}
-window.showEditGreyMarketFormByModel = showEditGreyMarketFormByModel;
 
 function cancelGreyMarketForm() {
   clearGreyMarketForm();
@@ -189,16 +177,13 @@ async function lookupGreyMarket() {
 
     // Desktop: card layout
     if (window.innerWidth >= 768) {
-      html = data.map(item => {
+      html = data.map((item, idx) => {
         let imgSrc = '';
         if (item.ImageFilename) {
           imgSrc = item.ImageFilename.startsWith('http')
             ? item.ImageFilename
             : `assets/grey_market/${item.ImageFilename}`;
         }
-	// --- Add debugging log ---
-        console.log('Model:', item.Model, '| ImageFilename:', item.ImageFilename, '| imgSrc:', imgSrc);
-
         const img = imgSrc
           ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
@@ -219,7 +204,7 @@ async function lookupGreyMarket() {
               <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
               <p><strong>Dealer:</strong> ${item.Dealer}</p>
               <p><strong>Comments:</strong> ${item.Comments}</p>
-              <button onclick='showEditGreyMarketFormByModel("${item.Model.replace(/"/g, '&quot;')}")'>Edit</button>
+              <button onclick='showEditGreyMarketFormByIndex(${idx})'>Edit</button>
             </div>
           </div>`;
       }).join('');
@@ -233,14 +218,13 @@ async function lookupGreyMarket() {
       html = `<table id="greyMarketTable"><thead><tr>${
         headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
       }</tr></thead><tbody>`;
-      data.forEach(item => {
+      data.forEach((item, idx) => {
         let imgSrc = '';
         if (item.ImageFilename) {
           imgSrc = item.ImageFilename.startsWith('http')
             ? item.ImageFilename
             : `assets/grey_market/${item.ImageFilename}`;
         }
-	console.log('[TABLE] Model:', item.Model, '| ImageFilename:', item.ImageFilename, '| imgSrc:', imgSrc);
         html += `<tr>
           <td data-label="Date Entered">${item["Date Entered"]||''}</td>
           <td data-label="Year">${item.Year||''}</td>
@@ -259,18 +243,31 @@ async function lookupGreyMarket() {
           <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
           <td data-label="Dealer">${item.Dealer||''}</td>
           <td data-label="Comments">${item.Comments||''}</td>
-          <td data-label="Actions"><button onclick='showEditGreyMarketFormByModel("${item.Model.replace(/"/g, '&quot;')}")'>Edit</button></td>
+          <td data-label="Actions"><button onclick='showEditGreyMarketFormByIndex(${idx})'>Edit</button></td>
         </tr>`;
       });
       html += `</tbody></table>`;
     }
 
     resultsDiv.innerHTML = html;
+
+    // Save the current results so index can be used for edit
+    window._latestGreyMarketResults = data;
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
 }
+
+// Edit by index in the *current results*, not in the global array
+function showEditGreyMarketFormByIndex(idx) {
+  if (window._latestGreyMarketResults && window._latestGreyMarketResults[idx]) {
+    showEditGreyMarketForm(window._latestGreyMarketResults[idx]);
+  } else {
+    alert("Could not find record at index " + idx);
+  }
+}
+window.showEditGreyMarketFormByIndex = showEditGreyMarketFormByIndex;
 
 // --- Sortable Table ---
 function sortTable(n) {
@@ -318,4 +315,4 @@ window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
 window.sortTable = sortTable;
-window.showEditGreyMarketFormByModel = showEditGreyMarketFormByModel;
+window.showEditGreyMarketFormByIndex = showEditGreyMarketFormByIndex;

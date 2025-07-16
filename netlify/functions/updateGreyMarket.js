@@ -14,10 +14,11 @@ exports.handler = async (event) => {
     const body = JSON.parse(event.body);
     console.log('✅ Parsed body:', body);
 
-    const { Model, fields } = body;
+    // FIX: use uniqueId instead of Model!
+    const { uniqueId, fields } = body;
     console.log('Fields to update:', fields);
-    if (!Model || !fields) {
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing Model or fields' }) };
+    if (!uniqueId || !fields) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing uniqueId or fields' }) };
     }
 
     if (!cachedClient) {
@@ -26,14 +27,15 @@ exports.handler = async (event) => {
       console.log('✅ MongoDB CONNECTED');
     }
 
-    const db = cachedClient.db('test'); // adjust DB name
+    const db = cachedClient.db('test'); // adjust DB name if needed
     const collection = db.collection('grey_market_refs');
 
-    const result = await collection.updateOne({ Model }, { $set: fields });
+    // FIX: Query by "Unique ID" field
+    const result = await collection.updateOne({ "Unique ID": uniqueId }, { $set: fields });
     console.log('✅ Update result:', result);
 
     if (result.matchedCount === 0) {
-      return { statusCode: 404, body: JSON.stringify({ error: 'Model not found' }) };
+      return { statusCode: 404, body: JSON.stringify({ error: 'Unique ID not found' }) };
     }
 
     return { statusCode: 200, body: JSON.stringify({ message: 'Updated successfully' }) };

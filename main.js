@@ -74,6 +74,7 @@ function showEditGreyMarketForm(record) {
   if (document.getElementById('gm_image')) {
     document.getElementById('gm_image').value = '';
   }
+ document.getElementById('greyMarketFormContainer').scrollIntoView({ behavior: 'smooth' });
 }
 
 function cancelGreyMarketForm() {

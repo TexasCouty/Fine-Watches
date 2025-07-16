@@ -32,7 +32,11 @@ exports.handler = async (event) => {
     const query = ref ? { Model: { $regex: ref, $options: 'i' } } : {};
     console.log('📡 Running query:', JSON.stringify(query));
 
-    const results = await collection.find(query).toArray();
+    // SORT BY Date Entered DESCENDING (latest first)
+    const results = await collection
+      .find(query)
+      .sort({ "Date Entered": -1 })  // <-- Sort here!
+      .toArray();
 
     console.log(`✅ Query returned ${results.length} result(s)`);
 
@@ -48,7 +52,6 @@ exports.handler = async (event) => {
     };
   }
 };
-
 
 
 

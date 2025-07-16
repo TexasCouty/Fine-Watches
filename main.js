@@ -2,7 +2,6 @@
 let greyMarketData = [];
 let modelNameSuggestions = [];
 let currentEditingGMModel = null;
-let currentEditingUniqueID = null;
 
 async function fetchGreyMarketData() {
   try {
@@ -22,16 +21,9 @@ function clearGreyMarketForm() {
   ];
   ids.forEach(id => { if (id !== 'gm_model_name') document.getElementById(id).value = ''; });
   currentEditingGMModel = null;
-  currentEditingUniqueID = null;
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
   document.getElementById('greyMarketFormContainer').style.display = 'none';
-  // Clear image preview and file input
-  document.getElementById('gm_current_img').src = '';
-  document.getElementById('gm_current_img').style.display = 'none';
-  if (document.getElementById('gm_image')) {
-    document.getElementById('gm_image').value = '';
-  }
 }
 
 function showAddGreyMarketForm() {
@@ -39,7 +31,6 @@ function showAddGreyMarketForm() {
   document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   currentEditingGMModel = null;
-  currentEditingUniqueID = null;
   document.getElementById('gm_delete_button').style.display = 'none';
 }
 
@@ -60,26 +51,21 @@ function showEditGreyMarketForm(record) {
   document.getElementById('gm_dealer').value = record['Dealer'] || '';
   document.getElementById('gm_comments').value = record['Comments'] || '';
   currentEditingGMModel = record['Model'];
-  currentEditingUniqueID = record["Unique ID"];
   document.getElementById('gm_delete_button').style.display = 'inline-block';
 
-  // --- Show image preview for Cloudinary URL or local filename ---
-  let imgSrc = '';
+  // ------ Add this block to handle showing the image ------
   if (record.ImageFilename) {
-    imgSrc = record.ImageFilename.startsWith('http')
-      ? record.ImageFilename
-      : `assets/grey_market/${record.ImageFilename}`;
-    document.getElementById('gm_current_img').src = imgSrc;
+    if (record.ImageFilename.startsWith('http')) {
+      document.getElementById('gm_current_img').src = record.ImageFilename;
+    } else {
+      document.getElementById('gm_current_img').src = 'assets/grey_market/' + record.ImageFilename;
+    }
     document.getElementById('gm_current_img').style.display = 'block';
   } else {
     document.getElementById('gm_current_img').src = '';
     document.getElementById('gm_current_img').style.display = 'none';
   }
-  if (document.getElementById('gm_image')) {
-    document.getElementById('gm_image').value = '';
-  }
-
-  document.getElementById('greyMarketFormContainer').scrollIntoView({ behavior: 'smooth' });
+  // --------------------------------------------------------
 }
 
 function cancelGreyMarketForm() {
@@ -87,11 +73,11 @@ function cancelGreyMarketForm() {
 }
 
 async function saveGreyMarketEntry() {
-  // --- Do NOT set Unique ID in fields! ---
+  const Model = document.getElementById('gm_model').value.trim();
   const fields = {
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
-    "Model": document.getElementById('gm_model').value.trim(),
+    "Model": Model,
     "Model Name": document.getElementById('gm_model_name').value.trim(),
     "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
     "Bracelet": document.getElementById('gm_bracelet').value.trim(),
@@ -112,31 +98,29 @@ async function saveGreyMarketEntry() {
   if (imageInput && imageInput.files && imageInput.files[0]) {
     const data = new FormData();
     data.append('file', imageInput.files[0]);
-    data.append('upload_preset', 'unsigned_preset'); // <-- your upload preset
-    const cloudName = 'dnymcygtl'; // <-- your cloud name
+    data.append('upload_preset', 'unsigned_preset'); // Your Cloudinary upload preset
+
+    const cloudName = 'dnymcygtl'; // Your Cloudinary cloud name
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
       method: 'POST',
       body: data
     });
     const imgData = await res.json();
-    if (imgData.secure_url) {
-      imageUrl = imgData.secure_url;
-      document.getElementById('gm_current_img').src = imageUrl;
-      document.getElementById('gm_current_img').style.display = 'block';
-    } else {
-      alert("Image upload failed: " + (imgData.error && imgData.error.message ? imgData.error.message : "Unknown error"));
-      return;
-    }
-  } else if (document.getElementById('gm_current_img').src && document.getElementById('gm_current_img').style.display !== 'none') {
+    imageUrl = imgData.secure_url; // This is the hosted image URL
+
+    // Optionally, show the uploaded image immediately
+    document.getElementById('gm_current_img').src = imageUrl;
+    document.getElementById('gm_current_img').style.display = 'block';
+  } else if (document.getElementById('gm_current_img').src) {
     imageUrl = document.getElementById('gm_current_img').src;
   }
 
   fields["ImageFilename"] = imageUrl;
 
-  // --- Save to Backend ---
-  const uniqueIdKey = currentEditingUniqueID;
-  if (!uniqueIdKey) {
-    alert('Unique ID is required.');
+  // --- Continue to Save to Backend ---
+  const modelKey = currentEditingGMModel || Model;
+  if (!modelKey) {
+    alert('Model is required.');
     return;
   }
 
@@ -144,7 +128,7 @@ async function saveGreyMarketEntry() {
     const res = await fetch('/.netlify/functions/updateGreyMarket', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ uniqueId: uniqueIdKey, fields })
+      body: JSON.stringify({ Model: modelKey, fields })
     });
     const result = await res.json();
     if (res.ok) {
@@ -158,6 +142,25 @@ async function saveGreyMarketEntry() {
     alert('Network or server error');
     console.error(e);
   }
+}
+
+// --- Parse date utility for robust sorting ---
+function parseDate(d) {
+  if (!d) return new Date(0);
+  if (d instanceof Date) return d;
+  let parts = d.split(/[\/\-]/);
+  if (parts.length === 3) {
+    if (parts[2].length === 4) {
+      // MM/DD/YYYY or DD/MM/YYYY
+      let [a, b, c] = parts.map(Number);
+      if (a > 12) return new Date(c, b - 1, a); // DD/MM/YYYY
+      return new Date(c, a - 1, b);             // MM/DD/YYYY
+    } else if (parts[0].length === 4) {
+      // YYYY-MM-DD
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+  }
+  return new Date(d);
 }
 
 // --- Grey Market Lookup (desktop: card, mobile: table) ---
@@ -174,6 +177,10 @@ async function lookupGreyMarket() {
     const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
     if (!res.ok) throw new Error('Network response was not ok');
     const data = await res.json();
+
+    // SORT by "Date Entered" descending (latest first)
+    data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
+
     if (!data.length) {
       resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
       return;
@@ -182,22 +189,21 @@ async function lookupGreyMarket() {
 
     // Desktop: card layout
     if (window.innerWidth >= 768) {
-      html = data.map((item, idx) => {
+      html = data.map(item => {
         let imgSrc = '';
-        if (item.ImageFilename) {
-          imgSrc = item.ImageFilename.startsWith('http')
-            ? item.ImageFilename
-            : `assets/grey_market/${item.ImageFilename}`;
+        if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
+          imgSrc = item.ImageFilename;
+        } else if (item.ImageFilename) {
+          imgSrc = 'assets/grey_market/' + item.ImageFilename;
         }
         const img = imgSrc
           ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
-        const uniqueId = item["Unique ID"] ? `<div style="font-size:13px;color:#888;margin-bottom:8px;"><strong>Unique ID:</strong> ${item["Unique ID"]}</div>` : '';
         return `
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
             ${img}
             <div>
-              ${uniqueId}
+              <p><strong>Unique ID:</strong> ${item["Unique ID"] || ''}</p>
               <p><strong>Model:</strong> ${item.Model}</p>
               <p><strong>Date Entered:</strong> ${item["Date Entered"]}</p>
               <p><strong>Year:</strong> ${item.Year}</p>
@@ -211,7 +217,7 @@ async function lookupGreyMarket() {
               <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
               <p><strong>Dealer:</strong> ${item.Dealer}</p>
               <p><strong>Comments:</strong> ${item.Comments}</p>
-              <button onclick='showEditGreyMarketFormByIndex(${idx})'>Edit</button>
+              <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
             </div>
           </div>`;
       }).join('');
@@ -225,12 +231,12 @@ async function lookupGreyMarket() {
       html = `<table id="greyMarketTable"><thead><tr>${
         headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
       }</tr></thead><tbody>`;
-      data.forEach((item, idx) => {
+      data.forEach(item => {
         let imgSrc = '';
-        if (item.ImageFilename) {
-          imgSrc = item.ImageFilename.startsWith('http')
-            ? item.ImageFilename
-            : `assets/grey_market/${item.ImageFilename}`;
+        if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
+          imgSrc = item.ImageFilename;
+        } else if (item.ImageFilename) {
+          imgSrc = 'assets/grey_market/' + item.ImageFilename;
         }
         html += `<tr>
           <td data-label="Date Entered">${item["Date Entered"]||''}</td>
@@ -250,29 +256,18 @@ async function lookupGreyMarket() {
           <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
           <td data-label="Dealer">${item.Dealer||''}</td>
           <td data-label="Comments">${item.Comments||''}</td>
-          <td data-label="Actions"><button onclick='showEditGreyMarketFormByIndex(${idx})'>Edit</button></td>
+          <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button></td>
         </tr>`;
       });
       html += `</tbody></table>`;
     }
 
     resultsDiv.innerHTML = html;
-    window._latestGreyMarketResults = data;
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
 }
-
-// Edit by index in the *current results*, not in the global array
-function showEditGreyMarketFormByIndex(idx) {
-  if (window._latestGreyMarketResults && window._latestGreyMarketResults[idx]) {
-    showEditGreyMarketForm(window._latestGreyMarketResults[idx]);
-  } else {
-    alert("Could not find record at index " + idx);
-  }
-}
-window.showEditGreyMarketFormByIndex = showEditGreyMarketFormByIndex;
 
 // --- Sortable Table ---
 function sortTable(n) {
@@ -320,4 +315,3 @@ window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
 window.sortTable = sortTable;
-window.showEditGreyMarketFormByIndex = showEditGreyMarketFormByIndex;

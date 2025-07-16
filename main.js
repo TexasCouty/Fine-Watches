@@ -84,6 +84,7 @@ function cancelGreyMarketForm() {
 async function saveGreyMarketEntry() {
   const Model = document.getElementById('gm_model').value.trim();
   const fields = {
+    "Unique ID": document.getElementById('gm_model').value.trim(), // Adjust if you use a separate input for Unique ID
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
     "Model": Model,
@@ -187,10 +188,13 @@ async function lookupGreyMarket() {
         const img = imgSrc
           ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
+        // Show Unique ID only (not Mongo _id)
+        const uniqueId = item["Unique ID"] ? `<div style="font-size:13px;color:#888;margin-bottom:8px;"><strong>Unique ID:</strong> ${item["Unique ID"]}</div>` : '';
         return `
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
             ${img}
             <div>
+              ${uniqueId}
               <p><strong>Model:</strong> ${item.Model}</p>
               <p><strong>Date Entered:</strong> ${item["Date Entered"]}</p>
               <p><strong>Year:</strong> ${item.Year}</p>
@@ -250,7 +254,6 @@ async function lookupGreyMarket() {
     }
 
     resultsDiv.innerHTML = html;
-
     // Save the current results so index can be used for edit
     window._latestGreyMarketResults = data;
   } catch (err) {

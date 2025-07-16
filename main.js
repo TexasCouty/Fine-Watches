@@ -52,6 +52,17 @@ function showEditGreyMarketForm(record) {
   document.getElementById('gm_comments').value = record['Comments'] || '';
   currentEditingGMModel = record['Model'];
   document.getElementById('gm_delete_button').style.display = 'inline-block';
+
+// ------ Add this block to handle showing the image ------
+  if (record.ImageFilename) {
+    document.getElementById('gm_current_img').src = record.ImageFilename;
+    document.getElementById('gm_current_img').style.display = 'block';
+  } else {
+    document.getElementById('gm_current_img').src = '';
+    document.getElementById('gm_current_img').style.display = 'none';
+  }
+  // --------------------------------------------------------
+
 }
 
 function cancelGreyMarketForm() {
@@ -59,7 +70,6 @@ function cancelGreyMarketForm() {
 }
 
 async function saveGreyMarketEntry() {
-  // Collect form values
   const Model = document.getElementById('gm_model').value.trim();
   const fields = {
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
@@ -77,7 +87,34 @@ async function saveGreyMarketEntry() {
     "Comments": document.getElementById('gm_comments').value.trim()
   };
 
-  // Use model from the current editing context
+  // --- Cloudinary Upload Section ---
+  const imageInput = document.getElementById('gm_image');
+  let imageUrl = '';
+
+  // Only upload if a new file was selected
+  if (imageInput && imageInput.files && imageInput.files[0]) {
+    const data = new FormData();
+    data.append('file', imageInput.files[0]);
+    data.append('upload_preset', 'unsigned_preset'); // Your Cloudinary upload preset
+
+    const cloudName = 'dnmycgtl'; // Your Cloudinary cloud name
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: 'POST',
+      body: data
+    });
+    const imgData = await res.json();
+    imageUrl = imgData.secure_url; // This is the hosted image URL
+
+    // Optionally, show the uploaded image immediately
+    document.getElementById('gm_current_img').src = imageUrl;
+    document.getElementById('gm_current_img').style.display = 'block';
+  } else if (document.getElementById('gm_current_img').src) {
+    imageUrl = document.getElementById('gm_current_img').src;
+  }
+
+  fields["ImageFilename"] = imageUrl;
+
+  // --- Continue to Save to Backend ---
   const modelKey = currentEditingGMModel || Model;
   if (!modelKey) {
     alert('Model is required.');

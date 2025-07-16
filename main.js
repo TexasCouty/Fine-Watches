@@ -2,6 +2,7 @@
 let greyMarketData = [];
 let modelNameSuggestions = [];
 let currentEditingGMModel = null;
+let currentEditingUniqueID = null;
 
 async function fetchGreyMarketData() {
   try {
@@ -21,6 +22,7 @@ function clearGreyMarketForm() {
   ];
   ids.forEach(id => { if (id !== 'gm_model_name') document.getElementById(id).value = ''; });
   currentEditingGMModel = null;
+  currentEditingUniqueID = null;
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
   document.getElementById('greyMarketFormContainer').style.display = 'none';
@@ -37,6 +39,7 @@ function showAddGreyMarketForm() {
   document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   currentEditingGMModel = null;
+  currentEditingUniqueID = null;
   document.getElementById('gm_delete_button').style.display = 'none';
 }
 
@@ -57,6 +60,7 @@ function showEditGreyMarketForm(record) {
   document.getElementById('gm_dealer').value = record['Dealer'] || '';
   document.getElementById('gm_comments').value = record['Comments'] || '';
   currentEditingGMModel = record['Model'];
+  currentEditingUniqueID = record["Unique ID"];
   document.getElementById('gm_delete_button').style.display = 'inline-block';
 
   // --- Show image preview for Cloudinary URL or local filename ---
@@ -74,21 +78,20 @@ function showEditGreyMarketForm(record) {
   if (document.getElementById('gm_image')) {
     document.getElementById('gm_image').value = '';
   }
- document.getElementById('greyMarketFormContainer').scrollIntoView({ behavior: 'smooth' });
+
+  document.getElementById('greyMarketFormContainer').scrollIntoView({ behavior: 'smooth' });
 }
 
 function cancelGreyMarketForm() {
   clearGreyMarketForm();
 }
 
-// --- Cloudinary-powered image upload and entry save ---
 async function saveGreyMarketEntry() {
-  const Model = document.getElementById('gm_model').value.trim();
+  // --- Do NOT set Unique ID in fields! ---
   const fields = {
-    "Unique ID": document.getElementById('gm_model').value.trim(), // Adjust if you use a separate input for Unique ID
     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
-    "Model": Model,
+    "Model": document.getElementById('gm_model').value.trim(),
     "Model Name": document.getElementById('gm_model_name').value.trim(),
     "Nickname or Dial": document.getElementById('gm_nickname').value.trim(),
     "Bracelet": document.getElementById('gm_bracelet').value.trim(),
@@ -131,9 +134,9 @@ async function saveGreyMarketEntry() {
   fields["ImageFilename"] = imageUrl;
 
   // --- Save to Backend ---
-  const modelKey = currentEditingGMModel || Model;
-  if (!modelKey) {
-    alert('Model is required.');
+  const uniqueIdKey = currentEditingUniqueID;
+  if (!uniqueIdKey) {
+    alert('Unique ID is required.');
     return;
   }
 
@@ -141,7 +144,7 @@ async function saveGreyMarketEntry() {
     const res = await fetch('/.netlify/functions/updateGreyMarket', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ Model: modelKey, fields })
+      body: JSON.stringify({ uniqueId: uniqueIdKey, fields })
     });
     const result = await res.json();
     if (res.ok) {
@@ -189,7 +192,6 @@ async function lookupGreyMarket() {
         const img = imgSrc
           ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
-        // Show Unique ID only (not Mongo _id)
         const uniqueId = item["Unique ID"] ? `<div style="font-size:13px;color:#888;margin-bottom:8px;"><strong>Unique ID:</strong> ${item["Unique ID"]}</div>` : '';
         return `
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
@@ -255,7 +257,6 @@ async function lookupGreyMarket() {
     }
 
     resultsDiv.innerHTML = html;
-    // Save the current results so index can be used for edit
     window._latestGreyMarketResults = data;
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;

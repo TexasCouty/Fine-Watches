@@ -1,22 +1,66 @@
 // importNewRows.js
 
+require('dotenv').config(); // Loads environment variables from .env
+
 const fs = require('fs');
 const csv = require('csv-parser');
 const path = require('path');
 const { MongoClient } = require('mongodb');
+const cloudinary = require('cloudinary').v2;
 
-const MONGO_URI = process.env.MONGO_URI;              // your Mongo URI
-const CSV_FILE = 'grey_market_refs.csv';              // your CSV
-const DB_NAME = 'test';                               // your DB name
-const COLLECTION_NAME = 'grey_market_refs';           // your collection
+// ---- Cloudinary config ----
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-// Folders where you might drop images
+// ---- MongoDB & file config ----
+const MONGO_URI = process.env.MONGO_URI;
+const CSV_FILE = 'grey_market_refs.csv';
+const DB_NAME = 'test';
+const COLLECTION_NAME = 'grey_market_refs';
+
 const IMAGE_SRC_DIRS = [
   path.join(__dirname, 'assets/Grey Market Assets'),
   path.join(__dirname, 'assets/grey_market')
 ];
-// Where we want them deployed
 const IMAGE_TARGET_DIR = path.join(__dirname, 'assets/grey_market');
+
+async function uploadToCloudinary(localPath, publicId) {
+  try {
+    // Check if this file is already in Cloudinary
+    const resource = await cloudinary.api.resource(`grey_market/${publicId}`).catch(() => null);
+    if (resource && resource.secure_url) {
+      console.log(`Cloudinary: File for ${publicId} already exists, skipping upload.`);
+      return resource.secure_url;
+    }
+
+    // Not found, upload!
+    const result = await cloudinary.uploader.upload(localPath, {
+      folder: 'grey_market',
+      public_id: publicId,
+      use_filename: true,
+      unique_filename: false,
+      overwrite: false // Don't create versions, just fail if exists
+    });
+    return result.secure_url;
+  } catch (err) {
+    if (err.http_code === 409) {
+      // File already exists, return its URL (409 = conflict)
+      try {
+        const existing = await cloudinary.api.resource(`grey_market/${publicId}`);
+        return existing.secure_url;
+      } catch (e) {
+        console.error('Cloudinary lookup failed:', e.message);
+        return null;
+      }
+    } else {
+      console.error(`Cloudinary upload failed for ${localPath}:`, err.message);
+      return null;
+    }
+  }
+}
 
 async function importNewRows() {
   const client = new MongoClient(MONGO_URI);
@@ -47,40 +91,47 @@ async function importNewRows() {
             continue;
           }
 
-          // look for image in any source folder, copy it if found
+          // try to find a local image
           const imageFile = `${uniqueID}-001.jpg`;
           let foundImage = false;
+          let cloudinaryUrl = '';
           for (const srcDir of IMAGE_SRC_DIRS) {
             const srcPath = path.join(srcDir, imageFile);
             if (fs.existsSync(srcPath)) {
-              const tgtPath = path.join(IMAGE_TARGET_DIR, imageFile);
-              if (!fs.existsSync(tgtPath)) {
-                fs.copyFileSync(srcPath, tgtPath);
-                console.log(`Copied ${imageFile} → assets/grey_market/`);
+              // Try Cloudinary upload or reuse
+              cloudinaryUrl = await uploadToCloudinary(srcPath, imageFile.replace(/\.[^/.]+$/, ''));
+              if (cloudinaryUrl) {
+                record.ImageFilename = cloudinaryUrl;
+                foundImage = true;
+                console.log(`Cloudinary: Using URL for ${imageFile}`);
+              } else {
+                // fallback: just use local
+                const tgtPath = path.join(IMAGE_TARGET_DIR, imageFile);
+                if (!fs.existsSync(tgtPath)) {
+                  fs.copyFileSync(srcPath, tgtPath);
+                  console.log(`Copied ${imageFile} → assets/grey_market/`);
+                }
+                record.ImageFilename = imageFile;
+                foundImage = true;
               }
-              record.ImageFilename = imageFile;
-              foundImage = true;
-              break;
+              break; // only use first found image
             }
           }
 
-          const exists = await collection.findOne({ 'Unique ID': uniqueID });
-          if (exists) {
-            // if we just found an image but the DB doc lacked it, update
-            if (foundImage && !exists.ImageFilename) {
-              await collection.updateOne(
-                { 'Unique ID': uniqueID },
-                { $set: { ImageFilename: record.ImageFilename } }
-              );
-              console.log(`Updated ImageFilename for Unique ID: ${uniqueID}`);
-            } else {
-              console.log(`Skipping existing Unique ID: ${uniqueID}`);
-            }
-          } else {
-            // brand new record (with image if found)
-            await collection.insertOne(record);
-            console.log(`Inserted new Unique ID: ${uniqueID}`);
-          }
+          // Find existing record by Unique ID
+        const exists = await collection.findOne({ 'Unique ID': uniqueID });
+		if (exists) {
+ 	 	// Always update all fields for existing record
+ 	 	await collection.updateOne(
+    		{ 'Unique ID': uniqueID },
+   		 { $set: record }
+  		);
+  	console.log(`Updated all fields for Unique ID: ${uniqueID}`);
+	} else {
+  		// brand new record (with image if found)
+  		await collection.insertOne(record);
+  		console.log(`Inserted new Unique ID: ${uniqueID}`);
+}
         }
 
         await client.close();

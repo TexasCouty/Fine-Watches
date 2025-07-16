@@ -3,6 +3,7 @@ let greyMarketData = [];
 let modelNameSuggestions = [];
 let currentEditingGMModel = null;
 
+// Fetch all grey market data for autocomplete and lookups
 async function fetchGreyMarketData() {
   try {
     const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
@@ -24,6 +25,12 @@ function clearGreyMarketForm() {
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
   document.getElementById('greyMarketFormContainer').style.display = 'none';
+  // Clear image preview and file input
+  document.getElementById('gm_current_img').src = '';
+  document.getElementById('gm_current_img').style.display = 'none';
+  if (document.getElementById('gm_image')) {
+    document.getElementById('gm_image').value = '';
+  }
 }
 
 function showAddGreyMarketForm() {
@@ -34,6 +41,7 @@ function showAddGreyMarketForm() {
   document.getElementById('gm_delete_button').style.display = 'none';
 }
 
+// The robust edit function (do not change unless adding fields)
 function showEditGreyMarketForm(record) {
   document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
   document.getElementById('greyMarketFormContainer').style.display = 'block';
@@ -53,7 +61,7 @@ function showEditGreyMarketForm(record) {
   currentEditingGMModel = record['Model'];
   document.getElementById('gm_delete_button').style.display = 'inline-block';
 
-// ------ Add this block to handle showing the image ------
+  // --- Show image preview if present ---
   if (record.ImageFilename) {
     document.getElementById('gm_current_img').src = record.ImageFilename;
     document.getElementById('gm_current_img').style.display = 'block';
@@ -61,14 +69,27 @@ function showEditGreyMarketForm(record) {
     document.getElementById('gm_current_img').src = '';
     document.getElementById('gm_current_img').style.display = 'none';
   }
-  // --------------------------------------------------------
-
+  // Clear file input (in case user is editing after already picking a new file)
+  if (document.getElementById('gm_image')) {
+    document.getElementById('gm_image').value = '';
+  }
 }
+
+function showEditGreyMarketFormByModel(model) {
+  const record = greyMarketData.find(x => x.Model === model);
+  if (record) {
+    showEditGreyMarketForm(record);
+  } else {
+    alert("Could not find record for " + model);
+  }
+}
+window.showEditGreyMarketFormByModel = showEditGreyMarketFormByModel;
 
 function cancelGreyMarketForm() {
   clearGreyMarketForm();
 }
 
+// --- Cloudinary-powered image upload and entry save ---
 async function saveGreyMarketEntry() {
   const Model = document.getElementById('gm_model').value.trim();
   const fields = {
@@ -95,9 +116,8 @@ async function saveGreyMarketEntry() {
   if (imageInput && imageInput.files && imageInput.files[0]) {
     const data = new FormData();
     data.append('file', imageInput.files[0]);
-    data.append('upload_preset', 'unsigned_preset'); // Your Cloudinary upload preset
-
-    const cloudName = 'dnmycgtl'; // Your Cloudinary cloud name
+    data.append('upload_preset', 'unsigned_preset'); // <-- YOUR upload preset name
+    const cloudName = 'dnmycgtl'; // <-- YOUR Cloudinary cloud name
     const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
       method: 'POST',
       body: data
@@ -105,16 +125,16 @@ async function saveGreyMarketEntry() {
     const imgData = await res.json();
     imageUrl = imgData.secure_url; // This is the hosted image URL
 
-    // Optionally, show the uploaded image immediately
+    // Show the uploaded image immediately
     document.getElementById('gm_current_img').src = imageUrl;
     document.getElementById('gm_current_img').style.display = 'block';
-  } else if (document.getElementById('gm_current_img').src) {
+  } else if (document.getElementById('gm_current_img').src && document.getElementById('gm_current_img').style.display !== 'none') {
     imageUrl = document.getElementById('gm_current_img').src;
   }
 
   fields["ImageFilename"] = imageUrl;
 
-  // --- Continue to Save to Backend ---
+  // --- Save to Backend ---
   const modelKey = currentEditingGMModel || Model;
   if (!modelKey) {
     alert('Model is required.');
@@ -165,7 +185,7 @@ async function lookupGreyMarket() {
     if (window.innerWidth >= 768) {
       html = data.map(item => {
         const img = item.ImageFilename
-          ? `<img src="assets/grey_market/${item.ImageFilename}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
+          ? `<img src="${item.ImageFilename}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
         return `
           <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
@@ -184,7 +204,7 @@ async function lookupGreyMarket() {
               <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
               <p><strong>Dealer:</strong> ${item.Dealer}</p>
               <p><strong>Comments:</strong> ${item.Comments}</p>
-              <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
+              <button onclick='showEditGreyMarketFormByModel("${item.Model.replace(/"/g, '&quot;')}")'>Edit</button>
             </div>
           </div>`;
       }).join('');
@@ -204,7 +224,7 @@ async function lookupGreyMarket() {
           <td data-label="Year">${item.Year||''}</td>
           <td data-label="Model">${item.Model||''}${
             item.ImageFilename
-              ? `<br><img src="assets/grey_market/${item.ImageFilename}" style="max-width:120px;margin-top:5px;" onerror="this.style.display='none';">`
+              ? `<br><img src="${item.ImageFilename}" style="max-width:120px;margin-top:5px;" onerror="this.style.display='none';">`
               : ''
           }</td>
           <td data-label="Model Name">${item["Model Name"]||''}</td>
@@ -217,7 +237,7 @@ async function lookupGreyMarket() {
           <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
           <td data-label="Dealer">${item.Dealer||''}</td>
           <td data-label="Comments">${item.Comments||''}</td>
-          <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button></td>
+          <td data-label="Actions"><button onclick='showEditGreyMarketFormByModel("${item.Model.replace(/"/g, '&quot;')}")'>Edit</button></td>
         </tr>`;
       });
       html += `</tbody></table>`;
@@ -276,3 +296,4 @@ window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
 window.sortTable = sortTable;
+window.showEditGreyMarketFormByModel = showEditGreyMarketFormByModel;

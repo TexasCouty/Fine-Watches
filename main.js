@@ -65,6 +65,8 @@ function showEditGreyMarketForm(record) {
     imgSrc = record.ImageFilename.startsWith('http')
       ? record.ImageFilename
       : `assets/grey_market/${record.ImageFilename}`;
+// --- Add debugging log ---
+  console.log('[EDIT] Model:', record.Model, '| ImageFilename:', record.ImageFilename, '| imgSrc:', imgSrc);
     document.getElementById('gm_current_img').src = imgSrc;
     document.getElementById('gm_current_img').style.display = 'block';
   } else {
@@ -194,6 +196,9 @@ async function lookupGreyMarket() {
             ? item.ImageFilename
             : `assets/grey_market/${item.ImageFilename}`;
         }
+	// --- Add debugging log ---
+        console.log('Model:', item.Model, '| ImageFilename:', item.ImageFilename, '| imgSrc:', imgSrc);
+
         const img = imgSrc
           ? `<img src="${imgSrc}" style="max-width:200px; margin-right:20px; border-radius:8px;" onerror="this.style.display='none';" />`
           : '';
@@ -235,6 +240,7 @@ async function lookupGreyMarket() {
             ? item.ImageFilename
             : `assets/grey_market/${item.ImageFilename}`;
         }
+	console.log('[TABLE] Model:', item.Model, '| ImageFilename:', item.ImageFilename, '| imgSrc:', imgSrc);
         html += `<tr>
           <td data-label="Date Entered">${item["Date Entered"]||''}</td>
           <td data-label="Year">${item.Year||''}</td>

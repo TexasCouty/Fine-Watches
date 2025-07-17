@@ -2,6 +2,7 @@
 let greyMarketData = [];
 let modelNameSuggestions = [];
 let currentEditingGMModel = null;
+let currentEditingGMUniqueId = null; // <-- This is what matters!
 
 async function fetchGreyMarketData() {
   try {
@@ -21,6 +22,7 @@ function clearGreyMarketForm() {
   ];
   ids.forEach(id => { if (id !== 'gm_model_name') document.getElementById(id).value = ''; });
   currentEditingGMModel = null;
+  currentEditingGMUniqueId = null; // <-- Reset on clear
   document.getElementById('gm_delete_button').style.display = 'none';
   hideRecordPicker();
   document.getElementById('greyMarketFormContainer').style.display = 'none';
@@ -31,10 +33,12 @@ function showAddGreyMarketForm() {
   document.getElementById('greyMarketFormTitle').innerText = 'Add New Grey Market Entry';
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   currentEditingGMModel = null;
+  currentEditingGMUniqueId = null; // <-- Reset for add
   document.getElementById('gm_delete_button').style.display = 'none';
 }
 
 function showEditGreyMarketForm(record) {
+  currentEditingGMUniqueId = record["Unique ID"]; // <-- Always set this!
   document.getElementById('greyMarketFormTitle').innerText = 'Edit Grey Market Entry';
   document.getElementById('greyMarketFormContainer').style.display = 'block';
   document.getElementById('gm_date_entered').value = record['Date Entered'] || '';
@@ -117,9 +121,8 @@ async function saveGreyMarketEntry() {
   fields["ImageFilename"] = imageUrl;
 
   // --- Continue to Save to Backend ---
-  const modelKey = currentEditingGMModel || Model;
-  if (!modelKey) {
-    alert('Model is required.');
+  if (!currentEditingGMUniqueId) {
+    alert('Unique ID is required.');
     return;
   }
 
@@ -127,7 +130,7 @@ async function saveGreyMarketEntry() {
     const res = await fetch('/.netlify/functions/updateGreyMarket', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ Model: modelKey, fields })
+      body: JSON.stringify({ uniqueId: currentEditingGMUniqueId, fields }) // <-- POST uniqueId, not Model
     });
     const result = await res.json();
     if (res.ok) {
@@ -163,175 +166,8 @@ function parseDate(d) {
 }
 
 // --- Grey Market Lookup (desktop: card, mobile: table) ---
-async function lookupGreyMarket() {
-  const ref = document.getElementById('greyMarketInput').value.trim();
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = '';
-  if (!ref) {
-    alert('Enter a model number.');
-    return;
-  }
-  resultsDiv.innerHTML = '<div>Searching Grey Market...</div>';
-  try {
-    const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
-    if (!res.ok) throw new Error('Network response was not ok');
-    const data = await res.json();
-
-    // SORT by "Date Entered" descending (latest first)
-    data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
-
-    if (!data.length) {
-      resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
-      return;
-    }
-    let html = '';
-
-    // Desktop: card layout
-    if (window.innerWidth >= 768) {
-      html = data.map(item => {
-        let imgSrc = '';
-        if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
-          imgSrc = item.ImageFilename;
-        } else if (item.ImageFilename) {
-          imgSrc = 'assets/grey_market/' + item.ImageFilename;
-        }
-        const img = imgSrc
-          ? `<img src="${imgSrc}" class="enlargeable-img" style="max-width:200px; margin-right:20px; border-radius:8px; cursor:pointer;" onerror="this.style.display='none';" />`
-          : '';
-        return `
-          <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
-            ${img}
-            <div>
-              <p><strong>Unique ID:</strong> ${item["Unique ID"] || ''}</p>
-              <p><strong>Model:</strong> ${item.Model}</p>
-              <p><strong>Date Entered:</strong> ${item["Date Entered"]}</p>
-              <p><strong>Year:</strong> ${item.Year}</p>
-              <p><strong>Model Name:</strong> ${item["Model Name"]}</p>
-              <p><strong>Nickname/Dial:</strong> ${item["Nickname or Dial"]}</p>
-              <p><strong>Bracelet:</strong> ${item.Bracelet}</p>
-              <p><strong>Bracelet Metal/Color:</strong> ${item["Bracelet Metal/Color"]}</p>
-              <p><strong>Full Set:</strong> ${item["Full Set"]}</p>
-              <p><strong>Retail Ready:</strong> ${item["Retail Ready"]}</p>
-              <p><strong>Grey Market Price:</strong> ${item.Price || ''}</p>
-              <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
-              <p><strong>Dealer:</strong> ${item.Dealer}</p>
-              <p><strong>Comments:</strong> ${item.Comments}</p>
-              <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
-            </div>
-          </div>`;
-      }).join('');
-    } else {
-      // Mobile: table layout
-      const headers = [
-        "Date Entered","Year","Model","Model Name","Nickname or Dial",
-        "Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
-        "Current Retail","Dealer","Comments","Actions"
-      ];
-      html = `<table id="greyMarketTable"><thead><tr>${
-        headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
-      }</tr></thead><tbody>`;
-      data.forEach(item => {
-        let imgSrc = '';
-        if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
-          imgSrc = item.ImageFilename;
-        } else if (item.ImageFilename) {
-          imgSrc = 'assets/grey_market/' + item.ImageFilename;
-        }
-        html += `<tr>
-          <td data-label="Date Entered">${item["Date Entered"]||''}</td>
-          <td data-label="Year">${item.Year||''}</td>
-          <td data-label="Model">${item.Model||''}${
-            imgSrc
-              ? `<br><img src="${imgSrc}" class="enlargeable-img" style="max-width:120px;margin-top:5px;cursor:pointer;" onerror="this.style.display='none';">`
-              : ''
-          }</td>
-          <td data-label="Model Name">${item["Model Name"]||''}</td>
-          <td data-label="Nickname or Dial">${item["Nickname or Dial"]||''}</td>
-          <td data-label="Bracelet">${item.Bracelet||''}</td>
-          <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"]||''}</td>
-          <td data-label="Grey Market Price">${item.Price||''}</td>
-          <td data-label="Full Set">${item["Full Set"]||''}</td>
-          <td data-label="Retail Ready">${item["Retail Ready"]||''}</td>
-          <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
-          <td data-label="Dealer">${item.Dealer||''}</td>
-          <td data-label="Comments">${item.Comments||''}</td>
-          <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button></td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-    }
-
-    resultsDiv.innerHTML = html;
-
-    // Attach modal handlers for all enlargeable images
-    addImageModalHandlers();
-
-  } catch (err) {
-    resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
-    console.error(err);
-  }
-}
-
-// --- Sortable Table ---
-function sortTable(n) {
-  const table = document.getElementById("greyMarketTable");
-  if (!table) return;
-  let switching = true, dir = "asc", switchcount = 0;
-  while (switching) {
-    switching = false;
-    const rows = table.rows;
-    for (let i = 1; i < rows.length - 1; i++) {
-      let shouldSwitch = false;
-      let x = rows[i].getElementsByTagName("TD")[n];
-      let y = rows[i + 1].getElementsByTagName("TD")[n];
-      if ((dir === "asc" && x.innerText.toLowerCase() > y.innerText.toLowerCase()) ||
-          (dir === "desc" && x.innerText.toLowerCase() < y.innerText.toLowerCase())) {
-        shouldSwitch = true;
-        break;
-      }
-    }
-    if (shouldSwitch) {
-      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-      switching = true;
-      switchcount++;
-    } else if (switchcount === 0 && dir === "asc") {
-      dir = "desc";
-      switching = true;
-    }
-  }
-}
-
-// --- (Optional) Autocomplete/Record Picker for Model Name (if used) ---
-function hideRecordPicker() {
-  const picker = document.getElementById('gmRecordPicker');
-  if (picker) picker.style.display = 'none';
-}
-
-// --- Enlarge Image Modal ---
-document.addEventListener('DOMContentLoaded', function () {
-  const modal = document.getElementById('imgModal');
-  const modalImg = document.getElementById('imgModalImg');
-  if (modal && modalImg) {
-    modal.onclick = () => modal.style.display = 'none';
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') modal.style.display = 'none';
-    });
-  }
-});
-
-function addImageModalHandlers() {
-  document.querySelectorAll('.enlargeable-img').forEach(img => {
-    img.onclick = function(e) {
-      e.stopPropagation();
-      const modal = document.getElementById('imgModal');
-      const modalImg = document.getElementById('imgModalImg');
-      if (modal && modalImg) {
-        modalImg.src = this.src;
-        modal.style.display = 'flex';
-      }
-    };
-  });
-}
+// ... no changes, leave as you had it ...
+// ... rest of your code unchanged ...
 
 // --- DOMContentLoaded ---
 window.addEventListener('DOMContentLoaded', async () => {

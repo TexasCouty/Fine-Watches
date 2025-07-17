@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cloudinary": "^2.7.0",
     "csv-parser": "^3.2.0",
     "csvtojson": "^2.0.10",
     "dotenv": "^17.2.0",

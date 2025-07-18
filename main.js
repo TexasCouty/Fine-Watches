@@ -56,6 +56,7 @@ function showEditGreyMarketForm(record) {
   console.log('Setting gm_date_entered to:', dateValue, 'from record:', record['Date Entered']);
   document.getElementById('gm_date_entered').value = dateValue;
 
+  document.getElementById('gm_unique_id').value = record["Unique ID"] || record["uniqueId"] || "";
   document.getElementById('gm_year').value = record['Year'] || '';
   document.getElementById('gm_model').value = record['Model'] || '';
   document.getElementById('gm_model_name').value = record['Model Name'] || '';
@@ -92,7 +93,8 @@ function cancelGreyMarketForm() {
 async function saveGreyMarketEntry() {
   const Model = document.getElementById('gm_model').value.trim();
   const fields = {
-    "Date Entered": document.getElementById('gm_date_entered').value.trim(),
+     "Unique ID": document.getElementById('gm_unique_id').value.trim(),    
+     "Date Entered": document.getElementById('gm_date_entered').value.trim(),
     "Year": document.getElementById('gm_year').value.trim(),
     "Model": Model,
     "Model Name": document.getElementById('gm_model_name').value.trim(),
@@ -241,7 +243,7 @@ async function lookupGreyMarket() {
     } else {
       // Mobile: table layout
       const headers = [
-        "Date Entered","Year","Model","Model Name","Nickname or Dial",
+        "Unique ID, Date Entered","Year","Model","Model Name","Nickname or Dial",
         "Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
         "Current Retail","Dealer","Comments","Actions"
       ];
@@ -263,6 +265,7 @@ async function lookupGreyMarket() {
               ? `<br><img src="${imgSrc}" class="enlargeable-img" style="max-width:120px;margin-top:5px;cursor:pointer;" onerror="this.style.display='none';">`
               : ''
           }</td>
+          <td data-label="Unique ID">${item["Unique ID"] || item["uniqueId"] || ""}</td>          
           <td data-label="Model Name">${item["Model Name"]||''}</td>
           <td data-label="Nickname or Dial">${item["Nickname or Dial"]||''}</td>
           <td data-label="Bracelet">${item.Bracelet||''}</td>

@@ -180,4 +180,4 @@ window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
 window.sortTable = sortTable;
-window.lookupGreyMarket = lookupGreyMarket;  //add this rows
+window.lookupGreyMarket = lookupGreyMarket;  

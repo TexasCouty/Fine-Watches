@@ -1,3 +1,4 @@
+/* ==================== GLOBAL LAYOUT & BODY ==================== */
 body {
   font-family: 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
@@ -22,6 +23,7 @@ h1 {
   margin-bottom: 40px;
 }
 
+/* ==================== GRID & SECTIONS ==================== */
 .lookup-grid {
   display: flex;
   gap: 40px;
@@ -47,6 +49,7 @@ h1 {
   text-shadow: 0 0 5px #b9972f;
 }
 
+/* ==================== LABELS & INPUTS ==================== */
 label {
   display: block;
   margin-top: 12px;
@@ -96,6 +99,7 @@ button:hover {
   transform: translateY(-2px);
 }
 
+/* ==================== RESULTS & CARDS ==================== */
 .results {
   margin-top: 40px;
   text-align: left;
@@ -136,7 +140,49 @@ button:hover {
   display: block;
 }
 
-/* TABLE STYLES */
+/* ==================== SEARCH SECTION (Dual Search) ==================== */
+.search-row.dual-search {
+  display: flex;
+  gap: 32px;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-bottom: 18px;
+  position: relative;
+}
+.search-col {
+  flex: 1 1 0;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.search-label {
+  color: #d4af37;
+  font-size: 1.07rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 3px #000, 0 0 2px #d4af376a;
+}
+.search-col input,
+.search-col button {
+  margin-top: 0;
+}
+.search-row.dual-search::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 13%;
+  bottom: 13%;
+  width: 2px;
+  background: linear-gradient(to bottom, #d4af37 85%, transparent 100%);
+  opacity: 0.22;
+  z-index: 2;
+  border-radius: 1px;
+}
+
+/* ==================== TABLES ==================== */
 #greyMarketTable {
   table-layout: fixed;
   width: 100%;
@@ -198,7 +244,115 @@ button:hover {
   vertical-align: middle;
 }
 
-/* Responsive stacking for mobile */
+/* ==================== AUTOCOMPLETE PICKER ==================== */
+.autocomplete-wrapper { position: relative; }
+#gmRecordPicker {
+  position: absolute;
+  z-index: 1100;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background: #222;
+  border: 1px solid #d4af37;
+  border-radius: 0 0 8px 8px;
+  box-sizing: border-box;
+}
+#gmRecordPicker div {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #d4af37aa;
+  color: #eee;
+}
+#gmRecordPicker div:hover {
+  background: #d4af37;
+  color: #000;
+}
+
+/* ==================== MODAL & IMAGE PREVIEW ==================== */
+.img-modal {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.9);
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1000;
+}
+.img-modal img {
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 0 32px #222;
+  border-radius: 18px;
+  background: #fff;
+  transition: box-shadow 0.2s;
+}
+
+/* ==================== SCROLLBAR STYLING ==================== */
+.results::-webkit-scrollbar {
+  width: 0.7em;
+  background: transparent;
+}
+.results::-webkit-scrollbar-thumb {
+  background: #222;
+}
+
+/* ==================== MEDIA QUERIES (RESPONSIVE) ==================== */
+
+/* Dual Search Mobile Fix: Columns stack, min-width reset */
+@media (max-width: 800px) {
+  .search-row.dual-search {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 0;
+  }
+  .search-col {
+    min-width: 0 !important;
+    width: 100%;
+    gap: 3px;
+  }
+  .search-label {
+    font-size: 1rem;
+    margin-bottom: 1px;
+  }
+  .search-col input,
+  .search-col button {
+    font-size: 1rem;
+    padding: 9px 7px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 2px;
+  }
+  .search-row.dual-search::before { display: none; }
+}
+
+/* General improvements for smaller screens */
+@media (max-width: 600px) {
+  body {
+    padding: 10px 2px;
+  }
+  .lookup-section {
+    min-width: unset;
+    padding: 7px;
+    font-size: 1rem;
+  }
+  .card-images {
+    gap: 7px;
+    max-width: 170px;
+  }
+  #greyMarketTable thead {
+    display: none;
+  }
+  #greyMarketTable td:last-child button {
+    pointer-events: auto;
+  }
+}
+
+/* Responsive stacking for mobile table */
 @media (max-width: 899px) {
   #greyMarketTable,
   #greyMarketTable thead,
@@ -239,63 +393,6 @@ button:hover {
   }
 }
 
-/* Autocomplete picker styles */
-.autocomplete-wrapper { position: relative; }
-#gmRecordPicker {
-  position: absolute;
-  z-index: 1100;
-  top: calc(100% + 5px);
-  left: 0;
-  right: 0;
-  max-height: 250px;
-  overflow-y: auto;
-  background: #222;
-  border: 1px solid #d4af37;
-  border-radius: 0 0 8px 8px;
-  box-sizing: border-box;
-}
-#gmRecordPicker div {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #d4af37aa;
-  color: #eee;
-}
-#gmRecordPicker div:hover {
-  background: #d4af37;
-  color: #000;
-}
-
-/* Scrollbar styling */
-.results::-webkit-scrollbar {
-  width: 0.7em;
-  background: transparent;
-}
-.results::-webkit-scrollbar-thumb {
-  background: #222;
-}
-
-/* General improvements for smaller screens */
-@media (max-width: 600px) {
-  body {
-    padding: 10px 2px;
-  }
-  .lookup-section {
-    min-width: unset;
-    padding: 7px;
-    font-size: 1rem;
-  }
-  .card-images {
-    gap: 7px;
-    max-width: 170px;
-  }
-  #greyMarketTable thead {
-    display: none;
-  }
-  #greyMarketTable td:last-child button {
-    pointer-events: auto;
-  }
-}
-
 /* Table header & cell padding for large screens */
 @media (min-width: 900px) {
   #greyMarketTable th,
@@ -305,139 +402,3 @@ button:hover {
     line-height: 1.2;
   }
 }
-/* Image Modal for click-to-enlarge feature */
-.img-modal {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.9);
-  position: fixed;
-  left: 0; top: 0;
-  width: 100vw; height: 100vh;
-  z-index: 1000;
-}
-.img-modal img {
-  max-width: 90vw;
-  max-height: 90vh;
-  box-shadow: 0 0 32px #222;
-  border-radius: 18px;
-  background: #fff;
-  transition: box-shadow 0.2s;
-}
-
-/* --- Modern LuxeTime Dual Search UI --- */
-.search-row.dual-search {
-  display: flex;
-  gap: 32px;
-  justify-content: flex-start;
-  align-items: flex-end;
-  margin-bottom: 18px;
-  position: relative;
-}
-.search-col {
-  flex: 1 1 0;
-  min-width: 220px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.search-label {
-  color: #d4af37;
-  font-size: 1.07rem;
-  font-weight: 700;
-  margin-bottom: 3px;
-  letter-spacing: 0.02em;
-  text-shadow: 0 0 3px #000, 0 0 2px #d4af376a;
-}
-.search-col input,
-.search-col button {
-  margin-top: 0;
-}
-.search-row.dual-search::before {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 13%;
-  bottom: 13%;
-  width: 2px;
-  background: linear-gradient(to bottom, #d4af37 85%, transparent 100%);
-  opacity: 0.22;
-  z-index: 2;
-  border-radius: 1px;
-}
-@media (max-width: 800px) {
-  .search-row.dual-search {
-    flex-direction: column;
-    gap: 14px;
-  }
-  .search-row.dual-search::before { display: none; }
-  .search-col { min-width: 0; }
-}
-@media (max-width: 800px) {
-  .search-label {
-    font-size: 1rem;
-    margin-bottom: 2px;
-  }
-  .search-col {
-    gap: 4px;
-  }
-  .search-col input,
-  .search-col button {
-    font-size: 1rem;
-    padding: 10px 8px;
-    margin-bottom: 2px;
-  }
-  .search-row.dual-search {
-    gap: 10px;
-    margin-bottom: 12px;
-    padding: 0;
-  }
-  .lookup-section {
-    padding: 9px;
-  }
-}
-@media (max-width: 500px) {
-  .search-label {
-    font-size: 0.97rem;
-  }
-  .search-col input,
-  .search-col button {
-    font-size: 0.99rem;
-    padding: 9px 7px;
-  }
-}
-@media (max-width: 500px) {
-  button {
-    padding: 8px 6px !important;
-    font-size: 0.98rem !important;
-    margin-top: 8px !important;
-  }
-}
-@media (max-width: 800px) {
-  .search-row.dual-search {
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 10px;
-    padding: 0;
-  }
-  .search-col {
-    min-width: 0 !important;
-    width: 100%;
-    gap: 3px;
-  }
-  .search-label {
-    font-size: 1rem;
-    margin-bottom: 1px;
-  }
-  .search-col input,
-  .search-col button {
-    font-size: 1rem;
-    padding: 9px 7px;
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 2px;
-  }
-}
-

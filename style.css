@@ -288,10 +288,10 @@ button:hover {
     gap: 7px;
     max-width: 170px;
   }
-#greyMarketTable thead {
+  #greyMarketTable thead {
     display: none;
   }
-#greyMarketTable td:last-child button {
+  #greyMarketTable td:last-child button {
     pointer-events: auto;
   }
 }
@@ -325,35 +325,53 @@ button:hover {
   background: #fff;
   transition: box-shadow 0.2s;
 }
-/* --- Modern LuxeTime Search Row --- */
-.search-row {
+
+/* --- Modern LuxeTime Dual Search UI --- */
+.search-row.dual-search {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
-  align-items: center;
+  gap: 32px;
   justify-content: flex-start;
+  align-items: flex-end;
+  margin-bottom: 18px;
+  position: relative;
 }
-.search-row input {
-  flex: 2 1 200px;
-  min-width: 180px;
+.search-col {
+  flex: 1 1 0;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.search-label {
+  color: #d4af37;
+  font-size: 1.07rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 3px #000, 0 0 2px #d4af376a;
+}
+.search-col input,
+.search-col button {
   margin-top: 0;
 }
-.search-row button {
-  flex: 1 1 160px;
-  min-width: 140px;
-  margin-top: 0;
+.search-row.dual-search::before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 13%;
+  bottom: 13%;
+  width: 2px;
+  background: linear-gradient(to bottom, #d4af37 85%, transparent 100%);
+  opacity: 0.22;
+  z-index: 2;
+  border-radius: 1px;
 }
-@media (max-width: 700px) {
-  .search-row {
-    display: block;
+@media (max-width: 800px) {
+  .search-row.dual-search {
+    flex-direction: column;
+    gap: 14px;
   }
-  .search-row input,
-  .search-row button {
-    width: 100%;
-    min-width: 0;
-    margin-bottom: 10px;
-  }
+  .search-row.dual-search::before { display: none; }
+  .search-col { min-width: 0; }
 }
-
-

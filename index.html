@@ -17,14 +17,19 @@
       <!-- Grey Market Lookup Section -->
 	<div class="lookup-section" style="position:relative;">
  	 <h2>Grey Market Lookup</h2>
-  
-  	<!-- Modern Search Row (horizontal on desktop, stacked on mobile) -->
- 	 <div class="search-row">
-    		<input type="text" id="greyMarketInput" placeholder="Enter Model (partial ok)" />
-    		<button onclick="lookupGreyMarket()">Search Grey Market</button>
-    		<input type="text" id="nicknameDialInput" placeholder="Enter Nickname or Dial (partial ok)" />
-    	<button onclick="lookupGreyMarketByNicknameDial()">Search by Nickname or Dial</button>
-	</div>
+
+  	<div class="search-row dual-search">
+   	 <div class="search-col">
+      	<label class="search-label" for="greyMarketInput">By Model / Reference</label>
+      	<input type="text" id="greyMarketInput" placeholder="Enter Model or Ref" />
+      	<button onclick="lookupGreyMarket()">Search Grey Market</button>
+    </div>
+    	<div class="search-col">
+     	 <label class="search-label" for="nicknameDialInput">By Nickname / Dial</label>
+      	<input type="text" id="nicknameDialInput" placeholder="Enter Nickname or Dial" />
+      	<button onclick="lookupGreyMarketByNicknameDial()">Search by Nickname or Dial</button>
+    </div>
+  </div>
 
   <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
 

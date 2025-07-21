@@ -375,3 +375,43 @@ button:hover {
   .search-row.dual-search::before { display: none; }
   .search-col { min-width: 0; }
 }
+@media (max-width: 800px) {
+  .search-label {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .search-col {
+    gap: 4px;
+  }
+  .search-col input,
+  .search-col button {
+    font-size: 1rem;
+    padding: 10px 8px;
+    margin-bottom: 2px;
+  }
+  .search-row.dual-search {
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 0;
+  }
+  .lookup-section {
+    padding: 9px;
+  }
+}
+@media (max-width: 500px) {
+  .search-label {
+    font-size: 0.97rem;
+  }
+  .search-col input,
+  .search-col button {
+    font-size: 0.99rem;
+    padding: 9px 7px;
+  }
+}
+@media (max-width: 500px) {
+  button {
+    padding: 8px 6px !important;
+    font-size: 0.98rem !important;
+    margin-top: 8px !important;
+  }
+}

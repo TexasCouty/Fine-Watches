@@ -353,7 +353,12 @@ button:hover {
 }
 
 /* Responsive stacking for mobile table */
+/* ==================== RESPONSIVE TABLE: HIDE HEADER ON MOBILE ==================== */
 @media (max-width: 899px) {
+  /* Hide the table header row so it doesn't stack vertically before the results */
+  #greyMarketTable thead {
+    display: none !important;
+  }
   #greyMarketTable,
   #greyMarketTable thead,
   #greyMarketTable tbody,
@@ -392,6 +397,7 @@ button:hover {
     background: transparent;
   }
 }
+
 
 /* Table header & cell padding for large screens */
 @media (min-width: 900px) {

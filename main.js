@@ -172,7 +172,6 @@ function parseDate(d) {
 
 async function lookupGreyMarket() {
   const ref = document.getElementById('greyMarketInput').value.trim();
-  const nicknameInput = document.getElementById('nicknameDialInput');
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
   if (!ref) {
@@ -187,23 +186,22 @@ async function lookupGreyMarket() {
     data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
     if (!data.length) {
       resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
-      return;
+    } else {
+      renderGreyMarketResults(data);
     }
-    renderGreyMarketResults(data);
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
-  // Clear both inputs after searching
+  // Always clear fields and blur on any result
   document.getElementById('greyMarketInput').value = '';
-  if (nicknameInput) nicknameInput.value = '';
+  document.getElementById('nicknameDialInput').value = '';
+  document.getElementById('greyMarketInput').blur();
+  document.getElementById('nicknameDialInput').blur();
 }
 
-
-// --- New function to search by Nickname or Dial ---
 async function lookupGreyMarketByNicknameDial() {
   const input = document.getElementById('nicknameDialInput').value.trim();
-  const modelInput = document.getElementById('greyMarketInput');
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
   if (!input) {
@@ -218,17 +216,20 @@ async function lookupGreyMarketByNicknameDial() {
     data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
     if (!data.length) {
       resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
-      return;
+    } else {
+      renderGreyMarketResults(data);
     }
-    renderGreyMarketResults(data);
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
-  // Clear both inputs after searching
+  // Always clear fields and blur on any result
   document.getElementById('nicknameDialInput').value = '';
-  if (modelInput) modelInput.value = '';
+  document.getElementById('greyMarketInput').value = '';
+  document.getElementById('nicknameDialInput').blur();
+  document.getElementById('greyMarketInput').blur();
 }
+
 
 
 function renderGreyMarketResults(data) {

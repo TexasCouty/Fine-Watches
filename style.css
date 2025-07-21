@@ -325,5 +325,35 @@ button:hover {
   background: #fff;
   transition: box-shadow 0.2s;
 }
+/* --- Modern LuxeTime Search Row --- */
+.search-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  align-items: center;
+  justify-content: flex-start;
+}
+.search-row input {
+  flex: 2 1 200px;
+  min-width: 180px;
+  margin-top: 0;
+}
+.search-row button {
+  flex: 1 1 160px;
+  min-width: 140px;
+  margin-top: 0;
+}
+@media (max-width: 700px) {
+  .search-row {
+    display: block;
+  }
+  .search-row input,
+  .search-row button {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 10px;
+  }
+}
 
 

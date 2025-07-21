@@ -415,3 +415,29 @@ button:hover {
     margin-top: 8px !important;
   }
 }
+@media (max-width: 800px) {
+  .search-row.dual-search {
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 0;
+  }
+  .search-col {
+    min-width: 0 !important;
+    width: 100%;
+    gap: 3px;
+  }
+  .search-label {
+    font-size: 1rem;
+    margin-bottom: 1px;
+  }
+  .search-col input,
+  .search-col button {
+    font-size: 1rem;
+    padding: 9px 7px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 2px;
+  }
+}
+

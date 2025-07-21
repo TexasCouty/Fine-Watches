@@ -172,6 +172,7 @@ function parseDate(d) {
 
 async function lookupGreyMarket() {
   const ref = document.getElementById('greyMarketInput').value.trim();
+  const nicknameInput = document.getElementById('nicknameDialInput');
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
   if (!ref) {
@@ -193,11 +194,16 @@ async function lookupGreyMarket() {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
+  // Clear both inputs after searching
+  document.getElementById('greyMarketInput').value = '';
+  if (nicknameInput) nicknameInput.value = '';
 }
+
 
 // --- New function to search by Nickname or Dial ---
 async function lookupGreyMarketByNicknameDial() {
   const input = document.getElementById('nicknameDialInput').value.trim();
+  const modelInput = document.getElementById('greyMarketInput');
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
   if (!input) {
@@ -219,7 +225,11 @@ async function lookupGreyMarketByNicknameDial() {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
+  // Clear both inputs after searching
+  document.getElementById('nicknameDialInput').value = '';
+  if (modelInput) modelInput.value = '';
 }
+
 
 function renderGreyMarketResults(data) {
   const resultsDiv = document.getElementById('results');

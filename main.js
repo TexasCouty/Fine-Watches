@@ -188,86 +188,117 @@ async function lookupGreyMarket() {
       resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
       return;
     }
-    let html = '';
-    if (window.innerWidth >= 768) {
-      html = data.map(item => {
-        let imgSrc = '';
-        if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
-          imgSrc = item.ImageFilename;
-        } else if (item.ImageFilename) {
-          imgSrc = 'assets/grey_market/' + item.ImageFilename;
-        }
-        const img = imgSrc
-          ? `<img src="${imgSrc}" class="enlargeable-img" style="max-width:200px; margin-right:20px; border-radius:8px; cursor:pointer;" onerror="this.style.display='none';" />`
-          : '';
-        return `
-          <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
-            ${img}
-            <div>
-              <p><strong>Unique ID:</strong> ${item["Unique ID"] || item["uniqueId"] || ''}</p>
-              <p><strong>Model:</strong> ${item.Model}</p>
-              <p><strong>Date Entered:</strong> ${item["Date Entered"]}</p>
-              <p><strong>Year:</strong> ${item.Year}</p>
-              <p><strong>Model Name:</strong> ${item["Model Name"]}</p>
-              <p><strong>Nickname/Dial:</strong> ${item["Nickname or Dial"]}</p>
-              <p><strong>Bracelet:</strong> ${item.Bracelet}</p>
-              <p><strong>Bracelet Metal/Color:</strong> ${item["Bracelet Metal/Color"]}</p>
-              <p><strong>Full Set:</strong> ${item["Full Set"]}</p>
-              <p><strong>Retail Ready:</strong> ${item["Retail Ready"]}</p>
-              <p><strong>Grey Market Price:</strong> ${item.Price || ''}</p>
-              <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
-              <p><strong>Dealer:</strong> ${item.Dealer}</p>
-              <p><strong>Comments:</strong> ${item.Comments}</p>
-              <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
-            </div>
-          </div>`;
-      }).join('');
-    } else {
-      const headers = [
-        "Unique ID","Date Entered","Year","Model","Model Name","Nickname or Dial",
-        "Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
-        "Current Retail","Dealer","Comments","Actions"
-      ];
-      html = `<table id="greyMarketTable"><thead><tr>${
-        headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
-      }</tr></thead><tbody>`;
-      data.forEach(item => {
-        let imgSrc = '';
-        if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
-          imgSrc = item.ImageFilename;
-        } else if (item.ImageFilename) {
-          imgSrc = 'assets/grey_market/' + item.ImageFilename;
-        }
-        html += `<tr>
-          <td data-label="Unique ID">${item["Unique ID"] || item["uniqueId"] || ""}</td>
-          <td data-label="Date Entered">${item["Date Entered"]||''}</td>
-          <td data-label="Year">${item.Year||''}</td>
-          <td data-label="Model">${item.Model||''}${
-            imgSrc
-              ? `<br><img src="${imgSrc}" class="enlargeable-img" style="max-width:120px;margin-top:5px;cursor:pointer;" onerror="this.style.display='none';">`
-              : ''
-          }</td>
-          <td data-label="Model Name">${item["Model Name"]||''}</td>
-          <td data-label="Nickname or Dial">${item["Nickname or Dial"]||''}</td>
-          <td data-label="Bracelet">${item.Bracelet||''}</td>
-          <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"]||''}</td>
-          <td data-label="Grey Market Price">${item.Price||''}</td>
-          <td data-label="Full Set">${item["Full Set"]||''}</td>
-          <td data-label="Retail Ready">${item["Retail Ready"]||''}</td>
-          <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
-          <td data-label="Dealer">${item.Dealer||''}</td>
-          <td data-label="Comments">${item.Comments||''}</td>
-          <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button></td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-    }
-    resultsDiv.innerHTML = html;
-    addImageModalHandlers();
+    renderGreyMarketResults(data);
   } catch (err) {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
+}
+
+// --- New function to search by Nickname or Dial ---
+async function lookupGreyMarketByNicknameDial() {
+  const input = document.getElementById('nicknameDialInput').value.trim();
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = '';
+  if (!input) {
+    alert('Enter a nickname or dial.');
+    return;
+  }
+  resultsDiv.innerHTML = '<div>Searching Grey Market by Nickname/Dial...</div>';
+  try {
+    const res = await fetch(`/.netlify/functions/greyMarketLookup?nickname_or_dial=${encodeURIComponent(input)}`);
+    if (!res.ok) throw new Error('Network response was not ok');
+    const data = await res.json();
+    data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
+    if (!data.length) {
+      resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
+      return;
+    }
+    renderGreyMarketResults(data);
+  } catch (err) {
+    resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
+    console.error(err);
+  }
+}
+
+function renderGreyMarketResults(data) {
+  const resultsDiv = document.getElementById('results');
+  let html = '';
+  if (window.innerWidth >= 768) {
+    html = data.map(item => {
+      let imgSrc = '';
+      if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
+        imgSrc = item.ImageFilename;
+      } else if (item.ImageFilename) {
+        imgSrc = 'assets/grey_market/' + item.ImageFilename;
+      }
+      const img = imgSrc
+        ? `<img src="${imgSrc}" class="enlargeable-img" style="max-width:200px; margin-right:20px; border-radius:8px; cursor:pointer;" onerror="this.style.display='none';" />`
+        : '';
+      return `
+        <div class="card" style="display:flex;gap:20px;padding:15px;margin-bottom:20px;border:1px solid gold;border-radius:10px;">
+          ${img}
+          <div>
+            <p><strong>Unique ID:</strong> ${item["Unique ID"] || item["uniqueId"] || ''}</p>
+            <p><strong>Model:</strong> ${item.Model}</p>
+            <p><strong>Date Entered:</strong> ${item["Date Entered"]}</p>
+            <p><strong>Year:</strong> ${item.Year}</p>
+            <p><strong>Model Name:</strong> ${item["Model Name"]}</p>
+            <p><strong>Nickname/Dial:</strong> ${item["Nickname or Dial"]}</p>
+            <p><strong>Bracelet:</strong> ${item.Bracelet}</p>
+            <p><strong>Bracelet Metal/Color:</strong> ${item["Bracelet Metal/Color"]}</p>
+            <p><strong>Full Set:</strong> ${item["Full Set"]}</p>
+            <p><strong>Retail Ready:</strong> ${item["Retail Ready"]}</p>
+            <p><strong>Grey Market Price:</strong> ${item.Price || ''}</p>
+            <p><strong>Current Retail: </strong>${item["Current Retail (Not Inc Tax)"]}</p>
+            <p><strong>Dealer:</strong> ${item.Dealer}</p>
+            <p><strong>Comments:</strong> ${item.Comments}</p>
+            <button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button>
+          </div>
+        </div>`;
+    }).join('');
+  } else {
+    const headers = [
+      "Unique ID","Date Entered","Year","Model","Model Name","Nickname or Dial",
+      "Bracelet","Bracelet Metal/Color","Grey Market Price","Full Set","Retail Ready",
+      "Current Retail","Dealer","Comments","Actions"
+    ];
+    html = `<table id="greyMarketTable"><thead><tr>${
+      headers.map((h,i) => `<th onclick="sortTable(${i})">${h}</th>`).join('')
+    }</tr></thead><tbody>`;
+    data.forEach(item => {
+      let imgSrc = '';
+      if (item.ImageFilename && item.ImageFilename.startsWith('http')) {
+        imgSrc = item.ImageFilename;
+      } else if (item.ImageFilename) {
+        imgSrc = 'assets/grey_market/' + item.ImageFilename;
+      }
+      html += `<tr>
+        <td data-label="Unique ID">${item["Unique ID"] || item["uniqueId"] || ""}</td>
+        <td data-label="Date Entered">${item["Date Entered"]||''}</td>
+        <td data-label="Year">${item.Year||''}</td>
+        <td data-label="Model">${item.Model||''}${
+          imgSrc
+            ? `<br><img src="${imgSrc}" class="enlargeable-img" style="max-width:120px;margin-top:5px;cursor:pointer;" onerror="this.style.display='none';">`
+            : ''
+        }</td>
+        <td data-label="Model Name">${item["Model Name"]||''}</td>
+        <td data-label="Nickname or Dial">${item["Nickname or Dial"]||''}</td>
+        <td data-label="Bracelet">${item.Bracelet||''}</td>
+        <td data-label="Bracelet Metal/Color">${item["Bracelet Metal/Color"]||''}</td>
+        <td data-label="Grey Market Price">${item.Price||''}</td>
+        <td data-label="Full Set">${item["Full Set"]||''}</td>
+        <td data-label="Retail Ready">${item["Retail Ready"]||''}</td>
+        <td data-label="Current Retail">${item["Current Retail (Not Inc Tax)"]||''}</td>
+        <td data-label="Dealer">${item.Dealer||''}</td>
+        <td data-label="Comments">${item.Comments||''}</td>
+        <td data-label="Actions"><button onclick='showEditGreyMarketForm(${JSON.stringify(item).replace(/'/g,"\\'")})'>Edit</button></td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+  resultsDiv.innerHTML = html;
+  addImageModalHandlers();
 }
 
 function sortTable(n) {
@@ -337,3 +368,4 @@ window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
 window.sortTable = sortTable;
+window.lookupGreyMarketByNicknameDial = lookupGreyMarketByNicknameDial; // <--- Make available globally

@@ -15,7 +15,11 @@ exports.handler = async (event) => {
     const refRaw = event.queryStringParameters?.reference || '';
     const ref = refRaw.trim();
 
-    console.log(`🔍 Received query parameter: "${ref}"`);
+    // NEW: Also support nickname_or_dial as a query param
+    const nicknameOrDialRaw = event.queryStringParameters?.nickname_or_dial || '';
+    const nicknameOrDial = nicknameOrDialRaw.trim();
+
+    console.log(`🔍 Received query parameter: reference="${ref}", nickname_or_dial="${nicknameOrDial}"`);
 
     if (!cachedClient) {
       console.log('🧩 Connecting to MongoDB...');
@@ -29,7 +33,20 @@ exports.handler = async (event) => {
     const db = cachedClient.db('test');
     const collection = db.collection('grey_market_refs');
 
-    const query = ref ? { Model: { $regex: ref, $options: 'i' } } : {};
+    // Construct query:
+    let query = {};
+    if (ref) {
+      query = {
+        $or: [
+          { Model: { $regex: ref, $options: 'i' } },
+          { "Model Name": { $regex: ref, $options: 'i' } }
+        ]
+      };
+    } else if (nicknameOrDial) {
+      query = {
+        "Nickname or Dial": { $regex: nicknameOrDial, $options: 'i' }
+      };
+    }
     console.log('📡 Running query:', JSON.stringify(query));
 
     // SORT BY Date Entered DESCENDING (latest first)
@@ -43,6 +60,10 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       body: JSON.stringify(results),
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
     };
   } catch (err) {
     console.error('💥 ERROR in greyMarketLookup:', err);
@@ -52,6 +73,3 @@ exports.handler = async (event) => {
     };
   }
 };
-
-
-

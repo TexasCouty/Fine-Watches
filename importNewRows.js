@@ -8,6 +8,8 @@ const path = require('path');
 const { MongoClient } = require('mongodb');
 const cloudinary = require('cloudinary').v2;
 
+console.log("Netlify ENV MONGO_URI:", process.env.MONGO_URI);
+
 // ---- Cloudinary config ----
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

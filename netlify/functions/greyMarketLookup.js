@@ -1,3 +1,4 @@
+console.log("🚨 Netlify ENV MONGO_URI:", process.env.MONGO_URI);
 const { MongoClient } = require('mongodb');
 
 const uri = process.env.MONGO_URI;

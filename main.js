@@ -1,4 +1,4 @@
-  // Testing Clean Directory
+// Testing Clean Directory
 
 let greyMarketData = [];
 let modelNameSuggestions = [];
@@ -15,7 +15,7 @@ function toDateInputValue(dateString) {
 
 async function fetchGreyMarketData() {
   try {
-    const res = await fetch('/.netlify/functions/greyMarketLookup?reference=');
+    const res = await fetch('/.netlify/functions/greyMarketLookup?query=');
     if (!res.ok) throw new Error('Failed to fetch grey market data');
     greyMarketData = await res.json();
     const names = [...new Set(greyMarketData.map(i => i['Model Name']).filter(Boolean).map(n => n.toUpperCase()))];
@@ -146,7 +146,7 @@ async function saveGreyMarketEntry() {
     if (res.ok) {
       alert('Entry updated!');
       clearGreyMarketForm();
-      lookupGreyMarket();
+      lookupCombinedGreyMarket();
     } else {
       alert('Error: ' + (result.error || 'Could not update entry'));
     }
@@ -156,65 +156,20 @@ async function saveGreyMarketEntry() {
   }
 }
 
-function parseDate(d) {
-  if (!d) return new Date(0);
-  if (d instanceof Date) return d;
-  let parts = d.split(/[\/\-]/);
-  if (parts.length === 3) {
-    if (parts[2].length === 4) {
-      let [a, b, c] = parts.map(Number);
-      if (a > 12) return new Date(c, b - 1, a);
-      return new Date(c, a - 1, b);
-    } else if (parts[0].length === 4) {
-      return new Date(parts[0], parts[1] - 1, parts[2]);
-    }
-  }
-  return new Date(d);
-}
-
-async function lookupGreyMarket() {
-  const ref = document.getElementById('greyMarketInput').value.trim();
-  const resultsDiv = document.getElementById('results');
-  resultsDiv.innerHTML = '';
-  if (!ref) {
-    alert('Enter a model number.');
-    return;
-  }
-  resultsDiv.innerHTML = '<div>Searching Grey Market...</div>';
-  try {
-    const res = await fetch(`/.netlify/functions/greyMarketLookup?reference=${encodeURIComponent(ref)}`);
-    if (!res.ok) throw new Error('Network response was not ok');
-    const data = await res.json();
-    data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
-    if (!data.length) {
-      resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
-    } else {
-      renderGreyMarketResults(data);
-    }
-  } catch (err) {
-    resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
-    console.error(err);
-  }
-  // Always clear fields and blur on any result
-  document.getElementById('greyMarketInput').value = '';
-  document.getElementById('nicknameDialInput').value = '';
-  document.getElementById('greyMarketInput').blur();
-  document.getElementById('nicknameDialInput').blur();
-}
-
-async function lookupGreyMarketByNicknameDial() {
-  const input = document.getElementById('nicknameDialInput').value.trim();
+async function lookupCombinedGreyMarket() {
+  const input = document.getElementById('combinedSearchInput').value.trim();
   const resultsDiv = document.getElementById('results');
   resultsDiv.innerHTML = '';
   if (!input) {
-    alert('Enter a nickname or dial.');
+    alert('Please enter a Model, Reference, Unique ID, Nickname, or Dial.');
     return;
   }
-  resultsDiv.innerHTML = '<div>Searching Grey Market by Nickname/Dial...</div>';
+  console.log(`[Unified Search] Searching for: ${input}`);
   try {
-    const res = await fetch(`/.netlify/functions/greyMarketLookup?nickname_or_dial=${encodeURIComponent(input)}`);
+    const res = await fetch(`/.netlify/functions/greyMarketLookup?query=${encodeURIComponent(input)}`);
     if (!res.ok) throw new Error('Network response was not ok');
     const data = await res.json();
+    console.log(`[Unified Search] Found ${data.length} results`);
     data.sort((a, b) => parseDate(b["Date Entered"]) - parseDate(a["Date Entered"]));
     if (!data.length) {
       resultsDiv.innerHTML = '<div>No Grey Market matches found.</div>';
@@ -225,14 +180,9 @@ async function lookupGreyMarketByNicknameDial() {
     resultsDiv.innerHTML = `<div>Error fetching grey market data.</div>`;
     console.error(err);
   }
-  // Always clear fields and blur on any result
-  document.getElementById('nicknameDialInput').value = '';
-  document.getElementById('greyMarketInput').value = '';
-  document.getElementById('nicknameDialInput').blur();
-  document.getElementById('greyMarketInput').blur();
+  document.getElementById('combinedSearchInput').value = '';
+  document.getElementById('combinedSearchInput').blur();
 }
-
-
 
 function renderGreyMarketResults(data) {
   const resultsDiv = document.getElementById('results');
@@ -381,4 +331,4 @@ window.showEditGreyMarketForm = showEditGreyMarketForm;
 window.cancelGreyMarketForm = cancelGreyMarketForm;
 window.saveGreyMarketEntry = saveGreyMarketEntry;
 window.sortTable = sortTable;
-window.lookupGreyMarketByNicknameDial = lookupGreyMarketByNicknameDial; // <--- Make available globally
+window.lookupCombinedGreyMarket = lookupCombinedGreyMarket;

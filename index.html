@@ -1,107 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>LuxeTime Watches Lookup</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LuxeTime Watch Lookup</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
-    <h1>LuxeTime Watches Lookup</h1>
 
-    <div class="lookup-grid">
+  <header>
+    <h1>LuxeTime Watch Lookup</h1>
+  </header>
 
-      
-      <!-- Grey Market Lookup Section -->
-	<div class="lookup-section" style="position:relative;">
- 	 <h2>Grey Market Lookup</h2>
+  <main>
+    <!-- ===== Unified Grey Market Search ===== -->
+    <section id="greyMarketLookupSection">
+      <h2>Grey Market Lookup</h2>
 
-  	<div class="search-row dual-search">
-   	 <div class="search-col">
-      	<label class="search-label" for="greyMarketInput">By Model / Reference</label>
-      	<input type="text" id="greyMarketInput" placeholder="Enter Model or Ref" />
-      	<button onclick="lookupGreyMarket()">Search Grey Market</button>
-    </div>
-    	<div class="search-col">
-     	 <label class="search-label" for="nicknameDialInput">By Nickname / Dial</label>
-      	<input type="text" id="nicknameDialInput" placeholder="Enter Nickname or Dial" />
-      	<button onclick="lookupGreyMarketByNicknameDial()">Search by Nickname or Dial</button>
-    </div>
-  </div>
+      <label for="combinedSearchInput"><strong>Enter Watch Details:</strong></label>
+      <input
+        type="text"
+        id="combinedSearchInput"
+        placeholder="Enter Model or Ref or Nickname or Dial"
+      >
+      <button onclick="lookupCombinedGreyMarket()">Search Grey Market</button>
+    </section>
 
-  <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
+    <!-- ===== Add New Grey Market Entry ===== -->
+    <section id="addGreyMarketSection">
+      <button id="addGreyMarketBtn" onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
 
-  <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
-          <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
+      <div id="greyMarketFormContainer" style="display:none;">
+        <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
 
+        <form id="greyMarketForm">
           <label for="gm_unique_id">Unique ID</label>
-          <input type="text" id="gm_unique_id" />          
+          <input type="text" id="gm_unique_id" name="gm_unique_id">
 
           <label for="gm_date_entered">Date Entered</label>
-          <input type="date" id="gm_date_entered" />
+          <input type="date" id="gm_date_entered" name="gm_date_entered">
 
           <label for="gm_year">Year</label>
-          <input type="text" id="gm_year" />
+          <input type="text" id="gm_year" name="gm_year">
 
           <label for="gm_model">Model</label>
-          <input type="text" id="gm_model" />
+          <input type="text" id="gm_model" name="gm_model">
 
           <label for="gm_model_name">Model Name</label>
-          <div class="autocomplete-wrapper">
-            <input type="text" id="gm_model_name" autocomplete="off" />
-            <div id="gmRecordPicker" style="display:none;"></div>
-          </div>
+          <input type="text" id="gm_model_name" name="gm_model_name">
 
           <label for="gm_nickname">Nickname or Dial</label>
-          <input type="text" id="gm_nickname" />
+          <input type="text" id="gm_nickname" name="gm_nickname">
 
           <label for="gm_bracelet">Bracelet</label>
-          <input type="text" id="gm_bracelet" />
+          <input type="text" id="gm_bracelet" name="gm_bracelet">
 
           <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
-          <input type="text" id="gm_bracelet_metal_color" />
+          <input type="text" id="gm_bracelet_metal_color" name="gm_bracelet_metal_color">
 
           <label for="gm_price">Price</label>
-          <input type="text" id="gm_price" />
+          <input type="text" id="gm_price" name="gm_price">
 
           <label for="gm_full_set">Full Set</label>
-          <input type="text" id="gm_full_set" />
+          <input type="text" id="gm_full_set" name="gm_full_set">
 
           <label for="gm_retail_ready">Retail Ready</label>
-          <input type="text" id="gm_retail_ready" />
+          <input type="text" id="gm_retail_ready" name="gm_retail_ready">
 
           <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
-          <input type="text" id="gm_current_retail" />
+          <input type="text" id="gm_current_retail" name="gm_current_retail">
 
           <label for="gm_dealer">Dealer</label>
-          <input type="text" id="gm_dealer" />
-
-	  <!-- Image upload starts here -->
-  	  <label for="gm_image">Image</label>
- 	  <input type="file" id="gm_image" accept="image/*" />
- 	  <img id="gm_current_img" src="" style="max-width:120px;display:none;" />
- 	  <!-- Image upload ends here -->
+          <input type="text" id="gm_dealer" name="gm_dealer">
 
           <label for="gm_comments">Comments</label>
-          <textarea id="gm_comments" rows="3"></textarea>
+          <textarea id="gm_comments" name="gm_comments"></textarea>
 
-          <button onclick="saveGreyMarketEntry()">Save</button>
-          <button onclick="cancelGreyMarketForm()">Cancel</button>
-          <button id="gm_delete_button" style="background:#b93a3a; color:#fff; display:none;" onclick="deleteGreyMarketEntry()">Delete</button>
-        </div>
+          <label for="gm_image">Image</label>
+          <input type="file" id="gm_image" name="gm_image" accept="image/*">
+          <img id="gm_current_img" style="max-width:200px; display:none; margin-top:10px;" />
+
+          <div class="form-buttons">
+            <button type="button" onclick="saveGreyMarketEntry()">Save</button>
+            <button type="button" id="gm_delete_button" style="display:none;">Delete</button>
+            <button type="button" onclick="cancelGreyMarketForm()">Cancel</button>
+          </div>
+        </form>
       </div>
-    </div>
+    </section>
 
-    <div id="results" class="results"></div>
+    <!-- ===== Search Results ===== -->
+    <section id="resultsSection">
+      <div id="results"></div>
+    </section>
+
+  </main>
+
+  <!-- ===== Modal for Enlargeable Images ===== -->
+  <div id="imgModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="imgModalImg">
   </div>
 
   <script src="main.js"></script>
-<!-- Image Modal -->
-<div id="imgModal" class="img-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.9); justify-content:center; align-items:center;">
-  <img id="imgModalImg" style="max-width:90vw; max-height:90vh; box-shadow:0 0 32px #222; border-radius:18px;" />
-</div>
-
 </body>
 </html>

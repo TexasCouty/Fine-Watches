@@ -1,6 +1,45 @@
-# Local Netlify folder
-.netlify
-
+# Node.js dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
 .env
-setup_env.bat 
+.env.local
+.env.*.local
+
+# Log files
+*.log
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# OS / Editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Netlify
+.netlify/
+
+
+# Build and temp artifacts
+dist/
+build/
+tmp/
+.cache/
+coverage/
+
+# PowerShell / Batch helpers
+setup_env.ps1
+setup_env.bat
+
+# CSV or sensitive business files (optional, if needed)
+*.csv
+
+# Lock files (optional for team consistency)
+# package-lock.json
+# yarn.lock

@@ -1,80 +1,53 @@
-// netlify/functions/greyMarketLookup.js
+const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
-const { MongoClient } = require('mongodb');
-const uri = process.env.MONGO_URI;
-let cachedClient = null;
-
-exports.handler = async (event) => {
+exports.handler = async function (event) {
   console.log("=== Grey Market Lookup Function Called ===");
 
-  if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: 'Only GET requests are allowed' }),
-    };
-  }
+  const term = event.queryStringParameters.term || "";
+  console.log("Search term received:", term);
 
-  const rawQuery = event.queryStringParameters?.query || '';
-  const queryTerm = rawQuery.trim();
-
-  console.log("Search term received:", queryTerm);
-
-  if (!queryTerm) {
+  if (!term) {
     return {
       statusCode: 400,
-      body: JSON.stringify({ error: 'Missing search term' }),
+      body: JSON.stringify({ error: "Search term is required" }),
     };
   }
 
-  const regex = { $regex: queryTerm, $options: 'i' };
-
-  // === Updated unified search query ===
-  const mongoQuery = {
-    $or: [
-      { Model: regex },
-      { "Model Name": regex },
-      { "Unique ID": regex },
-      { "Nickname or Dial": regex },
-      { Dial: regex }
-    ]
-  };
+  const uri = process.env.MONGO_URI;
+  const client = new MongoClient(uri);
 
   try {
-    if (!cachedClient) {
-      console.log("Connecting to MongoDB...");
-      cachedClient = new MongoClient(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      });
-      await cachedClient.connect();
-      console.log("MongoDB connected successfully.");
-    }
+    console.log("Connecting to MongoDB...");
+    await client.connect();
+    console.log("MongoDB connected successfully.");
 
-    const dbName = process.env.MONGODB_DB || 'luxetime';
-    const db = cachedClient.db(dbName);
-    const collection = db.collection('grey_market');
+    const db = client.db(process.env.MONGO_DB_NAME || "WatchDB");
+    const collection = db.collection(process.env.MONGO_COLLECTION || "grey_market");
 
-    console.log("Running query:", JSON.stringify(mongoQuery));
-    const results = await collection
-      .find(mongoQuery)
-      .sort({ "Date Entered": -1 })
-      .toArray();
+    const query = {
+      $or: [
+        { "Model": { $regex: term, $options: "i" } },
+        { "Model Name": { $regex: term, $options: "i" } },
+        { "Nickname or Dial": { $regex: term, $options: "i" } }
+      ]
+    };
 
+    console.log("Running query:", JSON.stringify(query));
+    const results = await collection.find(query).toArray();
     console.log(`Query returned ${results.length} results.`);
 
     return {
       statusCode: 200,
       body: JSON.stringify(results),
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
     };
   } catch (error) {
-    console.error("Error during MongoDB query:", error);
+    console.error("Error in greyMarketLookup:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal Server Error' }),
+      body: JSON.stringify({ error: "Internal Server Error" }),
     };
+  } finally {
+    await client.close();
   }
 };

@@ -37,8 +37,7 @@ coverage/
 setup_env.ps1
 setup_env.bat
 
-# CSV or sensitive business files (optional, if needed)
-*.csv
+
 
 # Lock files (optional for team consistency)
 # package-lock.json

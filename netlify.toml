@@ -1,9 +1,8 @@
 [build]
-  # where your static site now lives:
-  publish = "src"
-
-  # where your Netlify Functions now live:
-  functions = "functions"
+-  publish   = "."
++  publish   = "src"
+-  functions = "netlify/functions"
++  functions = "functions"
 
 [functions]
   node_bundler = "esbuild"

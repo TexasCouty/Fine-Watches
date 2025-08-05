@@ -42,3 +42,6 @@ setup_env.bat
 # Lock files (optional for team consistency)
 # package-lock.json
 # yarn.lock
+
+# local one-click backups
+backup/

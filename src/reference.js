@@ -41,7 +41,7 @@
 
   function buildReferenceCard(item, idx) {
     var card = document.createElement('div');
-    card.className = 'card detail-card';
+    card.className = 'card detail-card ref-compact'; // add compact class for desktop styling
     card.style.marginBottom = '18px';
     card.setAttribute('data-idx', String(idx));
 

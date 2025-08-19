@@ -482,4 +482,40 @@ button:hover {
     border-radius: 8px;
   }
 }
+/* ===== Reference cards: more compact on desktop only ===== */
+@media (min-width: 981px) {
+  .detail-card.ref-compact {
+    grid-template-columns: 1.2fr 300px; /* narrower image column */
+    gap: 14px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+  }
+
+  .detail-card.ref-compact h3.detail-title {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+
+  .detail-card.ref-compact dl {
+    grid-template-columns: 180px 1fr; /* label | value */
+    gap: 6px 12px;
+  }
+
+  .detail-card.ref-compact dt {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  .detail-card.ref-compact dd {
+    font-size: 0.95rem;
+    margin: 0 0 6px 0;
+  }
+
+  .detail-card.ref-compact .watch-image,
+  .detail-card.ref-compact img {
+    max-width: 280px;
+    border-radius: 6px;
+  }
+}
 

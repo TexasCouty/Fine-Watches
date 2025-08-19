@@ -5,17 +5,14 @@ const { MongoClient } = require('mongodb');
 
 const ENV = {
   URI: process.env.MONGO_URI,
-  DB: process.env.MONGO_DB || 'test',           // <- your prod DB
+  DB: process.env.MONGO_DB || 'test',
   COLL: process.env.MONGO_REF_COLL || 'references',
 };
 
 function mask(uri) {
   if (!uri) return '<undefined>';
-  try {
-    return uri.replace(/\/\/([^@]+)@/, '//***:***@');
-  } catch {
-    return '<unparseable>';
-  }
+  try { return uri.replace(/\/\/([^@]+)@/, '//***:***@'); }
+  catch { return '<unparseable>'; }
 }
 
 function rx(s) { return new RegExp(s, 'i'); }
@@ -24,20 +21,11 @@ function rx(s) { return new RegExp(s, 'i'); }
 function buildSmartQuery(term) {
   const tokens = (term || '').split(/\s+/).filter(Boolean);
   const F = [
-    'Reference',
-    'Brand',
-    'Collection',
-    'Description',
-    'Model',
-    'ModelName',
-    'Model Name',
-    'Nickname',
-    'Nickname or Dial',
-    'Family',
-    'Line',
-    'Keywords',
-    'Tags',
-    'Calibre.Name',
+    'Reference', 'Brand', 'Collection', 'Description',
+    'Model', 'ModelName', 'Model Name',
+    'Nickname', 'Nickname or Dial',
+    'Family', 'Line', 'Keywords', 'Tags',
+    'Calibre.Name'
   ];
   if (tokens.length === 0) return {};
   return { $and: tokens.map(t => ({ $or: F.map(f => ({ [f]: rx(t) })) })) };
@@ -70,7 +58,6 @@ exports.handler = async (event) => {
       return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // Accept both rawQuery and queryStringParameters
     const params = new URLSearchParams(event.rawQuery || '');
     const qs = event.queryStringParameters || {};
     const q = (params.get('q') || qs.q || '').trim();
@@ -88,7 +75,6 @@ exports.handler = async (event) => {
     const db = client.db(ENV.DB);
     const coll = db.collection(ENV.COLL);
 
-    // Diagnostics: confirm collection exists & count
     try {
       const est = await coll.estimatedDocumentCount();
       console.log(`[RefLookup] Collection "${ENV.COLL}" est count=${est}`);
@@ -100,23 +86,10 @@ exports.handler = async (event) => {
     console.log('[RefLookup] Query:', JSON.stringify(query));
 
     console.time('[RefLookup] find');
-    const docs = await coll.find(query, {
-      projection: {
-        _id: 0,
-        Reference: 1,
-        Brand: 1,
-        Collection: 1,
-        Description: 1,
-        ImageFilename: 1,
-        Calibre: 1,
-        Keywords: 1,
-        Tags: 1,
-        SourceURL: 1,
-        Price: 1,
-        PriceAmount: 1,
-        PriceCurrency: 1,
-      },
-    }).limit(limit).toArray();
+    // Return *all* fields (except _id) so we can display everything
+    const docs = await coll.find(query, { projection: { _id: 0 } })
+                           .limit(limit)
+                           .toArray();
     console.timeEnd('[RefLookup] find');
 
     console.log(`[RefLookup] ◄ ${docs.length} docs in ${Date.now() - t0}ms`);
@@ -126,7 +99,8 @@ exports.handler = async (event) => {
       body: JSON.stringify(docs),
     };
   } catch (err) {
-    const msg = (err?.message || String(err)).replace(/mongodb\+srv:[^ )]+/g, '***');
+    const msg = (err && err.message ? err.message : String(err))
+      .replace(/mongodb\+srv:[^ )]+/g, '***');
     console.error(`[RefLookup] ✖ ${msg} (after ${Date.now() - t0}ms)`);
     return {
       statusCode: 500,

@@ -1,111 +1,259 @@
 // src/reference.js
-// Reference Lookup – browser-side code
-// - Uses existing CSS (.card, .manufacturer-line, .watch-image, .card-images)
-// - Detailed logs with [RefLookup][UI] prefixes
-// - Enter key triggers search
-// - Safe JSON parsing + helpful error messages
+// Reference Lookup – UX matches Grey Market: clear input, one full-detail card per result in #detailDock
 
 (function () {
-  const IDS = {
-    input: 'refQuery',
-    button: 'refLookupBtn',
-    results: 'refResults',
-  };
+  'use strict';
 
-  const $ = (id) => document.getElementById(id);
+  // IDs from index.html (already present)
+  var input = document.getElementById('refQuery');
+  var btn   = document.getElementById('refLookupBtn');
+  var note  = document.getElementById('refResults');   // we reuse this only for "Searching…"
+  var dock  = document.getElementById('detailDock');   // full-width result area (same as GM)
 
-  function renderCard(doc) {
-    const ref = doc?.Reference || '';
-    const brand = doc?.Brand || '';
-    const collection = doc?.Collection ? ` | ${doc.Collection}` : '';
-    const desc = doc?.Description || '';
-    const calibre = doc?.Calibre?.Name ? `<div class="manufacturer-line"><em>${doc.Calibre.Name}</em></div>` : '';
-    const img = doc?.ImageFilename ? `<img class="watch-image" src="${doc.ImageFilename}" alt="${ref}" />` : '';
-
-    return `
-      <div class="card">
-        <div style="flex:1 1 auto;">
-          <div class="manufacturer-line"><strong>${ref}</strong> — ${brand}${collection}</div>
-          <div>${desc}</div>
-          ${calibre}
-        </div>
-        ${img ? `<div class="card-images" style="max-width:220px;">${img}</div>` : ''}
-      </div>
-    `;
+  function escapeHtml(s) {
+    if (s === undefined || s === null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function getFirst(obj, keys) {
+    if (!obj) return '';
+    for (var i=0;i<keys.length;i++){
+      var k = keys[i];
+      if (Object.prototype.hasOwnProperty.call(obj,k)) {
+        var v = obj[k];
+        if (v !== undefined && v !== null && String(v).trim() !== '') return v;
+      }
+    }
+    return '';
+  }
+  function fmtPriceFrom(obj) {
+    var p = getFirst(obj, ['Price']);
+    if (p) return String(p);
+    var amt = getFirst(obj, ['PriceAmount']);
+    var cur = getFirst(obj, ['PriceCurrency']) || 'USD';
+    if (!amt) return '';
+    var n = Number(String(amt).replace(/[^0-9.-]/g,''));
+    if (!isNaN(n)) {
+      try { return n.toLocaleString(undefined, { style:'currency', currency: cur, maximumFractionDigits: 0 }); }
+      catch(e){ return String(amt) + (cur ? (' ' + cur) : ''); }
+    }
+    return String(amt) + (cur ? (' ' + cur) : '');
   }
 
-  async function doReferenceLookup() {
-    const input = $(IDS.input);
-    const out = $(IDS.results);
+  function buildReferenceCard(item, idx) {
+    var card = document.createElement('div');
+    card.className = 'card detail-card';
+    card.style.marginBottom = '18px';
+    card.setAttribute('data-idx', String(idx));
 
-    if (!input || !out) {
-      console.error('[RefLookup][UI] Missing elements', { haveInput: !!input, haveResults: !!out });
-      return;
+    // --- Title (Reference • Brand) ---
+    var titleRef = getFirst(item, ['Reference']);
+    var titleBrand = getFirst(item, ['Brand']);
+    var h = document.createElement('h3');
+    h.className = 'detail-title';
+    h.style.margin = '0 0 8px 0';
+    h.style.color = '#d4af37';
+    h.textContent = titleRef ? (titleBrand ? (titleRef + ' • ' + titleBrand) : titleRef) : (titleBrand || 'Reference');
+
+    // --- LEFT: figure out canonical fields first ---
+    var left = document.createElement('div');
+    left.style.minWidth = '0';
+    left.appendChild(h);
+
+    var dl = document.createElement('dl');
+    dl.style.display = 'grid';
+    dl.style.gridTemplateColumns = '1fr 1fr';
+    dl.style.gap = '8px 20px';
+    dl.style.margin = '0';
+
+    function addKV(label, value) {
+      var dt = document.createElement('dt');
+      dt.textContent = label;
+      dt.style.fontWeight = '700';
+      dt.style.color = '#d4af37';
+      dt.style.marginBottom = '2px';
+      var dd = document.createElement('dd');
+      dd.textContent = value && String(value).trim() !== '' ? String(value) : '—';
+      dd.style.margin = '0 0 12px 0';
+      dl.appendChild(dt); dl.appendChild(dd);
     }
 
-    const term = (input.value || '').trim();
-    out.innerHTML = '';
+    // canonical fields
+    addKV('Reference', titleRef);
+    addKV('Brand', titleBrand);
+    addKV('Collection', getFirst(item, ['Collection']));
+    addKV('Description', getFirst(item, ['Description']));
+    addKV('Price', fmtPriceFrom(item));
+    addKV('Source URL', getFirst(item, ['SourceURL']));
 
-    if (!term) {
-      out.textContent = 'Enter a reference or keywords';
-      return;
+    // Calibre (nested)
+    var cal = item && item.Calibre ? item.Calibre : null;
+    if (cal && typeof cal === 'object') {
+      addKV('Calibre Name', getFirst(cal, ['Name']));
+      addKV('Functions', getFirst(cal, ['Functions']));
+      addKV('Mechanism', getFirst(cal, ['Mechanism']));
+      addKV('Frequency', getFirst(cal, ['Frequency']));
+      addKV('Number of Jewels', getFirst(cal, ['NumberOfJewels']));
+      addKV('Power Reserve', getFirst(cal, ['PowerReserve']));
+      addKV('Thickness', getFirst(cal, ['Thickness']));
+      addKV('Number Of Parts', getFirst(cal, ['NumberOfParts']));
     }
 
-    const url = `/.netlify/functions/referenceLookUp?q=${encodeURIComponent(term)}&limit=50`;
-    console.debug('[RefLookup][UI] GET', url);
+    // Keywords / Tags
+    var kw = Array.isArray(item.Keywords) ? item.Keywords.join(', ') : getFirst(item, ['Keywords']);
+    var tg = Array.isArray(item.Tags) ? item.Tags.join(', ') : getFirst(item, ['Tags']);
+    if (kw) addKV('Keywords', kw);
+    if (tg) addKV('Tags', tg);
 
-    const t0 = performance.now();
+    // ---- Include any other fields that weren't captured above (so we truly show "all data") ----
+    var shown = {
+      Reference:1, Brand:1, Collection:1, Description:1, Price:1, PriceAmount:1, PriceCurrency:1,
+      SourceURL:1, ImageFilename:1, Image:1, ImageUrl:1, image:1, Keywords:1, Tags:1, Calibre:1
+    };
+    Object.keys(item).forEach(function(k){
+      if (shown[k]) return;
+      var v = item[k];
+      if (v === null || v === undefined || String(v).trim && String(v).trim() === '') return;
+      // stringify objects/arrays
+      if (typeof v === 'object') {
+        try { v = JSON.stringify(v); } catch {}
+      }
+      addKV(k, v);
+    });
+
+    left.appendChild(dl);
+
+    // --- RIGHT: image (URL or filename under assets/references) ---
+    var right = document.createElement('div');
+    right.style.display = 'flex';
+    right.style.alignItems = 'start';
+    right.style.justifyContent = 'center';
+    right.style.minWidth = '220px';
+    right.style.maxWidth = '340px';
+
+    var rawImg = getFirst(item, ['ImageFilename', 'Image', 'image', 'ImageUrl']);
+    var imgSrc = '';
+    if (rawImg) {
+      imgSrc = /^https?:\/\//i.test(rawImg) ? rawImg : ('assets/references/' + rawImg);
+    }
+    if (imgSrc) {
+      var img = document.createElement('img');
+      img.className = 'watch-image enlargeable-img';
+      img.src = imgSrc;
+      img.alt = titleRef || 'reference';
+      img.style.maxWidth = '100%';
+      img.style.border = '1px solid #d4af37';
+      img.style.borderRadius = '8px';
+      img.style.cursor = 'pointer';
+      img.setAttribute('data-src', imgSrc);
+      right.appendChild(img);
+    } else {
+      var ph = document.createElement('div');
+      ph.style.width = '220px';
+      ph.style.height = '160px';
+      ph.style.display = 'flex';
+      ph.style.alignItems = 'center';
+      ph.style.justifyContent = 'center';
+      ph.style.background = '#0f0f0f';
+      ph.style.border = '1px dashed #444';
+      ph.style.borderRadius = '8px';
+      ph.textContent = 'No image';
+      right.appendChild(ph);
+    }
+
+    // Layout: details (left) + image (right)
+    card.style.display = 'grid';
+    card.style.gridTemplateColumns = '1fr 340px';
+    card.style.gap = '20px';
+    card.style.alignItems = 'start';
+
+    card.appendChild(left);
+    card.appendChild(right);
+    return card;
+  }
+
+  function attachImageModalHandlersIfAvailable() {
+    var imgModal = document.getElementById('imgModal');
+    var imgModalImg = document.getElementById('imgModalImg');
+    if (!dock || !imgModal || !imgModalImg) return;
+
+    dock.onclick = function (e) {
+      var t = e.target;
+      var img = t && t.closest ? t.closest('.enlargeable-img') : null;
+      if (!img) return;
+      var src = (img.dataset && img.dataset.src) ? img.dataset.src : img.src;
+      if (!src) return;
+      imgModalImg.src = src;
+      imgModal.style.display = 'flex';
+    };
+    imgModal.onclick = function(){ imgModal.style.display = 'none'; };
+    document.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') imgModal.style.display = 'none'; });
+  }
+
+  async function lookupReference() {
+    if (!input || !dock) {
+      console.error('[REF] Missing required elements', { input: !!input, dock: !!dock });
+      return;
+    }
+    var term = (input.value || '').trim();
+    if (!term) return;
+
+    if (note) note.innerHTML = '<div class="note">Searching…</div>';
+
     try {
-      const res = await fetch(url, { headers: { Accept: 'application/json' } });
-      const t1 = performance.now();
-      console.debug('[RefLookup][UI] HTTP', res.status, res.statusText, 'in', Math.round(t1 - t0), 'ms');
+      var url = '/.netlify/functions/referenceLookUp?q=' + encodeURIComponent(term) + '&limit=50';
+      console.log('[REF] GET', url);
+      var res = await fetch(url, { headers: { Accept: 'application/json' } });
+      var raw = await res.text();
 
-      // Read as text first to help debug if JSON is malformed in prod
-      const raw = await res.text();
-      let data;
-      try {
-        data = raw ? JSON.parse(raw) : null;
-      } catch (e) {
-        console.error('[RefLookup][UI] JSON parse error:', e, 'raw (first 400 chars):', raw.slice(0, 400));
-        out.textContent = 'Error: invalid JSON from server';
+      var data;
+      try { data = raw ? JSON.parse(raw) : []; }
+      catch (e) {
+        console.error('[REF] JSON parse error', e, 'raw:', raw.slice(0, 300));
+        if (note) note.textContent = 'Error: invalid JSON from server';
         return;
       }
 
       if (!res.ok) {
-        console.error('[RefLookup][UI] Server error payload:', data);
-        out.textContent = (data && data.error) ? `Error: ${data.error}` : 'Server error';
+        console.error('[REF] Server error payload:', data);
+        if (note) note.textContent = (data && data.error) ? ('Error: ' + data.error) : 'Server error';
         return;
       }
 
-      const isArray = Array.isArray(data);
-      console.debug('[RefLookup][UI] payload:', { type: isArray ? 'array' : typeof data, length: isArray ? data.length : undefined });
+      if (!Array.isArray(data)) data = [];
+      console.log('[REF] results:', data.length);
 
-      if (!isArray || data.length === 0) {
-        out.textContent = `No results for “${term}”.`;
+      // clear "Searching…" and the input
+      if (note) note.innerHTML = '';
+      input.value = '';
+
+      // render to the same full-width dock (like GM)
+      dock.innerHTML = '';
+      if (data.length === 0) {
+        // intentionally no summary
         return;
       }
+      data.forEach(function (item, idx) {
+        var card = buildReferenceCard(item, idx);
+        dock.appendChild(card);
+      });
 
-      out.innerHTML = data.map(renderCard).join('');
+      // enable image modal (like GM)
+      attachImageModalHandlersIfAvailable();
+
     } catch (err) {
-      console.error('[RefLookup][UI] Fetch exception:', err);
-      out.textContent = 'Network error fetching references';
+      console.error('[REF] Fetch exception:', err);
+      if (note) note.textContent = 'Network error fetching references';
     }
   }
 
-  function wireEvents() {
-    const btn = $(IDS.button);
-    const input = $(IDS.input);
-
-    if (btn) btn.addEventListener('click', doReferenceLookup);
+  function wire() {
+    if (btn) btn.addEventListener('click', lookupReference);
     if (input) {
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') doReferenceLookup();
+      input.addEventListener('keydown', function(e){
+        if (e.key === 'Enter') lookupReference();
       });
     }
-
-    // Optional: focus for fast testing
-    // input?.focus();
   }
 
-  document.addEventListener('DOMContentLoaded', wireEvents);
+  document.addEventListener('DOMContentLoaded', wire);
 })();

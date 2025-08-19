@@ -1,6 +1,12 @@
-/* Reference lookup with full-width detail card below the list
+'use strict';
+/* Reference lookup with full-width detail card (no inline JS)
    Calls: /.netlify/functions/referenceLookUp?q=...
+   Verbose logging included
 */
+
+(function initLogging(){
+  console.log('[Ref] reference.js loaded @', new Date().toISOString());
+})();
 
 const refEls = {
   input: document.getElementById('referenceInput'),
@@ -23,7 +29,7 @@ async function runRef(){
   try {
     const r = await fetch(url);
     const text = await r.text();
-    console.log('[Ref] status', r.status, 'body', text.slice(0, 500));
+    console.log('[Ref] status', r.status, 'raw body (first 400):', text.slice(0, 400));
     if (!r.ok) { refEls.out.innerHTML = `<div class="note">Server error (${r.status}). See console.</div>`; return; }
     const docs = JSON.parse(text);
     refState.list = Array.isArray(docs) ? docs : [];
@@ -64,49 +70,82 @@ function renderRefList(){
 
 function selectRef(i){
   refState.selectedIndex = i;
+  console.log('[Ref] select index=', i, 'doc=', refState.list[i]);
   renderRefList();
   renderRefDetail(refState.list[i]);
 }
 
+// Build the detail card with DOM API (no inline JS)
 function renderRefDetail(d){
   if (!refEls.detail) return;
   if (!d) { clearRefDetail(); return; }
 
+  refEls.detail.innerHTML = '';
+  const section = document.createElement('section');
+  section.className = 'detail-card';
+  section.setAttribute('role','region');
+  section.setAttribute('aria-labelledby','refDetailTitle');
+
+  // Media
+  const media = document.createElement('div');
+  media.className = 'detail-media';
+  const possibleImg = d.ImageUrl || d.Image || d.image || null;
+  if (possibleImg) {
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.src = possibleImg;
+    img.alt = d.Reference || 'Reference Image';
+    img.addEventListener('click', () => {
+      const m = document.getElementById('imgModal');
+      const mi = document.getElementById('imgModalImg');
+      if (m && mi){ mi.src = possibleImg; m.classList.add('open'); }
+    });
+    media.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'placeholder';
+    ph.textContent = 'No image';
+    media.appendChild(ph);
+  }
+
+  // Right
+  const right = document.createElement('div');
+  const h3 = document.createElement('h3');
+  h3.id = 'refDetailTitle';
+  h3.className = 'detail-title';
   const fact = [d.Reference, d.Brand, d.Collection, d.PriceAmount ? fmtPrice(d.PriceAmount) : null]
     .filter(Boolean).join(' • ');
+  h3.textContent = fact || 'Reference';
 
-  // Try any possible image property name if present in your dataset
-  const possibleImg = d.ImageUrl || d.Image || d.image || null;
+  if (d.Description) {
+    const sub = document.createElement('div');
+    sub.className = 'detail-sub';
+    sub.textContent = d.Description;
+    right.appendChild(sub);
+  }
 
-  const media = possibleImg
-    ? `<img src="${esc(possibleImg)}" alt="${esc(d.Reference || 'Reference Image')}" loading="lazy" />`
-    : `<div class="placeholder">No image</div>`;
+  const grid = document.createElement('dl');
+  grid.className = 'detail-grid';
+  addPair(grid, 'Calibre', d.Calibre ?? d.Caliber);
+  addPair(grid, 'Brand', d.Brand);
+  addPair(grid, 'Collection', d.Collection);
+  addPair(grid, 'Reference', d.Reference);
+  addPair(grid, 'Price', d.PriceAmount ? fmtPrice(d.PriceAmount) : '—');
 
-  refEls.detail.innerHTML = `
-    <section class="detail-card" role="region" aria-labelledby="refDetailTitle">
-      <div class="detail-media" onclick="${possibleImg ? 'document.getElementById(\\'imgModalImg\\').src=\\''+esc(possibleImg)+'\\';document.getElementById(\\'imgModal\\').classList.add(\\'open\\');' : ''}">
-        ${media}
-      </div>
-      <div>
-        <h3 id="refDetailTitle" class="detail-title">${esc(fact || 'Reference')}</h3>
-        ${d.Description ? `<div class="detail-sub">${esc(d.Description)}</div>` : ''}
-        <dl class="detail-grid">
-          <dt>Calibre</dt><dd>${esc(d.Calibre ?? d.Caliber ?? '—')}</dd>
-          <dt>Brand</dt><dd>${esc(d.Brand ?? '—')}</dd>
-          <dt>Collection</dt><dd>${esc(d.Collection ?? '—')}</dd>
-          <dt>Reference</dt><dd>${esc(d.Reference ?? '—')}</dd>
-          <dt>Price</dt><dd>${d.PriceAmount ? fmtPrice(d.PriceAmount) : '—'}</dd>
-        </dl>
-        <div class="detail-actions">
-          <button class="btn" id="refDetailCloseBtn">Close details</button>
-        </div>
-      </div>
-    </section>
-  `;
-  document.getElementById('refDetailCloseBtn')?.addEventListener('click', clearRefDetail);
+  const actions = document.createElement('div');
+  actions.className = 'detail-actions';
+  const closeBtn = mkBtn('Close details');
+  closeBtn.addEventListener('click', clearRefDetail);
+  actions.appendChild(closeBtn);
+
+  right.append(h3, grid, actions);
+  section.append(media, right);
+  refEls.detail.appendChild(section);
 }
 
 function clearRefDetail(){ if (refEls.detail) refEls.detail.innerHTML = ''; }
 
 function esc(s){ return (s==null? '': String(s)).replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
 function fmtPrice(p){ const n=Number(p); if (Number.isNaN(n)) return '—'; return n.toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}); }
+function mkBtn(txt){ const b=document.createElement('button'); b.className='btn'; b.textContent=txt; return b; }
+function addPair(dl, k, v){ const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v ?? '—'; dl.append(dt, dd); }

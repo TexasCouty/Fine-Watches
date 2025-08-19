@@ -18,7 +18,7 @@
       <section class="lookup-section">
         <h2>Grey Market Lookup</h2>
 
-        <!-- Toolbar: search + button -->
+        <!-- Toolbar: search + buttons -->
         <div class="toolbar">
           <div class="row">
             <input id="searchInput" class="input" type="search"
@@ -31,8 +31,11 @@
           </div>
         </div>
 
-        <!-- Results mount point -->
+        <!-- Results mount point (list/table) -->
         <div id="resultsContainer"></div>
+
+        <!-- Full-width details card appears here after selecting a result -->
+        <div id="gmDetail" class="detail-host"></div>
       </section>
 
       <!-- ── REFERENCE LOOKUP ─────────────────────────────────────────────── -->
@@ -41,7 +44,12 @@
         <label for="referenceInput"><strong>Enter Reference or Keywords:</strong></label>
         <input id="referenceInput" class="input" placeholder="e.g., 15210OR, Royal Oak, Offshore" />
         <button id="referenceBtn" class="btn" type="button">Reference Lookup</button>
+
+        <!-- Reference result list -->
         <div id="referenceOut" class="results"></div>
+
+        <!-- Full-width details card appears here after selecting a reference -->
+        <div id="refDetail" class="detail-host"></div>
       </section>
     </div>
   </div>

@@ -1,10 +1,8 @@
-/* Main UI controller – mobile-first cards + desktop table
-   - One button: "Grey Market Lookup"
-   - Correct endpoints:
-       greyMarketLookup?term=...
-       updateGreyMarket expects { uniqueId, fields }
-   - Signed Cloudinary uploads via getCloudinarySignature
-   - Verbose console logs for easier debugging
+/* Main UI controller – desktop-first; adds full-width GM detail card
+   Endpoints used:
+     - greyMarketLookup?term=...
+     - updateGreyMarket expects { uniqueId, fields }
+   Signed Cloudinary via getCloudinarySignature
 */
 
 const els = {
@@ -19,42 +17,26 @@ const els = {
   sheetForm: document.getElementById('editForm'),
   sheetClose: document.getElementById('sheetClose'),
   openAddBtn: document.getElementById('openAddBtn'),
-  sheetOpenForId: null,
+  gmDetail: document.getElementById('gmDetail'),
 };
 
 let state = {
   rows: [],
   sort: { key: 'DateEntered', dir: 'desc' },
+  selectedGMIndex: -1,
 };
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Event bindings
+// Events
 document.addEventListener('DOMContentLoaded', () => {
-  // Search button
-  els.gmBtn?.addEventListener('click', () => {
-    const v = els.search?.value || '';
-    searchGreyMarket(v);
-  });
+  els.gmBtn?.addEventListener('click', () => searchGreyMarket(els.search?.value || ''));
+  els.search?.addEventListener('keydown', (e) => { if (e.key === 'Enter') searchGreyMarket(e.currentTarget.value); });
 
-  // Enter to search
-  els.search?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') searchGreyMarket(e.currentTarget.value);
-  });
+  els.openAddBtn?.addEventListener('click', () => { els.sheetForm?.reset(); els.sheet?.classList.add('open'); });
 
-  // Add new entry (open empty form)
-  els.openAddBtn?.addEventListener('click', () => {
-    if (!els.sheet || !els.sheetForm) return;
-    els.sheetForm.reset();
-    els.sheet.classList.add('open');
-  });
-
-  // Modal
   els.modalClose?.addEventListener('click', closeImgModal);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && els.modal?.classList.contains('open')) closeImgModal();
-  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && els.modal?.classList.contains('open')) closeImgModal(); });
 
-  // Sheet close
   els.sheetClose?.addEventListener('click', closeEditSheet);
 });
 
@@ -66,6 +48,7 @@ async function searchGreyMarket(term = '') {
     console.warn('[GM] Skipping search: empty term');
     if (els.results) els.results.innerHTML = '<div class="note">Enter a model, nickname, or dealer to search.</div>';
     if (els.count) els.count.textContent = '';
+    clearGMDetail();
     return;
   }
 
@@ -79,10 +62,12 @@ async function searchGreyMarket(term = '') {
     if (!r.ok) {
       els.results.innerHTML = `<div class="note">Server error (${r.status}). Check Netlify Functions logs.</div>`;
       if (els.count) els.count.textContent = '';
+      clearGMDetail();
       return;
     }
     const data = safeJson(text);
     state.rows = Array.isArray(data) ? data : (data?.results || []);
+    state.selectedGMIndex = -1;
     console.log('[GM] rows', state.rows.length);
     safeSort();
     render();
@@ -90,19 +75,17 @@ async function searchGreyMarket(term = '') {
     console.error('[GM] Fetch error', err);
     els.results.innerHTML = `<div class="note">Network error. See console for details.</div>`;
     if (els.count) els.count.textContent = '';
+    clearGMDetail();
   }
 }
 
-function safeJson(s) {
-  try { return JSON.parse(s); } catch { return null; }
-}
+function safeJson(s) { try { return JSON.parse(s); } catch { return null; } }
 
 function safeSort() {
   const { key, dir } = state.sort;
   const mul = dir === 'asc' ? 1 : -1;
   state.rows.sort((a, b) => {
-    const av = a?.[key];
-    const bv = b?.[key];
+    const av = a?.[key], bv = b?.[key];
     if (av == null && bv == null) return 0;
     if (av == null) return 1;
     if (bv == null) return -1;
@@ -112,50 +95,85 @@ function safeSort() {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Rendering
+// Rendering list + selection
 function render() {
   const mobile = window.innerWidth < 768;
   if (els.count) els.count.textContent = `${state.rows.length} results`;
   els.results.innerHTML = '';
+  clearGMDetail();
   if (mobile) renderCards(); else renderTable();
 }
 
 function showSkeletons() {
-  const mobile = window.innerWidth < 768;
   const n = 6;
-  if (mobile) {
-    els.results.innerHTML = '<div class="grid">' + Array.from({length:n}).map(()=>`
-      <div class="card">
-        <div class="skel" style="width:60%;height:18px;margin-bottom:10px"></div>
-        <div class="skel" style="width:40%;height:12px;margin-bottom:12px"></div>
-        <div class="skel" style="width:100%;height:180px"></div>
-      </div>
-    `).join('') + '</div>';
-  } else {
-    els.results.innerHTML = `
-      <div class="tablewrap">
-        <table><thead><tr>
-          <th>Model</th><th>Dealer</th><th>Price</th><th>Date</th>
-        </tr></thead><tbody>
-          ${Array.from({length:n}).map(()=>`
-            <tr>
-              <td><div class="skel" style="height:14px"></div></td>
-              <td><div class="skel" style="height:14px"></div></td>
-              <td><div class="skel" style="height:14px"></div></td>
-              <td><div class="skel" style="height:14px"></div></td>
-            </tr>
-          `).join('')}
-        </tbody></table>
-      </div>`;
-  }
+  els.results.innerHTML = `
+    <div class="tablewrap">
+      <table><thead><tr>
+        <th>Model</th><th>Dealer</th><th>Price</th><th>Date</th>
+      </tr></thead><tbody>
+        ${Array.from({length:n}).map(()=>`
+          <tr>
+            <td><div class="skel" style="height:14px"></div></td>
+            <td><div class="skel" style="height:14px"></div></td>
+            <td><div class="skel" style="height:14px"></div></td>
+            <td><div class="skel" style="height:14px"></div></td>
+          </tr>
+        `).join('')}
+      </tbody></table>
+    </div>`;
+}
+
+function renderTable() {
+  const wrap = document.createElement('div'); wrap.className = 'tablewrap';
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tr = document.createElement('tr');
+
+  const cols = [
+    {k:'Model', label:'Model'},
+    {k:'Dealer', label:'Dealer'},
+    {k:'Price', label:'Price'},
+    {k:'DateEntered', label:'Date'},
+  ];
+
+  cols.forEach(c => {
+    const th = document.createElement('th');
+    th.textContent = c.label;
+    th.tabIndex = 0; th.setAttribute('role','button');
+    if (state.sort.key === c.k) th.setAttribute('aria-sort', state.sort.dir==='asc'?'ascending':'descending');
+    th.addEventListener('click', () => toggleSort(c.k));
+    th.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(c.k); } });
+    tr.appendChild(th);
+  });
+  thead.appendChild(tr);
+
+  const tbody = document.createElement('tbody');
+  state.rows.forEach((row, idx) => {
+    const r = document.createElement('tr');
+    r.setAttribute('tabindex', '0');
+    r.setAttribute('role', 'button');
+    if (idx === state.selectedGMIndex) r.classList.add('is-selected');
+    r.innerHTML = `
+      <td>${esc(row.Model)}</td>
+      <td>${esc(row.Dealer)}</td>
+      <td>${fmtPrice(row.Price)}</td>
+      <td>${fmtDate(row.DateEntered)}</td>
+    `;
+    r.addEventListener('click', () => onSelectGM(idx));
+    r.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectGM(idx); } });
+    tbody.appendChild(r);
+  });
+
+  table.append(thead, tbody); wrap.appendChild(table); els.results.appendChild(wrap);
 }
 
 function renderCards() {
   const grid = document.createElement('div');
   grid.className = 'grid';
-  state.rows.forEach((row) => {
+  state.rows.forEach((row, idx) => {
     const card = document.createElement('div');
     card.className = 'card';
+    if (idx === state.selectedGMIndex) card.classList.add('is-selected');
 
     const title = document.createElement('h3');
     title.textContent = `${row.Model ?? '—'} • ${fmtPrice(row.Price)}`;
@@ -182,9 +200,9 @@ function renderCards() {
 
     const actions = document.createElement('div');
     actions.style.marginTop = '10px';
-    const editBtn = mkBtn('Edit');
-    editBtn.addEventListener('click', () => openEditSheet(row));
-    actions.appendChild(editBtn);
+    const viewBtn = mkBtn('View Details');
+    viewBtn.addEventListener('click', () => onSelectGM(idx));
+    actions.appendChild(viewBtn);
 
     card.append(title, sub, img, meta, actions);
     grid.appendChild(card);
@@ -192,48 +210,62 @@ function renderCards() {
   els.results.appendChild(grid);
 }
 
-function renderTable() {
-  const wrap = document.createElement('div'); wrap.className = 'tablewrap';
-  const table = document.createElement('table');
-  const thead = document.createElement('thead');
-  const tr = document.createElement('tr');
-
-  const cols = [
-    {k:'Model', label:'Model'},
-    {k:'Dealer', label:'Dealer'},
-    {k:'Price', label:'Price'},
-    {k:'DateEntered', label:'Date'},
-  ];
-
-  cols.forEach(c => {
-    const th = document.createElement('th');
-    th.textContent = c.label;
-    th.tabIndex = 0; th.setAttribute('role','button');
-    if (state.sort.key === c.k) th.setAttribute('aria-sort', state.sort.dir==='asc'?'ascending':'descending');
-    th.addEventListener('click', () => toggleSort(c.k));
-    th.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSort(c.k); }
-    });
-    tr.appendChild(th);
-  });
-  thead.appendChild(tr);
-
-  const tbody = document.createElement('tbody');
-  state.rows.forEach(row => {
-    const r = document.createElement('tr');
-    r.innerHTML = `
-      <td>${esc(row.Model)}</td>
-      <td>${esc(row.Dealer)}</td>
-      <td>${fmtPrice(row.Price)}</td>
-      <td>${fmtDate(row.DateEntered)}</td>
-    `;
-    r.addEventListener('click', () => openEditSheet(row));
-    tbody.appendChild(r);
-  });
-
-  table.append(thead, tbody); wrap.appendChild(table); els.results.appendChild(wrap);
+function onSelectGM(idx){
+  state.selectedGMIndex = idx;
+  // Re-render list to show selected highlight
+  render();
+  // Render details card
+  renderGMDetail(state.rows[idx]);
 }
 
+/*────────────────────────────────────────────────────────────────────────────*/
+// Full-width GM Detail Card
+function renderGMDetail(row){
+  if (!els.gmDetail) return;
+  if (!row) { clearGMDetail(); return; }
+
+  const imgHtml = row.ImageUrl
+    ? `<img src="${esc(row.ImageUrl)}" alt="${esc(row.Model || 'Watch')}" loading="lazy" />`
+    : `<div class="placeholder">No image</div>`;
+
+  els.gmDetail.innerHTML = `
+    <section class="detail-card" role="region" aria-labelledby="gmDetailTitle">
+      <div class="detail-media" onclick="${row.ImageUrl ? 'document.getElementById(\\'imgModalImg\\').src=\\''+esc(row.ImageUrl)+'\\';document.getElementById(\\'imgModal\\').classList.add(\\'open\\');' : ''}">
+        ${imgHtml}
+      </div>
+      <div>
+        <h3 id="gmDetailTitle" class="detail-title">${esc(row.Model || '—')} • ${fmtPrice(row.Price)}</h3>
+        <div class="detail-sub">${fmtDate(row.DateEntered)}</div>
+        <dl class="detail-grid">
+          <dt>Model Name</dt><dd>${esc(row.ModelName ?? '—')}</dd>
+          <dt>Nickname/Dial</dt><dd>${esc(row.Nickname ?? '—')}</dd>
+          <dt>Dealer</dt><dd>${esc(row.Dealer ?? '—')}</dd>
+          <dt>Year</dt><dd>${esc(row.Year ?? '—')}</dd>
+          <dt>Metal</dt><dd>${esc(row.Metal ?? '—')}</dd>
+          <dt>Bracelet</dt><dd>${esc(row.BraceletColor ?? '—')}</dd>
+          <dt>Full Set</dt><dd>${row['Full Set'] ? 'Yes' : 'No'}</dd>
+          <dt>Retail Ready</dt><dd>${row['Retail Ready'] ? 'Yes' : 'No'}</dd>
+          <dt>Current Retail</dt><dd>${row['Current Retail (Not Inc Tax)'] ? fmtPrice(row['Current Retail (Not Inc Tax)']) : '—'}</dd>
+          <dt>Comments</dt><dd>${esc(row.Comments ?? '—')}</dd>
+          <dt>Unique ID</dt><dd>${esc(row['Unique ID'] || row.uniqueId || '—')}</dd>
+          <dt>Image URL</dt><dd>${row.ImageUrl ? `<a href="${esc(row.ImageUrl)}" target="_blank" rel="noopener">Open</a>` : '—'}</dd>
+        </dl>
+        <div class="detail-actions">
+          <button class="btn primary" id="gmDetailEditBtn">Edit</button>
+          <button class="btn" id="gmDetailCloseBtn">Close details</button>
+        </div>
+      </div>
+    </section>
+  `;
+
+  document.getElementById('gmDetailEditBtn')?.addEventListener('click', () => openEditSheet(row));
+  document.getElementById('gmDetailCloseBtn')?.addEventListener('click', clearGMDetail);
+}
+
+function clearGMDetail(){ if (els.gmDetail) els.gmDetail.innerHTML = ''; }
+
+/*────────────────────────────────────────────────────────────────────────────*/
+// Utilities
 function toggleSort(key){
   if (state.sort.key === key) state.sort.dir = state.sort.dir==='asc'?'desc':'asc';
   else { state.sort.key = key; state.sort.dir = 'asc'; }
@@ -242,7 +274,7 @@ function toggleSort(key){
 
 function addMeta(dl, k, v){ const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v ?? '—'; dl.append(dt, dd); }
 function mkBtn(txt){ const b=document.createElement('button'); b.className='btn'; b.textContent=txt; return b; }
-function esc(s){ return (s==null? '': String(s)).replace(/[&<>]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch])); }
+function esc(s){ return (s==null? '': String(s)).replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
 function fmtPrice(p){ if (p==null||p==='') return '—'; const n=Number(p); if (Number.isNaN(n)) return String(p); return n.toLocaleString(undefined,{style:'currency',currency:'USD',maximumFractionDigits:0}); }
 function fmtDate(d){ const dt = d? new Date(d): null; return dt? dt.toLocaleDateString(): '—'; }
 
@@ -252,12 +284,11 @@ function openImgModal(src){ if(!src) return; els.modalImg.src = src; els.modal.c
 function closeImgModal(){ els.modal.classList.remove('open'); els.modalImg.removeAttribute('src'); }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Edit sheet open/close
+// Edit sheet open/close + populate
 function openEditSheet(row){
   els.sheet.classList.add('open');
   els.sheetForm.reset();
 
-  // Populate fields by matching names
   setFormValue('Unique ID', row['Unique ID'] || row.uniqueId || row._id || '');
   setFormValue('Model', row.Model || '');
   setFormValue('Dealer', row.Dealer || '');
@@ -272,14 +303,8 @@ function openEditSheet(row){
 
 function closeEditSheet(){ els.sheet.classList.remove('open'); }
 
-function setFormValue(name, val){
-  const el = els.sheetForm.querySelector(`[name="${name}"]`);
-  if (el) el.value = val;
-}
-function setCheckbox(name, checked){
-  const el = els.sheetForm.querySelector(`[name="${name}"]`);
-  if (el && el.type === 'checkbox') el.checked = !!checked;
-}
+function setFormValue(name, val){ const el = els.sheetForm.querySelector(`[name="${name}"]`); if (el) el.value = val; }
+function setCheckbox(name, checked){ const el = els.sheetForm.querySelector(`[name="${name}"]`); if (el && el.type === 'checkbox') el.checked = !!checked; }
 
 /*────────────────────────────────────────────────────────────────────────────*/
 // Save handler → updateGreyMarket expects { uniqueId, fields }
@@ -324,6 +349,7 @@ els.sheetForm?.addEventListener('submit', async (e) => {
     console.log('[GM] update status', r.status, 'body', text);
     if (!r.ok) { alert(`Save failed (${r.status}). See console.`); return; }
     closeEditSheet();
+    // Re-run last search so the list & detail refresh
     searchGreyMarket(els.search?.value || '');
   } catch (err) {
     console.error('[GM] update error', err);

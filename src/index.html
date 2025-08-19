@@ -12,53 +12,37 @@
     <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>LuxeTime Watches Lookup</h1>
 
-    <!-- Toolbar: unified search + filters -->
-    <div class="toolbar">
-      <div class="row">
-        <input id="searchInput" class="input" type="search" placeholder="Search model, nickname, dealer…" />
-        <span id="resultCount" class="note"></span>
-      </div>
-      <div id="filtersBar" class="chips">
-        <span class="chip" data-chip="fullSet">Full Set</span>
-        <span class="chip" data-chip="retailReady">Retail Ready</span>
-      </div>
-    </div>
+    <!-- Two sections: Grey Market + Reference -->
+    <div class="lookup-grid">
+      <!-- GREY MARKET LOOKUP -->
+      <section class="lookup-section">
+        <h2>Grey Market Lookup</h2>
 
-    <!-- Results mount point -->
-    <div id="resultsContainer" class="container"></div>
-
-    <!-- Grey Market Add/Edit Form (now bottom sheet) -->
-    <div id="editSheet" class="sheet" role="dialog" aria-modal="true" aria-label="Edit entry">
-      <div class="grab"></div>
-      <div class="inner">
-        <form id="editForm">
-          <div style="display:grid;gap:8px">
-            <input class="input" name="Model" placeholder="Model" />
-            <input class="input" name="Dealer" placeholder="Dealer" />
-            <input class="input" name="Price" type="number" inputmode="decimal" placeholder="Price" />
-            <label><input type="checkbox" name="FullSet" /> Full Set</label>
-            <label><input type="checkbox" name="RetailReady" /> Retail Ready</label>
-            <input class="input" name="Year" placeholder="Year" />
-            <input class="input" name="Metal" placeholder="Metal" />
-            <input class="input" name="BraceletColor" placeholder="Bracelet Color" />
-            <input class="input" name="ImageUrl" placeholder="Image URL (auto-filled on upload)" />
-            <input class="input" type="file" name="imageFile" accept="image/*" />
+        <!-- Toolbar: search + button -->
+        <div class="toolbar">
+          <div class="row">
+            <input id="searchInput" class="input" type="search"
+                   placeholder="Search model, nickname, dealer…" />
+            <span id="resultCount" class="note"></span>
           </div>
-          <div class="actions">
-            <button type="button" id="sheetClose" class="btn">Cancel</button>
-            <button type="submit" class="btn primary">Save</button>
+          <div class="toolbar-actions">
+            <button id="gmSearchBtn" class="btn primary" type="button">Grey Market Lookup</button>
+            <button id="openAddBtn" class="btn" type="button">Add New Grey Market Entry</button>
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
 
-    <!-- Reference Lookup -->
-    <div class="lookup-section">
-      <h2>Reference Lookup</h2>
-      <label for="referenceInput"><strong>Enter Reference or Keywords:</strong></label>
-      <input id="referenceInput" placeholder="e.g., 15210OR, Royal Oak, Offshore" />
-      <button id="referenceBtn">Reference Lookup</button>
-      <div id="referenceOut" class="results"></div>
+        <!-- Results mount point -->
+        <div id="resultsContainer"></div>
+      </section>
+
+      <!-- REFERENCE LOOKUP -->
+      <section class="lookup-section">
+        <h2>Reference Lookup</h2>
+        <label for="referenceInput"><strong>Enter Reference or Keywords:</strong></label>
+        <input id="referenceInput" class="input" placeholder="e.g., 15210OR, Royal Oak, Offshore" />
+        <button id="referenceBtn" class="btn" type="button">Reference Lookup</button>
+        <div id="referenceOut" class="results"></div>
+      </section>
     </div>
   </div>
 
@@ -67,6 +51,55 @@
     <img id="imgModalImg" alt="Expanded watch image" />
     <button id="modalClose" class="btn" style="position:fixed;top:16px;right:16px">Close</button>
   </div>
+
+  <!-- Bottom sheet editor -->
+  <div id="editSheet" class="sheet" role="dialog" aria-modal="true" aria-label="Edit entry">
+    <div class="grab"></div>
+    <div class="inner">
+      <form id="editForm">
+        <div style="display:grid;gap:8px">
+          <input class="input" name="Model" placeholder="Model" />
+          <input class="input" name="Dealer" placeholder="Dealer" />
+          <input class="input" name="Price" type="number" inputmode="decimal" placeholder="Price" />
+          <label><input type="checkbox" name="FullSet" /> Full Set</label>
+          <label><input type="checkbox" name="RetailReady" /> Retail Ready</label>
+          <input class="input" name="Year" placeholder="Year" />
+          <input class="input" name="Metal" placeholder="Metal" />
+          <input class="input" name="BraceletColor" placeholder="Bracelet Color" />
+          <input class="input" name="ImageUrl" placeholder="Image URL (auto-filled on upload)" />
+          <input class="input" type="file" name="imageFile" accept="image/*" />
+        </div>
+        <div class="actions">
+          <button type="button" id="sheetClose" class="btn">Cancel</button>
+          <button type="submit" class="btn primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Quick hooks -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const gmBtn = document.getElementById('gmSearchBtn');
+      const addBtn = document.getElementById('openAddBtn');
+      const form = document.getElementById('editForm');
+      const sheet = document.getElementById('editSheet');
+      const input = document.getElementById('searchInput');
+
+      // Button triggers the same search as hitting Enter
+      gmBtn?.addEventListener('click', () => {
+        if (typeof searchGreyMarket === 'function') {
+          searchGreyMarket(input?.value || '');
+        }
+      });
+
+      // Open "Add New" form empty
+      addBtn?.addEventListener('click', () => {
+        form?.reset();
+        sheet?.classList.add('open');
+      });
+    });
+  </script>
 
   <!-- JS -->
   <script src="main.js"></script>

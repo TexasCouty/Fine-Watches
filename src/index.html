@@ -23,15 +23,16 @@
           id="combinedSearchInput"
           placeholder="Enter Model or Ref or Nickname or Dial"
         />
-        <button onclick="lookupCombinedGreyMarket()">Search Grey Market</button>
-        <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
+        <button id="gmSearchBtn">Search Grey Market</button>
+        <button id="openAddBtn">Add New Grey Market Entry</button>
 
         <!-- Results -->
         <div id="results" class="results"></div>
 
-        <!-- Add/Edit Form (unchanged) -->
+        <!-- Add/Edit Form -->
         <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
           <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
+          <!-- form fields (unchanged from previous) -->
           <label for="gm_unique_id">Unique ID</label>
           <input type="text" id="gm_unique_id" />
 
@@ -81,19 +82,18 @@
           <label for="gm_comments">Comments</label>
           <textarea id="gm_comments" rows="3"></textarea>
 
-          <button onclick="saveGreyMarketEntry()">Save</button>
-          <button onclick="cancelGreyMarketForm()">Cancel</button>
+          <button id="saveGmBtn">Save</button>
+          <button id="cancelGmBtn">Cancel</button>
           <button
             id="gm_delete_button"
             style="background:#b93a3a;color:#fff;display:none;"
-            onclick="deleteGreyMarketEntry()"
           >
             Delete
           </button>
         </div>
       </div>
 
-      <!-- Reference Lookup -->
+      <!-- Reference Lookup (unchanged) -->
       <div class="lookup-section">
         <h2>Reference Lookup</h2>
         <label for="refQuery"><strong>Enter Reference or Keywords:</strong></label>
@@ -104,6 +104,10 @@
         <div id="refResults" class="results"></div>
       </div>
     </div>
+
+    <!-- DETAIL DOCK: full-width card area below the two top cards -->
+    <div id="detailDock" class="detail-dock"></div>
+
   </div>
 
   <!-- Image Modal -->

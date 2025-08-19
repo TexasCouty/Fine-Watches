@@ -1,155 +1,96 @@
 // functions/greyMarketLookup.js
-// Unified search over Model, Model Name, Nickname or Dial
-// - Validates query length (min 2 chars) to avoid full scans
-// - Masks secrets in logs (never prints full MONGO_URI)
-// - Server-side sort by "Date Entered" descending, supporting MM/DD/YYYY and YYYY-MM-DD
+// Unified GM search (Model, Model Name, Nickname or Dial) with diagnostics.
 
 const { MongoClient } = require('mongodb');
 
-const {
-  MONGO_URI,
-  MONGO_DB = 'test',
-  MONGO_COLL = 'grey_market_refs',
-} = process.env;
-
-let cachedClient; // reused across hot invocations
-
-function escapeRegex(s) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function maskedUri(uri) {
-  if (!uri) return '';
-  // mongodb+srv://username:password@host/...
-  return uri.replace(/:\/\/([^:]+):[^@]+@/, '://$1:***@');
-}
-
-// CORS headers are harmless locally and on Netlify (same origin) but safe to include
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+const ENV = {
+  URI: process.env.MONGO_URI,
+  DB: process.env.MONGO_DB || 'test',
+  COLL: process.env.MONGO_COLL || 'grey_market_refs',
 };
+
+function mask(uri) {
+  if (!uri) return '<undefined>';
+  return uri.replace(/\/\/([^@]+)@/, '//***:***@');
+}
+
+function buildQuery(term) {
+  const rx = new RegExp(term, 'i');
+  return {
+    $or: [
+      { Model: rx },
+      { 'Model Name': rx },
+      { 'Nickname or Dial': rx },
+      { 'Unique ID': rx }, // handy sometimes
+    ],
+  };
+}
+
+let cachedClient = null;
+
+console.log('[GM] Cold start');
+console.log('[GM] ENV MONGO_URI:', mask(ENV.URI));
+console.log('[GM] ENV MONGO_DB:', ENV.DB);
+console.log('[GM] ENV MONGO_COLL:', ENV.COLL);
+
+async function getClient() {
+  if (cachedClient) return cachedClient;
+  if (!ENV.URI) throw new Error('Missing MONGO_URI in environment');
+  const client = new MongoClient(ENV.URI, { serverSelectionTimeoutMS: 8000, maxPoolSize: 10 });
+  await client.connect();
+  cachedClient = client;
+  console.log('[GM] ✅ Connected to Mongo (client cached)');
+  return cachedClient;
+}
 
 exports.handler = async (event) => {
   const t0 = Date.now();
 
-  // Preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers: corsHeaders, body: '' };
-  }
-
   try {
-    if (!MONGO_URI) {
-      console.error('Missing MONGO_URI env var.');
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: 'Server not configured: MONGO_URI missing' }),
-      };
+    if (event.httpMethod !== 'GET') {
+      return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    // Parse & validate input
-    const params = event.queryStringParameters || {};
-    const termRaw = (params.term || '').trim();
-    if (termRaw.length < 2) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify({ error: 'Query term must be at least 2 characters.' }),
-      };
+    const params = new URLSearchParams(event.rawQuery || event.queryStringParameters || '');
+    const term = (params.get ? params.get('term') : event.queryStringParameters?.term || '').trim();
+
+    if (!term) {
+      console.warn('[GM] 400: missing term');
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing query parameter ?term' }) };
     }
 
-    const termRegex = new RegExp(escapeRegex(termRaw), 'i');
+    console.log(`[GM] ► Request term="${term}"`);
 
-    // Build query across fields
-    const mongoQuery = {
-      $or: [
-        { Model: { $regex: termRegex } },
-        { 'Model Name': { $regex: termRegex } },
-        { 'Nickname or Dial': { $regex: termRegex } },
-      ],
-    };
+    const client = await getClient();
+    const coll = client.db(ENV.DB).collection(ENV.COLL);
 
-    // Connect (reuse if warm)
-    if (!cachedClient) {
-      console.log('Connecting to MongoDB with URI (masked):', maskedUri(MONGO_URI));
-      cachedClient = new MongoClient(MONGO_URI, {
-        // Modern drivers use server API versions; defaults are fine for Atlas
-        // serverApi: { version: '1', strict: true, deprecationErrors: true },
-      });
-      await cachedClient.connect();
-    }
-    const db = cachedClient.db(MONGO_DB);
-    const coll = db.collection(MONGO_COLL);
+    const query = buildQuery(term);
 
-    // Aggregation:
-    // - Match on the $or
-    // - Add parsedDate by trying MM/DD/YYYY first, then YYYY-MM-DD
-    // - Sort by parsedDate desc
-    // - Drop helper field in output
-    const pipeline = [
-      { $match: mongoQuery },
-      {
-        $addFields: {
-          parsedDate: {
-            $let: {
-              vars: {
-                d1: {
-                  $dateFromString: {
-                    dateString: '$Date Entered',
-                    format: '%m/%d/%Y',
-                    onError: null,
-                    onNull: null,
-                  },
-                },
-                d2: {
-                  $dateFromString: {
-                    dateString: '$Date Entered',
-                    format: '%Y-%m-%d',
-                    onError: null,
-                    onNull: null,
-                  },
-                },
-              },
-              in: { $ifNull: ['$$d1', '$$d2'] },
-            },
-          },
-        },
-      },
-      { $sort: { parsedDate: -1 } },
-      { $project: { parsedDate: 0 } },
-    ];
+    console.time('[GM] Mongo find');
+    const docs = await coll
+      .find(query)
+      .sort({ 'Date Entered': -1 })
+      .limit(200)
+      .toArray();
+    console.timeEnd('[GM] Mongo find');
 
-    const docs = await coll.aggregate(pipeline, { allowDiskUse: true }).toArray();
-
-    const ms = Date.now() - t0;
-    console.log(
-      `greyMarketLookup "${termRaw}" -> ${docs.length} docs in ${ms} ms (db=${MONGO_DB}, coll=${MONGO_COLL})`
-    );
+    const dt = Date.now() - t0;
+    console.log(`[GM] ◄ Response ${docs.length} docs in ${dt}ms`);
 
     return {
       statusCode: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(docs),
     };
   } catch (err) {
-    console.error('greyMarketLookup error:', err && err.stack ? err.stack : err);
+    const dt = Date.now() - t0;
+    const msg = (err && err.message) ? err.message.replace(/mongodb\+srv:[^ ]+/g, '***') : String(err);
+    console.error(`[GM] ✖ Error after ${dt}ms:`, msg);
+
     return {
       statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Internal Server Error' }),
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ error: 'Internal error querying grey market' }),
     };
   }
 };
-
-// Optional: clean shutdown on cold starts (Netlify usually handles lifecycle).
-// exports.onShutdown = async () => {
-//   if (cachedClient) {
-//     await cachedClient.close().catch(() => {});
-//     cachedClient = undefined;
-//   }
-// };

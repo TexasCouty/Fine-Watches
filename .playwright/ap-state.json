@@ -1,0 +1,658 @@
+{
+  "cookies": [
+    {
+      "name": "X-AB",
+      "value": "6e8ff43aed9c49b5956bd2ab293967f9",
+      "domain": "sc-static.net",
+      "path": "/scevent.min.js",
+      "expires": 1755149388.400305,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_GRECAPTCHA",
+      "value": "09ANMylNCmFlbHvbwzH4TXQkh0tko4y1hA2aNFDns8tW_WACrJtWe0aiivaoetplyEXKmO9_Ohf6g_uyYoA0J8NLE",
+      "domain": "recaptcha.net",
+      "path": "/recaptcha",
+      "expires": 1770625608.064422,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_cq_duid",
+      "value": "1.1755061966.KS4UMWaf4tEQxFbn",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1762957606,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_cq_suid",
+      "value": "1.1755061966.UHSKBDPxm7MAaINv",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "cg_uuid",
+      "value": "6a38bd0c6204379875b3f7f418fc498c",
+      "domain": "obs.isstarsbuilding.com",
+      "path": "/",
+      "expires": 1784092366.754642,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_gcl_au",
+      "value": "1.1.565994185.1755061967",
+      "domain": "www.audemarspiguet.com",
+      "path": "/",
+      "expires": 1762837967,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_fbp",
+      "value": "fb.1.1755061967216.552309697778961469",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1762849610,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "IDE",
+      "value": "AHWqTUmayt9oVP2GdK_n9ggUwL6JaNic8nyHBUdBBsarLEkTlt6LFTyCdIPuYLfv",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1789622086.185627,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "OptanonAlertBoxClosed",
+      "value": "2025-08-13T05:14:46.454Z",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": 1786598086,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_gcl_au",
+      "value": "1.1.565994185.1755061967",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1762837967,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "at_check",
+      "value": "true",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.877881420.1755062087",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1789633606.833883,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "receive-cookie-deprecation",
+      "value": "1",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1770614091.602475,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://audemarspiguet.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "_ttp",
+      "value": "31DeIEAsgU1pDdLhxCEWcKNN447",
+      "domain": ".tiktok.com",
+      "path": "/",
+      "expires": 1788769606.77725,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "HMACCOUNT_BFESS",
+      "value": "324A0783BD1123DF",
+      "domain": ".hm.baidu.com",
+      "path": "/",
+      "expires": 1789622988.622485,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__lt__cid",
+      "value": "39d222cc-06f0-4ffd-be5d-fcfba356e34b",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": 1789633607.021091,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__lt__sid",
+      "value": "d5f2f857-c41e5caa",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": 1755075407,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_scid",
+      "value": "FBPIdugckPC8sOyDBQponiMohPaWMcIC",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1789249686,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "Hm_lvt_e5acecb73e72d7020d220cd4555e16f5",
+      "value": "1755062989",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": 1786609607,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "HMACCOUNT",
+      "value": "324A0783BD1123DF",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "muc_ads",
+      "value": "8dbc3d33-0a2a-4b34-8e4c-bca0bfcb4018",
+      "domain": ".t.co",
+      "path": "/",
+      "expires": 1789622988.863577,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ScCbts",
+      "value": "%5B%5D",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1755667788,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "guest_id_marketing",
+      "value": "v1%3A175506298854662775",
+      "domain": ".twitter.com",
+      "path": "/",
+      "expires": 1789622988.927644,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "guest_id_ads",
+      "value": "v1%3A175506298854662775",
+      "domain": ".twitter.com",
+      "path": "/",
+      "expires": 1789622988.927724,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "personalization_id",
+      "value": "\"v1_XKnoJIDgrRPmX96wxXRfbg==\"",
+      "domain": ".twitter.com",
+      "path": "/",
+      "expires": 1789622988.927753,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "guest_id",
+      "value": "v1%3A175506298854662775",
+      "domain": ".twitter.com",
+      "path": "/",
+      "expires": 1789622988.927774,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_tt_enable_cookie",
+      "value": "1",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1788769607,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ttp",
+      "value": "01K2GYFW9MFCD8R8CBQMAWV9Q9_.tt.1",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1788769607,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "li_sugr",
+      "value": "b2d5a46e-01cd-4f33-9d28-20d8f89a0e00",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1762849607.113151,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "bcookie",
+      "value": "\"v=2&3c746758-f5e0-44bf-80af-68d038320a26\"",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1786609607.113233,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ldbrbid",
+      "value": "tr__k1y/XGicIszCtTi7pCmpAg==",
+      "domain": ".line.me",
+      "path": "/",
+      "expires": 1789633607.561839,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "UserMatchHistory",
+      "value": "AQLuYomvxV0GbgAAAZih5_CfnkbnrS7PK8awM5OQfTQaYQZ1SusqvFJqG50PBsrVteGQNyA8UjAU3w",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1757654989.242075,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "AnalyticsSyncHistory",
+      "value": "AQLNvM4Dd4zNFAAAAZih5_CfWASXbjhxTIs2Sz6NU1zyx7oeKQ1X_qo6WRJ1HvgfHHTAq5KMnzgIU0aRyRtF3A",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1757654989.242126,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "bscookie",
+      "value": "\"v=1&202508130529497ec661e3-63d3-496d-89e8-7e59c6886e9dAQFlROS8GtlDX5a3m2xBNnmEFTBLqRb9\"",
+      "domain": ".www.linkedin.com",
+      "path": "/",
+      "expires": 1786598990.315925,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "XA",
+      "value": "59f8hl1k9o8md&sd=A&t=1755062989&u=1755062989&v=1",
+      "domain": ".yahoo.co.jp",
+      "path": "/",
+      "expires": 1786598989.740968,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "XB",
+      "value": "87ea98ca-7806-11f0-a2d9-6f004c3f4bcc&v=6&u=1755062989&s=8f",
+      "domain": ".yahoo.co.jp",
+      "path": "/",
+      "expires": 1789622989.741735,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "YSC",
+      "value": "MRScn-X07sw",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://audemarspiguet.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "VISITOR_INFO1_LIVE",
+      "value": "A66T5Jqp2v0",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1770623971.460882,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://audemarspiguet.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "VISITOR_PRIVACY_METADATA",
+      "value": "CgJVUxIEGgAgGg%3D%3D",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1770623971.460938,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://audemarspiguet.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "__Secure-ROLLOUT_TOKEN",
+      "value": "COyil-_Es--33AEQ-fChoIyHjwMYpsfroIyHjwM%3D",
+      "domain": ".youtube.com",
+      "path": "/",
+      "expires": 1770616366.591773,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://audemarspiguet.com",
+      "_crHasCrossSiteAncestor": true
+    },
+    {
+      "name": "fr",
+      "value": "0b0XQQHP2tsnoGk9K..BonCrH...1.0.BonCrH.",
+      "domain": ".facebook.com",
+      "path": "/",
+      "expires": 1762841031.698582,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "lidc",
+      "value": "\"b=TGST09:s=T:r=T:a=T:p=T:g=3095:u=1:x=1:i=1755066004:t=1755152404:v=2:sig=AQHyIbzo71zs0JaaTq1pLbfj7YRYgU-X\"",
+      "domain": ".linkedin.com",
+      "path": "/",
+      "expires": 1755152405.136726,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "NID",
+      "value": "525=epwilBc_XAJmm3HpHb6QFJTJDe3K5_skg8YIDMwpkrjt5yuXXJoaLflHcEWprIO483nfwROJzLJpv747Jbr84W3N1d59oaaTGCWESw68VREAc1QRcgOjsOZAeOy28IODaYIXweQZIHZ8tlTbBF0mt5UidMw2P1yubjYHEnb-znIuyllPMvT346ZFqNagpPQIgkmzB-E",
+      "domain": ".google.com",
+      "path": "/",
+      "expires": 1770875575.289908,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "affinity",
+      "value": "\"278ac151105adbdb\"",
+      "domain": "www.audemarspiguet.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "OptanonConsent",
+      "value": "isGpcEnabled=0&datestamp=Wed+Aug+13+2025+03%3A26%3A46+GMT-0500+(Central+Daylight+Time)&version=202405.2.0&browserGpcFlag=0&isIABGlobal=false&consentId=c3fe3ac7-ac05-48e2-8961-5aaf65b60bc3&interactionCount=2&isAnonUser=1&landingPath=NotLandingPage&groups=C0001%3A1%2CC0003%3A1%2CC0004%3A1%2CC0002%3A1%2CC0005%3A1&hosts=H1%3A1%2CH3%3A1%2CH18%3A1%2CH19%3A1%2CH4%3A1%2CH5%3A1%2CH7%3A1%2CH8%3A1%2CH9%3A1%2CH12%3A1%2CH13%3A1%2CH21%3A1%2CH2%3A1%2CH6%3A1%2CH26%3A1&genVendors=&intType=1&geolocation=US%3BTX&AwaitingReconsent=false",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": 1786609606,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_scid_r",
+      "value": "MJPIdugckPC8sOyDBQponiMohPaWMcICwPJ1Zw",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1789260304,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ttcsid",
+      "value": "1755062989120::lwWRKJ6d7a9K44p_-GkM.1.1755073607049",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1788769607,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "mbox",
+      "value": "session#85e163e60e79412199e8f29ab9ce09e7#1755075468|PC#85e163e60e79412199e8f29ab9ce09e7.35_0#1818318408",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1789633607.095446,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "sc_at",
+      "value": "v2|H4sIAAAAAAAAAE3GyQ3AMAgEwIqQdmWOkG7AoQsX72/mNexvVqVKdo3oBKWDJZXh+mwrbBwqXoYZYjn8/IoLatnjpUAAAAA=",
+      "domain": ".snapchat.com",
+      "path": "/",
+      "expires": 1788769607.166699,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "Hm_lpvt_e5acecb73e72d7020d220cd4555e16f5",
+      "value": "1755073607",
+      "domain": ".www.audemarspiguet.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_sc_cspv",
+      "value": "https%3A%2F%2Ftr6.snapchat.com%2Fp",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1789260305,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_9MYQEEKY8J",
+      "value": "GS2.1.s1755062086$o1$g1$t1755073610$j56$l0$h0",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1789633610.953949,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ttcsid_C82F4VGJVRJLR9PJGOIG",
+      "value": "1755062989115::x76_w2mRPeJZzryDKeCL.1.1755073613093",
+      "domain": ".audemarspiguet.com",
+      "path": "/",
+      "expires": 1788769613,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.audemarspiguet.com",
+      "localStorage": [
+        {
+          "name": "tgt:tlm:lower",
+          "value": "155"
+        },
+        {
+          "name": "u_sclid",
+          "value": "EeN0XnL53--0si6-aHX7a9j3MN4gHgHxFBPIdugckPC8sOyDBQponiMohPaWMcIC"
+        },
+        {
+          "name": "__lt__cid",
+          "value": "39d222cc-06f0-4ffd-be5d-fcfba356e34b"
+        },
+        {
+          "name": "topicsLastReferenceTime",
+          "value": "1755073610878"
+        },
+        {
+          "name": "tgt:tlm:upper",
+          "value": "156"
+        },
+        {
+          "name": "plyr",
+          "value": "{\"volume\":1,\"muted\":false}"
+        },
+        {
+          "name": "contextHubStore",
+          "value": "{\"customerDetails\":{\"countryCode\":\"us\",\"languageCode\":\"en\",\"updated\":false}}"
+        },
+        {
+          "name": "_gcl_ls",
+          "value": "{\"schema\":\"gcl\",\"version\":1,\"gcl_ctr\":{\"value\":{\"value\":315,\"creationTimeMs\":1755073607188},\"expires\":1762849607188}}"
+        },
+        {
+          "name": "_grecaptcha",
+          "value": "09ANMylNApusCgUK-hUoB58B4tyWfqv9zVo1CMbeSdPS0FwZIqNyAKHaMaze-PBEFch2IhpSrE9-84u89Y_TsWVkMeEQ25ryJ61q8NifiKgTvbxZK3WV13kC_Z9mtG9QKt"
+        },
+        {
+          "name": "u_sclid_r",
+          "value": "PWN0XnL53--0si6-aHX7a9j3MN4gHgHxI20INDCTyHboHJDwvLDsgwUKaJ4jKIT2ljHCAsDydWc"
+        },
+        {
+          "name": "lastExternalReferrerTime",
+          "value": "1755073607026"
+        },
+        {
+          "name": "cache-sprite-plyr",
+          "value": "{\"content\":\"<?xml version='1.0' encoding='UTF-8'?><!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'><svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><symbol id='plyr-airplay' viewBox='0 0 18 18'><path d='M16 1H2a1 1 0 00-1 1v10a1 1 0 001 1h3v-2H3V3h12v8h-2v2h3a1 1 0 001-1V2a1 1 0 00-1-1z'/><path d='M4 17h10l-5-6z'/></symbol><symbol id='plyr-captions-off' viewBox='0 0 18 18'><path d='M1 1c-.6 0-1 .4-1 1v11c0 .6.4 1 1 1h4.6l2.7 2.7c.2.2.4.3.7.3.3 0 .5-.1.7-.3l2.7-2.7H17c.6 0 1-.4 1-1V2c0-.6-.4-1-1-1H1zm4.52 10.15c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41C8.47 4.96 7.46 3.76 5.5 3.76c-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69zm7.57 0c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41c-.28-1.15-1.29-2.35-3.25-2.35-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69z' fill-rule='evenodd' fill-opacity='.5'/></symbol><symbol id='plyr-captions-on' viewBox='0 0 18 18'><path d='M1 1c-.6 0-1 .4-1 1v11c0 .6.4 1 1 1h4.6l2.7 2.7c.2.2.4.3.7.3.3 0 .5-.1.7-.3l2.7-2.7H17c.6 0 1-.4 1-1V2c0-.6-.4-1-1-1H1zm4.52 10.15c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41C8.47 4.96 7.46 3.76 5.5 3.76c-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69zm7.57 0c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41c-.28-1.15-1.29-2.35-3.25-2.35-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69z' fill-rule='evenodd'/></symbol><symbol id='plyr-download' viewBox='0 0 18 18'><path d='M9 13c.3 0 .5-.1.7-.3L15.4 7 14 5.6l-4 4V1H8v8.6l-4-4L2.6 7l5.7 5.7c.2.2.4.3.7.3zm-7 2h14v2H2z'/></symbol><symbol id='plyr-enter-fullscreen' viewBox='0 0 18 18'><path fill-rule='evenodd' d='M12 2H9V0h5v5h-2V2zM2 12h3v2H0V9h2v3zM12 12V9h2v5H9v-2h3zM2 2v3H0V0h5v2H2z' clip-rule='evenodd'/></symbol><symbol id='plyr-exit-fullscreen' viewBox='0 0 14 14'><path d='M9 2H12V5H14V0H9V2Z' fill='white'/><path d='M5 12H2L2 9H0V14H5V12Z' fill='white'/><path d='M12 12V9H14V14H9V12H12Z' fill='white'/><path d='M2 5L2 2L5 2L5 0H0V5H2Z' fill='white'/></symbol><symbol id='plyr-fast-forward' viewBox='0 0 18 18'><path d='M7.875 7.171L0 1v16l7.875-6.171V17L18 9 7.875 1z'/></symbol><symbol id='plyr-logo-vimeo' viewBox='0 0 18 18'><path d='M17 5.3c-.1 1.6-1.2 3.7-3.3 6.4-2.2 2.8-4 4.2-5.5 4.2-.9 0-1.7-.9-2.4-2.6C5 10.9 4.4 6 3 6c-.1 0-.5.3-1.2.8l-.8-1c.8-.7 3.5-3.4 4.7-3.5 1.2-.1 2 .7 2.3 2.5.3 2 .8 6.1 1.8 6.1.9 0 2.5-3.4 2.6-4 .1-.9-.3-1.9-2.3-1.1.8-2.6 2.3-3.8 4.5-3.8 1.7.1 2.5 1.2 2.4 3.3z'/></symbol><symbol id='plyr-logo-youtube' viewBox='0 0 18 18'><path d='M16.8 5.8c-.2-1.3-.8-2.2-2.2-2.4C12.4 3 9 3 9 3s-3.4 0-5.6.4C2 3.6 1.3 4.5 1.2 5.8 1 7.1 1 9 1 9s0 1.9.2 3.2c.2 1.3.8 2.2 2.2 2.4C5.6 15 9 15 9 15s3.4 0 5.6-.4c1.4-.3 2-1.1 2.2-2.4.2-1.3.2-3.2.2-3.2s0-1.9-.2-3.2zM7 12V6l5 3-5 3z'/></symbol><symbol id='plyr-muted' viewBox='0 0 18 18'><path d='M12.4 12.5l2.1-2.1 2.1 2.1 1.4-1.4L15.9 9 18 6.9l-1.4-1.4-2.1 2.1-2.1-2.1L11 6.9 13.1 9 11 11.1zM3.786 6.008H.714C.286 6.008 0 6.31 0 6.76v4.512c0 .452.286.752.714.752h3.072l4.071 3.858c.5.3 1.143 0 1.143-.602V2.752c0-.601-.643-.977-1.143-.601L3.786 6.008z'/></symbol><symbol id='plyr-pause' viewBox='0 0 16 16'><path d='M5.5 14L5.5 2H3L3 14H5.5Z' /><path d='M13 14.0005L13 2.00049L10.5 2.00049L10.5 14.0005H13Z' /></symbol><symbol id='plyr-pip' viewBox='0 0 18 18'><path d='M13.293 3.293L7.022 9.564l1.414 1.414 6.271-6.271L17 7V1h-6z'/><path d='M13 15H3V5h5V3H2a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1v-6h-2v5z'/></symbol><symbol id='plyr-play' viewBox='0 0 16 16'><path xmlns='http://www.w3.org/2000/svg' d='M13.5 8L4 1.5V14.5L13.5 8Z'/></symbol><symbol id='plyr-restart' viewBox='0 0 18 18'><path d='M9.7 1.2l.7 6.4 2.1-2.1c1.9 1.9 1.9 5.1 0 7-.9 1-2.2 1.5-3.5 1.5-1.3 0-2.6-.5-3.5-1.5-1.9-1.9-1.9-5.1 0-7 .6-.6 1.4-1.1 2.3-1.3l-.6-1.9C6 2.6 4.9 3.2 4 4.1 1.3 6.8 1.3 11.2 4 14c1.3 1.3 3.1 2 4.9 2 1.9 0 3.6-.7 4.9-2 2.7-2.7 2.7-7.1 0-9.9L16 1.9l-6.3-.7z'/></symbol><symbol id='plyr-rewind' viewBox='0 0 18 18'><path d='M10.125 1L0 9l10.125 8v-6.171L18 17V1l-7.875 6.171z'/></symbol><symbol id='plyr-settings' viewBox='0 0 18 18'><path d='M16.135 7.784a2 2 0 01-1.23-2.969c.322-.536.225-.998-.094-1.316l-.31-.31c-.318-.318-.78-.415-1.316-.094a2 2 0 01-2.969-1.23C10.065 1.258 9.669 1 9.219 1h-.438c-.45 0-.845.258-.997.865a2 2 0 01-2.969 1.23c-.536-.322-.999-.225-1.317.093l-.31.31c-.318.318-.415.781-.093 1.317a2 2 0 01-1.23 2.969C1.26 7.935 1 8.33 1 8.781v.438c0 .45.258.845.865.997a2 2 0 011.23 2.969c-.322.536-.225.998.094 1.316l.31.31c.319.319.782.415 1.316.094a2 2 0 012.969 1.23c.151.607.547.865.997.865h.438c.45 0 .845-.258.997-.865a2 2 0 012.969-1.23c.535.321.997.225 1.316-.094l.31-.31c.318-.318.415-.781.094-1.316a2 2 0 011.23-2.969c.607-.151.865-.547.865-.997v-.438c0-.451-.26-.846-.865-.997zM9 12a3 3 0 110-6 3 3 0 010 6z'/></symbol><symbol id='plyr-volume' viewBox='0 0 18 18'><path d='M15.6 3.3c-.4-.4-1-.4-1.4 0-.4.4-.4 1 0 1.4C15.4 5.9 16 7.4 16 9c0 1.6-.6 3.1-1.8 4.3-.4.4-.4 1 0 1.4.2.2.5.3.7.3.3 0 .5-.1.7-.3C17.1 13.2 18 11.2 18 9s-.9-4.2-2.4-5.7z'/><path d='M11.282 5.282a.909.909 0 000 1.316c.735.735.995 1.458.995 2.402 0 .936-.425 1.917-.995 2.487a.909.909 0 000 1.316c.145.145.636.262 1.018.156a.725.725 0 00.298-.156C13.773 11.733 14.13 10.16 14.13 9c0-.17-.002-.34-.011-.51-.053-.992-.319-2.005-1.522-3.208a.909.909 0 00-1.316 0zm-7.496.726H.714C.286 6.008 0 6.31 0 6.76v4.512c0 .452.286.752.714.752h3.072l4.071 3.858c.5.3 1.143 0 1.143-.602V2.752c0-.601-.643-.977-1.143-.601L3.786 6.008z'/></symbol><symbol id='plyr-captions-off' viewBox='0 0 18 18'><path d='M1 1c-.6 0-1 .4-1 1v11c0 .6.4 1 1 1h4.6l2.7 2.7c.2.2.4.3.7.3.3 0 .5-.1.7-.3l2.7-2.7H17c.6 0 1-.4 1-1V2c0-.6-.4-1-1-1H1zm4.52 10.15c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41C8.47 4.96 7.46 3.76 5.5 3.76c-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69zm7.57 0c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41c-.28-1.15-1.29-2.35-3.25-2.35-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69z' fill-rule='evenodd' fill-opacity='.5'/></symbol><symbol id='plyr-captions-on' viewBox='0 0 18 18'><path d='M1 1c-.6 0-1 .4-1 1v11c0 .6.4 1 1 1h4.6l2.7 2.7c.2.2.4.3.7.3.3 0 .5-.1.7-.3l2.7-2.7H17c.6 0 1-.4 1-1V2c0-.6-.4-1-1-1H1zm4.52 10.15c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41C8.47 4.96 7.46 3.76 5.5 3.76c-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69zm7.57 0c1.99 0 3.01-1.32 3.28-2.41l-1.29-.39c-.19.66-.78 1.45-1.99 1.45-1.14 0-2.2-.83-2.2-2.34 0-1.61 1.12-2.37 2.18-2.37 1.23 0 1.78.75 1.95 1.43l1.3-.41c-.28-1.15-1.29-2.35-3.25-2.35-1.9 0-3.61 1.44-3.61 3.7 0 2.26 1.65 3.69 3.63 3.69z' fill-rule='evenodd'/></symbol></svg>\"}"
+        },
+        {
+          "name": "tgt:tlm:156",
+          "value": "{\"execution\":303.6,\"parsing\":0,\"request\":{\"dns\":7,\"tls\":92.4,\"timeToFirstByte\":105.2,\"download\":0.6,\"responseSize\":258},\"telemetryServerToken\":\"cJWuCgDiaU1IgPqDGhBbFHkrF99L8uQ0awvojXc3vY0=\",\"mode\":\"edge\",\"features\":{\"executePageLoad\":true,\"prefetchViewCount\":1,\"decisioningMethod\":\"server-side\"},\"requestId\":\"d3586ad068e644e2b07b8f3d96b8e1a2\",\"timestamp\":1755073607092}"
+        },
+        {
+          "name": "Hm_lvt_e5acecb73e72d7020d220cd4555e16f5",
+          "value": "1786609607353|1755062989"
+        },
+        {
+          "name": "lastExternalReferrer",
+          "value": "empty"
+        },
+        {
+          "name": "li_adsId",
+          "value": "ce1efd8a-4372-45c5-8cd2-a9e5d5f1c93d"
+        }
+      ]
+    },
+    {
+      "origin": "https://recaptcha.net",
+      "localStorage": [
+        {
+          "name": "rc::a",
+          "value": "MTM1amJmYTEzNTFnMmY="
+        },
+        {
+          "name": "rc::f",
+          "value": "0aAJ3Gg0Y7r7Dhe7pnG8dfLMDtnmEwKbKevguLe0IjmXrMcAnxC_gGy_Jdm0KwdnX0W-_4v84"
+        }
+      ]
+    },
+    {
+      "origin": "https://tr.snapchat.com",
+      "localStorage": [
+        {
+          "name": "u_sclid_r",
+          "value": "ILsWgB65SFCWkB3Qi3vSqDZP0gDM3o6uRmPgG9laM9CARY5ixsW7ex0UVsPg7_9QPmrEsNgMZDY"
+        },
+        {
+          "name": "u_sclid",
+          "value": "HzsWgB65SFCWkB3Qi3vSqDZP0gDM3o6uyNoz0IBFjmLGxbt7HRRWw-Dv_1A-asSw"
+        }
+      ]
+    },
+    {
+      "origin": "https://www.youtube.com",
+      "localStorage": [
+        {
+          "name": "yt.innertube::nextId",
+          "value": "{\"data\":14,\"expiration\":1755158376773,\"creation\":1755071976773}"
+        },
+        {
+          "name": "yt.innertube::requests",
+          "value": "{\"data\":{},\"expiration\":1755158380365,\"creation\":1755071980365}"
+        },
+        {
+          "name": "ytidb::LAST_RESULT_ENTRY_KEY",
+          "value": "{\"data\":{\"hasSucceededOnce\":true},\"expiration\":1757663976863,\"creation\":1755071976863}"
+        }
+      ]
+    }
+  ]
+}

@@ -1,20 +1,29 @@
 {
+  "name": "watch-lookup",
+  "version": "1.0.0",
+  "description": "",
+  "main": "load_json_to_mongo.js",
+  "license": "ISC",
+  "author": "",
+  "keywords": [],
   "dependencies": {
+    "cheerio": "^1.0.0",
     "cloudinary": "^2.7.0",
     "csv-parser": "^3.2.0",
     "csvtojson": "^2.0.10",
     "dotenv": "^17.2.0",
-    "mongodb": "^6.17.0",
-    "mongoose": "^8.16.1"
+    "mongodb": "^6.18.0",
+    "mongoose": "^8.16.1",
+    "node-fetch": "^2.7.0",
+    "playwright": "^1.46.1"
   },
-  "name": "watch-lookup",
-  "version": "1.0.0",
-  "main": "load_json_to_mongo.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fetch:apimg": "node scripts/fetchAPImageAndUpload.js 26399NB.OO.D009KB.01",
+    "playwright:install": "playwright install chromium",
+    "ap:scrape": "node scripts/scrapeAPProduct.js",
+    "ap:crawl:all": "node scripts/crawlAP.js --all --write --upload --resume --concurrency=2 --delay=2500",
+    "ap:crawl:offshore": "node scripts/crawlAP.js --collections=royal-oak-offshore --write --upload --resume --concurrency=2 --delay=2500",
+    "ap:crawl:code1159": "node scripts/crawlAP.js --collections=code-1159 --write --upload --resume --concurrency=2 --delay=2500"
+  }
 }

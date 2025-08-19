@@ -239,13 +239,16 @@ async function lookupCombinedGreyMarket() {
     else if (data && Array.isArray(data.results)) greyMarketData = data.results;
     else greyMarketData = [];
 
-    console.log('[GM] results:', greyMarketData.length);
+console.log('[GM] results:', greyMarketData.length);
 
-    // Clear search box after successful search
-    if (termEl) termEl.value = '';
+// Clear the "Searching…" note now that we have results
+if (els.resultsContainer) els.resultsContainer.innerHTML = '';
 
-    // Render all records as full-detail cards
-    renderGreyMarketDetailCards(greyMarketData);
+// Clear search input after successful search
+if (termEl) termEl.value = '';
+
+// Render full detail cards (one per record) into #detailDock
+renderGreyMarketDetailCards(greyMarketData);
 
   } catch (err) {
     console.error('[GM] fetch error', err);

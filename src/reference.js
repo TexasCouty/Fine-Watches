@@ -1,139 +1,111 @@
-// functions/referenceLookUp.js
-// Reference search (Audemars Piguet, etc.) with detailed diagnostics.
-// - Logs which DB/collection are used (without exposing secrets)
-// - Reuses the Mongo client across invocations
-// - Partial, case-insensitive match on Reference/Brand/Collection/Description
+// src/reference.js
+// Reference Lookup – browser-side code
+// - Uses existing CSS (.card, .manufacturer-line, .watch-image, .card-images)
+// - Detailed logs with [RefLookup][UI] prefixes
+// - Enter key triggers search
+// - Safe JSON parsing + helpful error messages
 
-const { MongoClient } = require('mongodb');
-
-const ENV = {
-  URI: process.env.MONGO_URI,
-  DB: process.env.MONGO_DB || 'test',
-  COLL: process.env.MONGO_REF_COLL || 'references',
-};
-
-// ---- Helpers ---------------------------------------------------------------
-
-/** Mask credentials in a Mongo URI for safe logging */
-function maskMongoUri(uri) {
-  if (!uri) return '<undefined>';
-  try {
-    // Replace credential block between '://' and '@'
-    return uri.replace(/\/\/([^@]+)@/, '//***:***@');
-  } catch {
-    return '<unparseable>';
-  }
-}
-
-/** Build case-insensitive partial-match query */
-function buildQuery(term) {
-  const rx = new RegExp(term, 'i');
-  return {
-    $or: [
-      { Reference: rx },
-      { Brand: rx },
-      { Collection: rx },
-      { Description: rx },
-    ],
+(function () {
+  const IDS = {
+    input: 'refQuery',
+    button: 'refLookupBtn',
+    results: 'refResults',
   };
-}
 
-// Cache the client across hot invocations
-let cachedClient = null;
+  const $ = (id) => document.getElementById(id);
 
-// Cold start log (runs once per function boot)
-console.log('[RefLookup] Cold start');
-console.log('[RefLookup] ENV MONGO_URI:', maskMongoUri(ENV.URI));
-console.log('[RefLookup] ENV MONGO_DB:', ENV.DB);
-console.log('[RefLookup] ENV MONGO_REF_COLL:', ENV.COLL);
+  function renderCard(doc) {
+    const ref = doc?.Reference || '';
+    const brand = doc?.Brand || '';
+    const collection = doc?.Collection ? ` | ${doc.Collection}` : '';
+    const desc = doc?.Description || '';
+    const calibre = doc?.Calibre?.Name ? `<div class="manufacturer-line"><em>${doc.Calibre.Name}</em></div>` : '';
+    const img = doc?.ImageFilename ? `<img class="watch-image" src="${doc.ImageFilename}" alt="${ref}" />` : '';
 
-async function getClient() {
-  if (cachedClient) return cachedClient;
-  if (!ENV.URI) {
-    throw new Error('Missing MONGO_URI in environment');
+    return `
+      <div class="card">
+        <div style="flex:1 1 auto;">
+          <div class="manufacturer-line"><strong>${ref}</strong> — ${brand}${collection}</div>
+          <div>${desc}</div>
+          ${calibre}
+        </div>
+        ${img ? `<div class="card-images" style="max-width:220px;">${img}</div>` : ''}
+      </div>
+    `;
   }
-  const client = new MongoClient(ENV.URI, {
-    // modern driver options
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 8000,
-  });
-  await client.connect();
-  cachedClient = client;
-  console.log('[RefLookup] ✅ Connected to Mongo (client cached)');
-  return cachedClient;
-}
 
-// ---- Handler ---------------------------------------------------------------
+  async function doReferenceLookup() {
+    const input = $(IDS.input);
+    const out = $(IDS.results);
 
-exports.handler = async (event) => {
-  const t0 = Date.now();
-
-  try {
-    if (event.httpMethod !== 'GET') {
-      return { statusCode: 405, body: 'Method Not Allowed' };
+    if (!input || !out) {
+      console.error('[RefLookup][UI] Missing elements', { haveInput: !!input, haveResults: !!out });
+      return;
     }
 
-    const params = new URLSearchParams(event.rawQuery || event.queryStringParameters || '');
-    const q = (params.get ? params.get('q') : (event.queryStringParameters?.q || '')).trim();
-    const limit = Math.min(
-      parseInt(params.get ? (params.get('limit') || '50') : (event.queryStringParameters?.limit || '50'), 10) || 50,
-      200
-    );
+    const term = (input.value || '').trim();
+    out.innerHTML = '';
 
-    if (!q) {
-      console.warn('[RefLookup] 400: missing q');
-      return { statusCode: 400, body: JSON.stringify({ error: 'Missing query parameter ?q' }) };
+    if (!term) {
+      out.textContent = 'Enter a reference or keywords';
+      return;
     }
 
-    // Log request summary (no secrets)
-    console.log(`[RefLookup] ► Request q="${q}" limit=${limit}`);
+    const url = `/.netlify/functions/referenceLookUp?q=${encodeURIComponent(term)}&limit=50`;
+    console.debug('[RefLookup][UI] GET', url);
 
-    const client = await getClient();
-    const db = client.db(ENV.DB);
-    const coll = db.collection(ENV.COLL);
+    const t0 = performance.now();
+    try {
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      const t1 = performance.now();
+      console.debug('[RefLookup][UI] HTTP', res.status, res.statusText, 'in', Math.round(t1 - t0), 'ms');
 
-    const query = buildQuery(q);
+      // Read as text first to help debug if JSON is malformed in prod
+      const raw = await res.text();
+      let data;
+      try {
+        data = raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        console.error('[RefLookup][UI] JSON parse error:', e, 'raw (first 400 chars):', raw.slice(0, 400));
+        out.textContent = 'Error: invalid JSON from server';
+        return;
+      }
 
-    console.time('[RefLookup] Mongo find');
-    const cursor = coll
-      .find(query, {
-        projection: {
-          _id: 0,
-          Reference: 1,
-          Brand: 1,
-          Collection: 1,
-          Description: 1,
-          ImageFilename: 1,
-          Calibre: 1,
-          SourceURL: 1,
-          Price: 1,
-          PriceCurrency: 1,
-          PriceAmount: 1,
-        },
-      })
-      .limit(limit);
-    const docs = await cursor.toArray();
-    console.timeEnd('[RefLookup] Mongo find');
+      if (!res.ok) {
+        console.error('[RefLookup][UI] Server error payload:', data);
+        out.textContent = (data && data.error) ? `Error: ${data.error}` : 'Server error';
+        return;
+      }
 
-    const dt = Date.now() - t0;
-    console.log(`[RefLookup] ◄ Response ${docs.length} docs in ${dt}ms`);
+      const isArray = Array.isArray(data);
+      console.debug('[RefLookup][UI] payload:', { type: isArray ? 'array' : typeof data, length: isArray ? data.length : undefined });
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify(docs),
-    };
-  } catch (err) {
-    const dt = Date.now() - t0;
-    // Sanitize message
-    const msg = (err && err.message) ? err.message.replace(/mongodb\+srv:[^ ]+/g, '***') : String(err);
-    console.error(`[RefLookup] ✖ Error after ${dt}ms:`, msg);
+      if (!isArray || data.length === 0) {
+        out.textContent = `No results for “${term}”.`;
+        return;
+      }
 
-    // Return minimal info to the client; full detail stays in logs
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ error: 'Internal error querying references' }),
-    };
+      out.innerHTML = data.map(renderCard).join('');
+    } catch (err) {
+      console.error('[RefLookup][UI] Fetch exception:', err);
+      out.textContent = 'Network error fetching references';
+    }
   }
-};
+
+  function wireEvents() {
+    const btn = $(IDS.button);
+    const input = $(IDS.input);
+
+    if (btn) btn.addEventListener('click', doReferenceLookup);
+    if (input) {
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') doReferenceLookup();
+      });
+    }
+
+    // Optional: focus for fast testing
+    // input?.focus();
+  }
+
+  document.addEventListener('DOMContentLoaded', wireEvents);
+})();

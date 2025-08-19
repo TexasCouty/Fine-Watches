@@ -1,108 +1,137 @@
 // functions/referenceLookUp.js
-// Netlify Function: fuzzy reference lookup across brands
+// Reference search with detailed diagnostics and safe secret masking.
 
 const { MongoClient } = require('mongodb');
 
-function corsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Content-Type': 'application/json; charset=utf-8',
-  };
-}
+const ENV = {
+  URI: process.env.MONGO_URI,
+  DB: process.env.MONGO_DB || 'test',           // <- your prod DB
+  COLL: process.env.MONGO_REF_COLL || 'references',
+};
 
-function getDbNameFromUri(uri) {
+function mask(uri) {
+  if (!uri) return '<undefined>';
   try {
-    const u = new URL(uri);
-    const name = u.pathname.replace(/^\//, '');
-    return name || 'test';
+    return uri.replace(/\/\/([^@]+)@/, '//***:***@');
   } catch {
-    return 'test';
+    return '<unparseable>';
   }
 }
 
-function escRe(s) {
-  return String(s || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function rx(s) { return new RegExp(s, 'i'); }
+
+// More forgiving search: tokenized "AND of ORs" across common fields
+function buildSmartQuery(term) {
+  const tokens = (term || '').split(/\s+/).filter(Boolean);
+  const F = [
+    'Reference',
+    'Brand',
+    'Collection',
+    'Description',
+    'Model',
+    'ModelName',
+    'Model Name',
+    'Nickname',
+    'Nickname or Dial',
+    'Family',
+    'Line',
+    'Keywords',
+    'Tags',
+    'Calibre.Name',
+  ];
+  if (tokens.length === 0) return {};
+  return { $and: tokens.map(t => ({ $or: F.map(f => ({ [f]: rx(t) })) })) };
+}
+
+let cachedClient = null;
+
+console.log('[RefLookup] Cold start');
+console.log('[RefLookup] ENV MONGO_URI:', mask(ENV.URI));
+console.log('[RefLookup] ENV MONGO_DB:', ENV.DB);
+console.log('[RefLookup] ENV MONGO_REF_COLL:', ENV.COLL);
+
+async function getClient() {
+  if (cachedClient) return cachedClient;
+  if (!ENV.URI) throw new Error('Missing MONGO_URI');
+  const client = new MongoClient(ENV.URI, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 8000,
+  });
+  await client.connect();
+  cachedClient = client;
+  console.log('[RefLookup] ✅ Connected (client cached)');
+  return cachedClient;
 }
 
 exports.handler = async (event) => {
-  const start = Date.now();
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers: corsHeaders(), body: '' };
-  }
-
-  const MONGO_URI = process.env.MONGO_URI;
-  if (!MONGO_URI) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders(),
-      body: JSON.stringify({ ok: false, error: 'MONGO_URI not set' }),
-    };
-  }
-
-  const qRaw  = (event.queryStringParameters?.q || '').trim();
-  const limit = Math.min(parseInt(event.queryStringParameters?.limit || '50', 10) || 50, 200);
-
-  const client = new MongoClient(MONGO_URI, { ignoreUndefined: true });
+  const t0 = Date.now();
   try {
-    await client.connect();
-    const dbName = process.env.MONGO_DB || getDbNameFromUri(MONGO_URI);
-    const db = client.db(dbName);
-    const col = db.collection('references');
-
-    let results = [];
-    if (qRaw) {
-      const re = new RegExp(escRe(qRaw), 'i');
-
-      // search in common fields + Aliases array
-      const filter = {
-        $or: [
-          { Reference: re },
-          { Aliases: re },                 // array of strings supported by regex
-          { Description: re },
-          { Brand: re },
-          { Collection: re },
-          { Case: re },
-          { Dial: re },
-          { Bracelet: re },
-        ],
-      };
-
-      results = await col
-        .find(filter, {
-          projection: {
-            _id: 0,
-            Reference: 1, Brand: 1, Collection: 1, Description: 1,
-            Details: 1, Case: 1, Dial: 1, Bracelet: 1,
-            ImageFilename: 1, PriceAmount: 1, PriceCurrency: 1,
-            Calibre: 1, SourceURL: 1, Aliases: 1, LastUpdated: 1,
-          },
-        })
-        .limit(limit)
-        .toArray();
-    } else {
-      // empty query: no results (you can choose to return recent items instead)
-      results = [];
+    if (event.httpMethod !== 'GET') {
+      return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
+    // Accept both rawQuery and queryStringParameters
+    const params = new URLSearchParams(event.rawQuery || '');
+    const qs = event.queryStringParameters || {};
+    const q = (params.get('q') || qs.q || '').trim();
+    const limitRaw = params.get('limit') || qs.limit || '50';
+    const limit = Math.min(parseInt(limitRaw, 10) || 50, 200);
+
+    if (!q) {
+      console.warn('[RefLookup] 400: missing q');
+      return { statusCode: 400, body: JSON.stringify({ error: 'Missing query parameter ?q' }) };
+    }
+
+    console.log(`[RefLookup] ► Request q="${q}" limit=${limit}`);
+
+    const client = await getClient();
+    const db = client.db(ENV.DB);
+    const coll = db.collection(ENV.COLL);
+
+    // Diagnostics: confirm collection exists & count
+    try {
+      const est = await coll.estimatedDocumentCount();
+      console.log(`[RefLookup] Collection "${ENV.COLL}" est count=${est}`);
+    } catch (e) {
+      console.warn('[RefLookup] Could not get estimatedDocumentCount:', e.message);
+    }
+
+    const query = buildSmartQuery(q);
+    console.log('[RefLookup] Query:', JSON.stringify(query));
+
+    console.time('[RefLookup] find');
+    const docs = await coll.find(query, {
+      projection: {
+        _id: 0,
+        Reference: 1,
+        Brand: 1,
+        Collection: 1,
+        Description: 1,
+        ImageFilename: 1,
+        Calibre: 1,
+        Keywords: 1,
+        Tags: 1,
+        SourceURL: 1,
+        Price: 1,
+        PriceAmount: 1,
+        PriceCurrency: 1,
+      },
+    }).limit(limit).toArray();
+    console.timeEnd('[RefLookup] find');
+
+    console.log(`[RefLookup] ◄ ${docs.length} docs in ${Date.now() - t0}ms`);
     return {
       statusCode: 200,
-      headers: corsHeaders(),
-      body: JSON.stringify({
-        ok: true,
-        took_ms: Date.now() - start,
-        count: results.length,
-        results,
-      }),
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify(docs),
     };
   } catch (err) {
-    console.error('referenceLookUp error:', err);
+    const msg = (err?.message || String(err)).replace(/mongodb\+srv:[^ )]+/g, '***');
+    console.error(`[RefLookup] ✖ ${msg} (after ${Date.now() - t0}ms)`);
     return {
       statusCode: 500,
-      headers: corsHeaders(),
-      body: JSON.stringify({ ok: false, error: err.message || 'server error' }),
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({ error: 'Internal error querying references' }),
     };
-  } finally {
-    try { await client.close(); } catch {}
   }
 };

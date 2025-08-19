@@ -1,15 +1,17 @@
 'use strict';
-/* Grey Market list + full-width detail dock (below top cards).
-   - Image column on RIGHT (compact layout)
-   - Shows all GM fields you specified (incl. spaced keys)
-   - Clears the search box after results load
+/* LuxeTime – Grey Market (web)
+   v2025-08-19-01  — includes showSkeletons() + event delegation renderLists()
+   - Wide detail dock below the two search cards
+   - Image on RIGHT (compact)
+   - Robust field mapping for Mongo keys (incl. spaced names)
+   - Clears the search box after each successful search
 */
 
 (function initLogging(){
   window.addEventListener('error', (e) => {
     console.error('[GLOBAL ERROR]', e.message, e.filename + ':' + e.lineno + ':' + e.colno, e.error);
   });
-  console.log('[GM] main.js loaded @', new Date().toISOString());
+  console.log('[GM] main.js loaded (v2025-08-19-01) @', new Date().toISOString());
 })();
 
 const els = {
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && els.modal?.classList.contains('open')) closeImgModal(); });
 
   els.sheetClose?.addEventListener('click', closeEditSheet);
+
   window.addEventListener('resize', () => adjustDockLayout());
 });
 
@@ -69,10 +72,11 @@ async function searchGreyMarket(term = '') {
   }
 
   try {
-    showSkeletons();
+    showSkeletons();            // ← this helper is defined below
     clearDock();
 
     const url = `/.netlify/functions/greyMarketLookup?term=${encodeURIComponent(q)}`;
+    console.log('[GM] GET', url);
     const r = await fetch(url);
     const text = await r.text();
     if (!r.ok) {
@@ -115,7 +119,7 @@ function safeSort() {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Results list + selection
+// Results list (event delegation for stable selection)
 function renderLists() {
   els.count.textContent = `${state.rows.length} results`;
   els.results.innerHTML = `
@@ -138,7 +142,6 @@ function renderLists() {
     </div>
   `;
 
-  // Event delegation for click/keyboard
   const tb = els.results.querySelector('tbody');
   tb?.addEventListener('click', (e) => {
     const tr = e.target.closest('tr[data-idx]');
@@ -158,6 +161,11 @@ function renderLists() {
   });
 }
 
+function onSelectGM(idx){
+  state.selectedGMIndex = idx;
+  renderLists();               // refresh highlight
+  renderGMDetail(state.rows[idx]);
+}
 
 /*────────────────────────────────────────────────────────────────────────────*/
 // Detail dock (image on RIGHT)
@@ -167,8 +175,7 @@ function renderGMDetail(row){
 
   const section = document.createElement('section');
   section.className = 'detail-card';
-  // put details first and image second; make second column fixed width
-  applyRightImageLayout(section);
+  applyRightImageLayout(section);  // set 2-column template (1fr | 340px) on desktop
 
   // RIGHT column (media)
   const media = document.createElement('div');
@@ -202,7 +209,6 @@ function renderGMDetail(row){
   const grid = document.createElement('dl');
   grid.className = 'detail-grid';
 
-  // Map fields in the order you provided
   addPair(grid, 'Unique ID', prettyId(getFirst(row, ['Unique ID','uniqueId','_id'])));
   addPair(grid, 'Model Name', getFirst(row, ['Model Name','ModelName']));
   addPair(grid, 'Nickname/Dial', getFirst(row, ['Nickname or Dial','Nickname','Dial']));
@@ -218,7 +224,7 @@ function renderGMDetail(row){
   addPair(grid, 'Reference', getFirst(row, ['reference','Reference']));
   addPair(grid, 'Date Posted', getFirst(row, ['Date Posted','DatePosted']));
   addPairRaw(grid, 'Comments', getFirst(row, ['Comments']));
-  if (imgSrc) { // link to image if present
+  if (imgSrc) {
     const dt = document.createElement('dt'); dt.textContent = 'Image URL';
     const dd = document.createElement('dd'); const a = document.createElement('a');
     a.href = imgSrc; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open';
@@ -233,24 +239,40 @@ function renderGMDetail(row){
   actions.append(editBtn, closeBtn);
 
   left.append(header, sub, grid, actions);
-
-  // Append LEFT (details) then RIGHT (media)
-  section.append(left, media);
+  section.append(left, media);      // left details, right image
   els.dock.appendChild(section);
   adjustDockLayout();
 }
 
 function clearDock(){ if (els.dock) els.dock.innerHTML = ''; }
-
 function applyRightImageLayout(section){
-  // Override CSS grid columns so details take full flex space and image is fixed 340px on the RIGHT.
-  // Respect mobile breakpoint (style.css collapses to 1 col at <=980px)
   if (window.innerWidth >= 980) section.style.gridTemplateColumns = '1fr 340px';
   else section.style.gridTemplateColumns = '';
 }
 function adjustDockLayout(){
   const section = els.dock?.querySelector('.detail-card');
   if (section) applyRightImageLayout(section);
+}
+
+/*────────────────────────────────────────────────────────────────────────────*/
+// SKELETONS (this was missing in your copy)
+function showSkeletons() {
+  const n = 6;
+  els.results.innerHTML = `
+    <div class="tablewrap">
+      <table><thead><tr>
+        <th>Model</th><th>Dealer</th><th>Price</th><th>Date</th>
+      </tr></thead><tbody>
+        ${Array.from({length:n}).map(()=>`
+          <tr>
+            <td><div class="skel" style="height:14px"></div></td>
+            <td><div class="skel" style="height:14px"></div></td>
+            <td><div class="skel" style="height:14px"></div></td>
+            <td><div class="skel" style="height:14px"></div></td>
+          </tr>
+        `).join('')}
+      </tbody></table>
+    </div>`;
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
@@ -314,12 +336,11 @@ function setVal(name, val){ const el = els.sheetForm.querySelector(`[name="${nam
 function setCheck(name, checked){ const el = els.sheetForm.querySelector(`[name="${name}"]`); if (el && el.type === 'checkbox') el.checked = !!checked; }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Save handler → updateGreyMarket expects { uniqueId, fields }
+// Cloudinary upload (signed)
 els.sheetForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fd = new FormData(els.sheetForm);
 
-  // Optional Cloudinary upload
   const file = fd.get('imageFile');
   if (file && file.size > 0) {
     const uploadedUrl = await uploadToCloudinarySigned(file);
@@ -360,8 +381,6 @@ els.sheetForm?.addEventListener('submit', async (e) => {
   }
 });
 
-/*────────────────────────────────────────────────────────────────────────────*/
-// Cloudinary helper
 async function uploadToCloudinarySigned(file){
   try {
     const sigRes = await fetch('/.netlify/functions/getCloudinarySignature');

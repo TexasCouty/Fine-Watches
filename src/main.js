@@ -1,10 +1,11 @@
 'use strict';
-/* Main UI controller – desktop-first with full-width GM detail card
-   Endpoints used:
+/* Desktop-first GM list + single detail card.
+   On search:
+     - Renders list
+     - Auto-selects first result and shows the full-width detail card below the list
+   Endpoints:
      - /.netlify/functions/greyMarketLookup?term=...
-     - /.netlify/functions/updateGreyMarket  { uniqueId, fields }
-   Signed Cloudinary via getCloudinarySignature
-   Verbose logging included
+     - /.netlify/functions/updateGreyMarket { uniqueId, fields }
 */
 
 (function initLogging(){
@@ -27,6 +28,7 @@ const els = {
   sheetClose: document.getElementById('sheetClose'),
   openAddBtn: document.getElementById('openAddBtn'),
   gmDetail: document.getElementById('gmDetail'),
+  refDetail: document.getElementById('refDetail'), // so we can clear it when GM searches
 };
 
 let state = {
@@ -38,76 +40,73 @@ let state = {
 /*────────────────────────────────────────────────────────────────────────────*/
 // Events
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('[GM] DOM ready');
-
-  // Search button
   els.gmBtn?.addEventListener('click', () => {
     const v = els.search?.value || '';
-    console.log('[GM] click search, term=', v);
+    console.log('[GM] search button', v);
     searchGreyMarket(v);
   });
 
-  // Enter to search
   els.search?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      console.log('[GM] enter search, term=', e.currentTarget.value);
+      console.log('[GM] search enter', e.currentTarget.value);
       searchGreyMarket(e.currentTarget.value);
     }
   });
 
-  // Add new entry (open empty form)
-  els.openAddBtn?.addEventListener('click', () => {
-    console.log('[GM] open add sheet');
-    els.sheetForm?.reset();
-    els.sheet?.classList.add('open');
-  });
+  els.openAddBtn?.addEventListener('click', () => { els.sheetForm?.reset(); els.sheet?.classList.add('open'); });
 
-  // Modal close + ESC
   els.modalClose?.addEventListener('click', closeImgModal);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && els.modal?.classList.contains('open')) closeImgModal();
-  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && els.modal?.classList.contains('open')) closeImgModal(); });
 
-  // Sheet close
   els.sheetClose?.addEventListener('click', closeEditSheet);
 });
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Fetch GM data
+// Fetch & render
 async function searchGreyMarket(term = '') {
   const q = (term || '').trim();
   if (!q) {
-    console.warn('[GM] Skipping search: empty term');
-    if (els.results) els.results.innerHTML = '<div class="note">Enter a model, nickname, or dealer to search.</div>';
-    if (els.count) els.count.textContent = '';
+    console.warn('[GM] empty term');
+    els.results.innerHTML = '<div class="note">Enter a model, nickname, or dealer to search.</div>';
+    els.count.textContent = '';
     clearGMDetail();
     return;
   }
 
   try {
     showSkeletons();
+    // When searching GM, hide any Reference details
+    if (els.refDetail) els.refDetail.innerHTML = '';
+
     const url = `/.netlify/functions/greyMarketLookup?term=${encodeURIComponent(q)}`;
     console.log('[GM] GET', url);
     const r = await fetch(url);
     const text = await r.text();
-    console.log('[GM] status', r.status, 'raw body (first 400):', text.slice(0, 400));
+    console.log('[GM] status', r.status, 'body (first 400):', text.slice(0, 400));
     if (!r.ok) {
-      els.results.innerHTML = `<div class="note">Server error (${r.status}). Check Netlify Functions logs.</div>`;
-      if (els.count) els.count.textContent = '';
+      els.results.innerHTML = `<div class="note">Server error (${r.status}). See Functions logs.</div>`;
+      els.count.textContent = '';
       clearGMDetail();
       return;
     }
     let data = null;
-    try { data = JSON.parse(text); } catch (e) { console.error('[GM] JSON parse failed', e); }
+    try { data = JSON.parse(text); } catch (e) { console.error('[GM] parse fail', e); }
     state.rows = Array.isArray(data) ? data : (data?.results || []);
-    state.selectedGMIndex = -1;
-    console.log('[GM] rows=', state.rows.length);
     safeSort();
+
+    // Auto-select first result
+    state.selectedGMIndex = state.rows.length ? 0 : -1;
     render();
+
+    if (state.selectedGMIndex >= 0) {
+      renderGMDetail(state.rows[state.selectedGMIndex]);
+    } else {
+      clearGMDetail();
+    }
   } catch (err) {
-    console.error('[GM] Fetch error', err);
-    els.results.innerHTML = `<div class="note">Network error. See console for details.</div>`;
-    if (els.count) els.count.textContent = '';
+    console.error('[GM] fetch error', err);
+    els.results.innerHTML = `<div class="note">Network error. See console.</div>`;
+    els.count.textContent = '';
     clearGMDetail();
   }
 }
@@ -126,12 +125,11 @@ function safeSort() {
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Rendering list + selection
+// Results list + selection
 function render() {
   const mobile = window.innerWidth < 768;
-  if (els.count) els.count.textContent = `${state.rows.length} results`;
+  els.count.textContent = `${state.rows.length} results`;
   els.results.innerHTML = '';
-  clearGMDetail();
   if (mobile) renderCards(); else renderTable();
 }
 
@@ -243,15 +241,13 @@ function renderCards() {
 
 function onSelectGM(idx){
   state.selectedGMIndex = idx;
-  console.log('[GM] select index=', idx, 'row=', state.rows[idx]);
-  // Re-render list to show selected highlight
-  render();
-  // Render details card
-  renderGMDetail(state.rows[idx]);
+  console.log('[GM] select', idx, state.rows[idx]);
+  render();                      // refresh list highlight
+  renderGMDetail(state.rows[idx]); // show detail card
 }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Full-width GM Detail Card (DOM API, no inline JS)
+// Full-width GM Detail Card
 function renderGMDetail(row){
   if (!els.gmDetail) return;
   if (!row) { clearGMDetail(); return; }
@@ -303,7 +299,6 @@ function renderGMDetail(row){
   addPair(grid, 'Current Retail', row['Current Retail (Not Inc Tax)'] ? fmtPrice(row['Current Retail (Not Inc Tax)']) : '—');
   addPair(grid, 'Comments', row.Comments);
   addPair(grid, 'Unique ID', row['Unique ID'] || row.uniqueId);
-  // Image URL as link if present
   if (row.ImageUrl) {
     const dt = document.createElement('dt'); dt.textContent = 'Image URL';
     const dd = document.createElement('dd');
@@ -336,7 +331,6 @@ function toggleSort(key){
   else { state.sort.key = key; state.sort.dir = 'asc'; }
   safeSort(); render();
 }
-
 function addMeta(dl, k, v){ const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v ?? '—'; dl.append(dt, dd); }
 function addPair(dl, k, v){ const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v ?? '—'; dl.append(dt, dd); }
 function mkBtn(txt){ const b=document.createElement('button'); b.className='btn'; b.textContent=txt; return b; }
@@ -345,12 +339,10 @@ function fmtPrice(p){ if (p==null||p==='') return '—'; const n=Number(p); if (
 function fmtDate(d){ const dt = d? new Date(d): null; return dt? dt.toLocaleDateString(): '—'; }
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Image modal
+// Modal + Edit sheet
 function openImgModal(src){ if(!src) return; els.modalImg.src = src; els.modal.classList.add('open'); }
 function closeImgModal(){ els.modal.classList.remove('open'); els.modalImg.removeAttribute('src'); }
 
-/*────────────────────────────────────────────────────────────────────────────*/
-// Edit sheet open/close + populate
 function openEditSheet(row){
   els.sheet.classList.add('open');
   els.sheetForm.reset();
@@ -366,9 +358,7 @@ function openEditSheet(row){
   setFormValue('BraceletColor', row.BraceletColor || '');
   setFormValue('ImageUrl', row.ImageUrl || '');
 }
-
 function closeEditSheet(){ els.sheet.classList.remove('open'); }
-
 function setFormValue(name, val){ const el = els.sheetForm.querySelector(`[name="${name}"]`); if (el) el.value = val; }
 function setCheckbox(name, checked){ const el = els.sheetForm.querySelector(`[name="${name}"]`); if (el && el.type === 'checkbox') el.checked = !!checked; }
 
@@ -378,7 +368,6 @@ els.sheetForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const fd = new FormData(els.sheetForm);
 
-  // Optional Cloudinary upload
   const file = fd.get('imageFile');
   if (file && file.size > 0) {
     const uploadedUrl = await uploadToCloudinarySigned(file);
@@ -415,7 +404,6 @@ els.sheetForm?.addEventListener('submit', async (e) => {
     console.log('[GM] update status', r.status, 'body', text.slice(0, 400));
     if (!r.ok) { alert(`Save failed (${r.status}). See console.`); return; }
     closeEditSheet();
-    // Re-run last search so the list & detail refresh
     searchGreyMarket(els.search?.value || '');
   } catch (err) {
     console.error('[GM] update error', err);
@@ -424,7 +412,7 @@ els.sheetForm?.addEventListener('submit', async (e) => {
 });
 
 /*────────────────────────────────────────────────────────────────────────────*/
-// Signed Cloudinary upload helper
+// Cloudinary helper
 async function uploadToCloudinarySigned(file){
   try {
     const sigRes = await fetch('/.netlify/functions/getCloudinarySignature');

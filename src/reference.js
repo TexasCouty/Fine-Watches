@@ -1,18 +1,17 @@
 'use strict';
-/* Reference lookup with full-width detail card (no inline JS)
+/* Reference lookup with full-width detail card (desktop).
+   On search:
+     - Renders list
+     - Auto-selects the first result and shows the detail card beneath
    Calls: /.netlify/functions/referenceLookUp?q=...
-   Verbose logging included
 */
-
-(function initLogging(){
-  console.log('[Ref] reference.js loaded @', new Date().toISOString());
-})();
 
 const refEls = {
   input: document.getElementById('referenceInput'),
   btn: document.getElementById('referenceBtn'),
   out: document.getElementById('referenceOut'),
   detail: document.getElementById('refDetail'),
+  gmDetail: document.getElementById('gmDetail'), // clear when Reference searches
 };
 
 const refState = { list: [], selectedIndex: -1 };
@@ -24,6 +23,9 @@ async function runRef(){
   const q = (refEls.input?.value || '').trim();
   if (!q) { refEls.out.innerHTML = '<div class="note">Enter a reference or keywords.</div>'; clearRefDetail(); return; }
   refEls.out.innerHTML = '<div class="skel" style="height:120px"></div>'; clearRefDetail();
+  // When searching Reference, hide any GM details
+  if (refEls.gmDetail) refEls.gmDetail.innerHTML = '';
+
   const url = `/.netlify/functions/referenceLookUp?q=${encodeURIComponent(q)}&limit=25`;
   console.log('[Ref] GET', url);
   try {
@@ -33,8 +35,10 @@ async function runRef(){
     if (!r.ok) { refEls.out.innerHTML = `<div class="note">Server error (${r.status}). See console.</div>`; return; }
     const docs = JSON.parse(text);
     refState.list = Array.isArray(docs) ? docs : [];
-    refState.selectedIndex = -1;
+    // Auto-select first
+    refState.selectedIndex = refState.list.length ? 0 : -1;
     renderRefList();
+    if (refState.selectedIndex >= 0) renderRefDetail(refState.list[0]);
   } catch (err) {
     console.error('[Ref] error', err);
     refEls.out.innerHTML = '<div class="note">Network error. See console.</div>';
@@ -43,7 +47,6 @@ async function runRef(){
 
 function renderRefList(){
   if (refState.list.length === 0) { refEls.out.innerHTML = '<div class="note">No matches.</div>'; return; }
-  // simple table for scan-ability
   const rows = refState.list.map((d, i)=> `
     <tr class="${i===refState.selectedIndex?'is-selected':''}" tabindex="0" role="button" data-idx="${i}">
       <td>${esc(d.Reference ?? '—')}</td>
@@ -70,12 +73,11 @@ function renderRefList(){
 
 function selectRef(i){
   refState.selectedIndex = i;
-  console.log('[Ref] select index=', i, 'doc=', refState.list[i]);
+  console.log('[Ref] select', i, refState.list[i]);
   renderRefList();
   renderRefDetail(refState.list[i]);
 }
 
-// Build the detail card with DOM API (no inline JS)
 function renderRefDetail(d){
   if (!refEls.detail) return;
   if (!d) { clearRefDetail(); return; }
@@ -108,7 +110,7 @@ function renderRefDetail(d){
     media.appendChild(ph);
   }
 
-  // Right
+  // Right column
   const right = document.createElement('div');
   const h3 = document.createElement('h3');
   h3.id = 'refDetailTitle';
@@ -117,13 +119,6 @@ function renderRefDetail(d){
     .filter(Boolean).join(' • ');
   h3.textContent = fact || 'Reference';
 
-  if (d.Description) {
-    const sub = document.createElement('div');
-    sub.className = 'detail-sub';
-    sub.textContent = d.Description;
-    right.appendChild(sub);
-  }
-
   const grid = document.createElement('dl');
   grid.className = 'detail-grid';
   addPair(grid, 'Calibre', d.Calibre ?? d.Caliber);
@@ -131,6 +126,7 @@ function renderRefDetail(d){
   addPair(grid, 'Collection', d.Collection);
   addPair(grid, 'Reference', d.Reference);
   addPair(grid, 'Price', d.PriceAmount ? fmtPrice(d.PriceAmount) : '—');
+  if (d.Description) { addPair(grid, 'Description', d.Description); }
 
   const actions = document.createElement('div');
   actions.className = 'detail-actions';

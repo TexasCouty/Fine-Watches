@@ -118,42 +118,46 @@ function safeSort() {
 // Results list + selection
 function renderLists() {
   els.count.textContent = `${state.rows.length} results`;
-  els.results.innerHTML = '';
+  els.results.innerHTML = `
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Dealer</th><th>Price</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          ${state.rows.map((row, idx) => `
+            <tr class="${idx===state.selectedGMIndex?'is-selected':''}" tabindex="0" role="button" data-idx="${idx}">
+              <td>${esc(row['Model'])}</td>
+              <td>${esc(getFirst(row, ['Dealer']))}</td>
+              <td>${fmtUSD(getFirst(row, ['Price']))}</td>
+              <td>${esc(getFirst(row, ['Date Entered','DateEntered','Date']))}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 
-  const wrap = document.createElement('div'); wrap.className = 'tablewrap';
-  const table = document.createElement('table');
-  const thead = document.createElement('thead');
-  const tr = document.createElement('tr');
-  ['Model', 'Dealer', 'Price', 'Date'].forEach(label => {
-    const th = document.createElement('th'); th.textContent = label; tr.appendChild(th);
+  // Event delegation for click/keyboard
+  const tb = els.results.querySelector('tbody');
+  tb?.addEventListener('click', (e) => {
+    const tr = e.target.closest('tr[data-idx]');
+    if (!tr) return;
+    const idx = Number(tr.dataset.idx);
+    console.log('[GM] row click -> idx', idx);
+    onSelectGM(idx);
   });
-  thead.appendChild(tr);
-
-  const tbody = document.createElement('tbody');
-  state.rows.forEach((row, idx) => {
-    const r = document.createElement('tr');
-    r.setAttribute('tabindex', '0');
-    r.setAttribute('role', 'button');
-    if (idx === state.selectedGMIndex) r.classList.add('is-selected');
-    r.innerHTML = `
-      <td>${esc(row['Model'])}</td>
-      <td>${esc(getFirst(row, ['Dealer']))}</td>
-      <td>${fmtUSD(getFirst(row, ['Price']))}</td>
-      <td>${esc(getFirst(row, ['Date Entered','DateEntered','Date']))}</td>
-    `;
-    r.addEventListener('click', () => onSelectGM(idx));
-    r.addEventListener('keydown', (e) => { if (e.key==='Enter' || e.key===' ') { e.preventDefault(); onSelectGM(idx); } });
-    tbody.appendChild(r);
+  tb?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const tr = e.target.closest('tr[data-idx]');
+    if (!tr) return;
+    e.preventDefault();
+    const idx = Number(tr.dataset.idx);
+    console.log('[GM] row key -> idx', idx);
+    onSelectGM(idx);
   });
-
-  table.append(thead, tbody); wrap.appendChild(table); els.results.appendChild(wrap);
 }
 
-function onSelectGM(idx){
-  state.selectedGMIndex = idx;
-  renderLists();               // refresh highlight
-  renderGMDetail(state.rows[idx]);
-}
 
 /*────────────────────────────────────────────────────────────────────────────*/
 // Detail dock (image on RIGHT)

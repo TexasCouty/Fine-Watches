@@ -12,110 +12,60 @@
     <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>LuxeTime Watches Lookup</h1>
 
-    <!-- Two sections side-by-side using .lookup-grid -->
-    <div class="lookup-grid">
-      <!-- Grey Market Lookup -->
-      <div class="lookup-section">
-        <h2>Grey Market Lookup</h2>
-        <label for="combinedSearchInput"><strong>Enter Watch Details:</strong></label>
-        <input
-          type="text"
-          id="combinedSearchInput"
-          placeholder="Enter Model or Ref or Nickname or Dial"
-        />
-        <button onclick="lookupCombinedGreyMarket()">Search Grey Market</button>
-        <button onclick="showAddGreyMarketForm()">Add New Grey Market Entry</button>
+    <!-- Toolbar: unified search + filters -->
+    <div class="toolbar">
+      <div class="row">
+        <input id="searchInput" class="input" type="search" placeholder="Search model, nickname, dealer…" />
+        <span id="resultCount" class="note"></span>
+      </div>
+      <div id="filtersBar" class="chips">
+        <span class="chip" data-chip="fullSet">Full Set</span>
+        <span class="chip" data-chip="retailReady">Retail Ready</span>
+      </div>
+    </div>
 
-        <!-- Results -->
-        <div id="results" class="results"></div>
+    <!-- Results mount point -->
+    <div id="resultsContainer" class="container"></div>
 
-        <!-- Add/Edit Form (unchanged) -->
-        <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
-          <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
-          <label for="gm_unique_id">Unique ID</label>
-          <input type="text" id="gm_unique_id" />
-
-          <label for="gm_date_entered">Date Entered</label>
-          <input type="date" id="gm_date_entered" />
-
-          <label for="gm_year">Year</label>
-          <input type="text" id="gm_year" />
-
-          <label for="gm_model">Model</label>
-          <input type="text" id="gm_model" />
-
-          <label for="gm_model_name">Model Name</label>
-          <div class="autocomplete-wrapper">
-            <input type="text" id="gm_model_name" autocomplete="off" />
-            <div id="gmRecordPicker" style="display:none;"></div>
+    <!-- Grey Market Add/Edit Form (now bottom sheet) -->
+    <div id="editSheet" class="sheet" role="dialog" aria-modal="true" aria-label="Edit entry">
+      <div class="grab"></div>
+      <div class="inner">
+        <form id="editForm">
+          <div style="display:grid;gap:8px">
+            <input class="input" name="Model" placeholder="Model" />
+            <input class="input" name="Dealer" placeholder="Dealer" />
+            <input class="input" name="Price" type="number" inputmode="decimal" placeholder="Price" />
+            <label><input type="checkbox" name="FullSet" /> Full Set</label>
+            <label><input type="checkbox" name="RetailReady" /> Retail Ready</label>
+            <input class="input" name="Year" placeholder="Year" />
+            <input class="input" name="Metal" placeholder="Metal" />
+            <input class="input" name="BraceletColor" placeholder="Bracelet Color" />
+            <input class="input" name="ImageUrl" placeholder="Image URL (auto-filled on upload)" />
+            <input class="input" type="file" name="imageFile" accept="image/*" />
           </div>
-
-          <label for="gm_nickname">Nickname or Dial</label>
-          <input type="text" id="gm_nickname" />
-
-          <label for="gm_bracelet">Bracelet</label>
-          <input type="text" id="gm_bracelet" />
-
-          <label for="gm_bracelet_metal_color">Bracelet Metal/Color</label>
-          <input type="text" id="gm_bracelet_metal_color" />
-
-          <label for="gm_price">Price</label>
-          <input type="text" id="gm_price" />
-
-          <label for="gm_full_set">Full Set</label>
-          <input type="text" id="gm_full_set" />
-
-          <label for="gm_retail_ready">Retail Ready</label>
-          <input type="text" id="gm_retail_ready" />
-
-          <label for="gm_current_retail">Current Retail (Not Inc Tax)</label>
-          <input type="text" id="gm_current_retail" />
-
-          <label for="gm_dealer">Dealer</label>
-          <input type="text" id="gm_dealer" />
-
-          <label for="gm_image">Image</label>
-          <input type="file" id="gm_image" accept="image/*" />
-          <img id="gm_current_img" src="" style="max-width:120px;display:none;" />
-
-          <label for="gm_comments">Comments</label>
-          <textarea id="gm_comments" rows="3"></textarea>
-
-          <button onclick="saveGreyMarketEntry()">Save</button>
-          <button onclick="cancelGreyMarketForm()">Cancel</button>
-          <button
-            id="gm_delete_button"
-            style="background:#b93a3a;color:#fff;display:none;"
-            onclick="deleteGreyMarketEntry()"
-          >
-            Delete
-          </button>
-        </div>
+          <div class="actions">
+            <button type="button" id="sheetClose" class="btn">Cancel</button>
+            <button type="submit" class="btn primary">Save</button>
+          </div>
+        </form>
       </div>
+    </div>
 
-      <!-- Reference Lookup -->
-      <div class="lookup-section">
-        <h2>Reference Lookup</h2>
-        <label for="refQuery"><strong>Enter Reference or Keywords:</strong></label>
-        <input id="refQuery" placeholder="e.g., 15210OR, Royal Oak, Offshore" />
-        <button id="refLookupBtn">Reference Lookup</button>
-
-        <!-- Results -->
-        <div id="refResults" class="results"></div>
-      </div>
+    <!-- Reference Lookup -->
+    <div class="lookup-section">
+      <h2>Reference Lookup</h2>
+      <label for="referenceInput"><strong>Enter Reference or Keywords:</strong></label>
+      <input id="referenceInput" placeholder="e.g., 15210OR, Royal Oak, Offshore" />
+      <button id="referenceBtn">Reference Lookup</button>
+      <div id="referenceOut" class="results"></div>
     </div>
   </div>
 
   <!-- Image Modal -->
-  <div
-    id="imgModal"
-    class="img-modal"
-    style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);justify-content:center;align-items:center;"
-  >
-    <img
-      id="imgModalImg"
-      style="max-width:90vw;max-height:90vh;box-shadow:0 0 32px #222;border-radius:18px;"
-    />
+  <div id="imgModal" class="modal" role="dialog" aria-modal="true" aria-label="Image preview">
+    <img id="imgModalImg" alt="Expanded watch image" />
+    <button id="modalClose" class="btn" style="position:fixed;top:16px;right:16px">Close</button>
   </div>
 
   <!-- JS -->

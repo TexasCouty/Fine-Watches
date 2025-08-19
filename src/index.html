@@ -8,13 +8,13 @@
 </head>
 <body>
   <div class="container">
-    <!-- Logo + Title -->
+    <!-- Branding -->
     <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>LuxeTime Watches Lookup</h1>
 
     <!-- Two sections: Grey Market + Reference -->
     <div class="lookup-grid">
-      <!-- GREY MARKET LOOKUP -->
+      <!-- ── GREY MARKET LOOKUP ───────────────────────────────────────────── -->
       <section class="lookup-section">
         <h2>Grey Market Lookup</h2>
 
@@ -35,7 +35,7 @@
         <div id="resultsContainer"></div>
       </section>
 
-      <!-- REFERENCE LOOKUP -->
+      <!-- ── REFERENCE LOOKUP ─────────────────────────────────────────────── -->
       <section class="lookup-section">
         <h2>Reference Lookup</h2>
         <label for="referenceInput"><strong>Enter Reference or Keywords:</strong></label>
@@ -58,11 +58,14 @@
     <div class="inner">
       <form id="editForm">
         <div style="display:grid;gap:8px">
+          <!-- Required by update endpoint -->
+          <input class="input" name="Unique ID" placeholder="Unique ID" readonly />
+
           <input class="input" name="Model" placeholder="Model" />
           <input class="input" name="Dealer" placeholder="Dealer" />
           <input class="input" name="Price" type="number" inputmode="decimal" placeholder="Price" />
-          <label><input type="checkbox" name="FullSet" /> Full Set</label>
-          <label><input type="checkbox" name="RetailReady" /> Retail Ready</label>
+          <label><input type="checkbox" name="Full Set" /> Full Set</label>
+          <label><input type="checkbox" name="Retail Ready" /> Retail Ready</label>
           <input class="input" name="Year" placeholder="Year" />
           <input class="input" name="Metal" placeholder="Metal" />
           <input class="input" name="BraceletColor" placeholder="Bracelet Color" />
@@ -76,30 +79,6 @@
       </form>
     </div>
   </div>
-
-  <!-- Quick hooks -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const gmBtn = document.getElementById('gmSearchBtn');
-      const addBtn = document.getElementById('openAddBtn');
-      const form = document.getElementById('editForm');
-      const sheet = document.getElementById('editSheet');
-      const input = document.getElementById('searchInput');
-
-      // Button triggers the same search as hitting Enter
-      gmBtn?.addEventListener('click', () => {
-        if (typeof searchGreyMarket === 'function') {
-          searchGreyMarket(input?.value || '');
-        }
-      });
-
-      // Open "Add New" form empty
-      addBtn?.addEventListener('click', () => {
-        form?.reset();
-        sheet?.classList.add('open');
-      });
-    });
-  </script>
 
   <!-- JS -->
   <script src="main.js"></script>

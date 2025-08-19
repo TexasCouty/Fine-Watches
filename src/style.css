@@ -3,9 +3,10 @@
   --radius:12px; --space:12px; --space-lg:16px; --border:1px solid rgba(200,162,74,0.35);
 }
 * { box-sizing:border-box; }
-body { margin:0; background:var(--bg); color:var(--ink);
-  font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans",sans-serif; }
-
+body {
+  margin:0; background:var(--bg); color:var(--ink);
+  font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+}
 .container { max-width:1200px; margin:0 auto; padding:16px; }
 
 /* Branding */

@@ -567,6 +567,13 @@ button:hover {
     max-width: 100% !important;
   }
 }
+.note.empty {
+  text-align: center;
+  opacity: 0.9;
+  padding: 16px 0;
+  color: #ddd;
+}
+
 
 /* (Desktop rules you added earlier remain; this only affects phones) */
 

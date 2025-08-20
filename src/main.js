@@ -265,11 +265,12 @@ function renderGreyMarketDetailCards(items) {
   }
   els.detailDock.innerHTML = '';
 
-  if (!items || items.length === 0) {
-    // Intentionally no summary; optionally show empty note
-    // els.detailDock.innerHTML = '<div class="note">No matches found.</div>';
-    return;
-  }
+if (!items || items.length === 0) {
+  if (els.resultsContainer) els.resultsContainer.innerHTML = '';
+  els.detailDock.innerHTML =
+    '<div class="note empty">No matches found.<br><small>Try a different model, nickname, dealer, or reference.</small></div>';
+  return;
+}
 
   items.forEach(function(item, idx) {
     try {

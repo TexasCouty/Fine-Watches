@@ -518,4 +518,55 @@ button:hover {
     border-radius: 6px;
   }
 }
+/* ===== Reference cards: compact, safe mobile layout ===== */
+@media (max-width: 820px) {
+  /* Make reference cards single-column and tighter */
+  .detail-card.ref-compact {
+    display: grid !important;
+    grid-template-columns: 1fr !important;   /* stack */
+    gap: 10px !important;
+    padding: 10px 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .detail-card.ref-compact h3.detail-title {
+    font-size: 1.05rem !important;
+    line-height: 1.2 !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  /* Label | Value grid — readable but compact on phones */
+  .detail-card.ref-compact dl {
+    display: grid !important;
+    grid-template-columns: minmax(120px, 40%) 1fr !important; /* label | value */
+    gap: 6px 10px !important;
+    margin: 0 !important;
+  }
+
+  .detail-card.ref-compact dt,
+  .detail-card.ref-compact dd {
+    font-size: 0.95rem !important;
+    line-height: 1.25 !important;
+    margin: 0 0 4px 0 !important;
+  }
+
+  /* Image: full width, capped height, never overlaps */
+  .detail-card.ref-compact .watch-image,
+  .detail-card.ref-compact img {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 260px !important;   /* cap the height */
+    object-fit: contain !important;  /* keep aspect without cropping */
+    border-radius: 8px !important;
+  }
+
+  /* Ensure the right column wrapper doesn’t force width on phones */
+  .detail-card.ref-compact > div:last-child {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+/* (Desktop rules you added earlier remain; this only affects phones) */
 

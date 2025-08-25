@@ -1,22 +1,23 @@
 // src/reference.js
-// Reference Lookup — identical UX/visuals to Grey Market:
-// - Image first (so on mobile it stacks above details, like GM)
-// - Label/value rows using <p><strong>Label:</strong> value</p>
-// - Clears input after search
-// - Renders one full-detail card per match in #detailDock
-// - Shows a friendly "No matches found" message when empty
+// Reference Lookup — richer details, clickable Source URL,
+// backwards compatible with your existing page and modal.
 
 (function () {
   'use strict';
 
-  var input = document.getElementById('refQuery');        // search box (right card)
-  var btn   = document.getElementById('refLookupBtn');    // search button (right card)
-  var note  = document.getElementById('refResults');      // small area where "Searching…" is shown
-  var dock  = document.getElementById('detailDock');      // wide area under both cards (same as GM)
+  var input = document.getElementById('refQuery');
+  var btn   = document.getElementById('refLookupBtn');
+  var note  = document.getElementById('refResults');
+  var dock  = document.getElementById('detailDock');
 
   function escapeHtml(s) {
     if (s === undefined || s === null) return '';
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#39;');
   }
 
   function getFirst(obj, keys) {
@@ -40,15 +41,43 @@
     var n = Number(String(amt).replace(/[^0-9.-]/g, ''));
     if (!isNaN(n)) {
       try { return n.toLocaleString(undefined, { style: 'currency', currency: cur, maximumFractionDigits: 0 }); }
-      catch (e) { /* fallback below */ }
+      catch (e) { /* fall back below */ }
     }
     return String(amt) + (cur ? (' ' + cur) : '');
+  }
+
+  function renderRow(label, valueHtml) {
+    if (!valueHtml) return '';
+    return '<p><strong>' + escapeHtml(label) + ':</strong> ' + valueHtml + '</p>';
+  }
+
+  function renderSpecs(specsObj) {
+    if (!specsObj || typeof specsObj !== 'object') return '';
+    var keys = Object.keys(specsObj);
+    if (keys.length === 0) return '';
+    var rows = '';
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      var v = specsObj[k];
+      if (v === undefined || v === null || String(v).trim() === '') continue;
+      rows += '<li><span style="opacity:.85">' + escapeHtml(k) + '</span>: ' + escapeHtml(v) + '</li>';
+    }
+    if (!rows) return '';
+    return '<div style="margin-top:6px"><strong>Specs</strong><ul style="margin:6px 0 0 18px">' + rows + '</ul></div>';
+  }
+
+  function renderArray(label, arrOrStr) {
+    if (Array.isArray(arrOrStr)) {
+      if (arrOrStr.length === 0) return '';
+      return renderRow(label, escapeHtml(arrOrStr.join(', ')));
+    }
+    if (!arrOrStr) return '';
+    return renderRow(label, escapeHtml(String(arrOrStr)));
   }
 
   function buildRefDetailCard(item, idx) {
     var card = document.createElement('div');
     card.className = 'card detail-card';
-    // match GM inline safety styles
     card.style.display = 'flex';
     card.style.gap = '20px';
     card.style.padding = '15px';
@@ -58,69 +87,87 @@
     card.style.alignItems = 'flex-start';
     card.setAttribute('data-idx', String(idx));
 
-    // ----- IMAGE (first in DOM so mobile shows it on top) -----
+    // ----- IMAGE (first) -----
     var rawImg = getFirst(item, ['ImageFilename', 'Image', 'image', 'ImageUrl']);
-    var imgSrc = '';
-    if (rawImg) imgSrc = /^https?:\/\//i.test(rawImg) ? rawImg : ('assets/references/' + rawImg);
-
-    var imgHtml = '';
-    if (imgSrc) {
-      imgHtml =
-        '<img src="' + escapeHtml(imgSrc) + '" ' +
-        'class="enlargeable-img" ' +
+    var imgSrc = rawImg ? (/^https?:\/\//i.test(rawImg) ? rawImg : ('assets/references/' + rawImg)) : '';
+    var imgHtml = imgSrc
+      ? '<img src="' + escapeHtml(imgSrc) + '" class="enlargeable-img" ' +
         'style="max-width:200px;margin-right:20px;border-radius:8px;cursor:pointer;" ' +
-        'onerror="this.style.display=\'none\';" ' +
-        'data-src="' + escapeHtml(imgSrc) + '" />';
+        'onerror="this.style.display=\'none\';" data-src="' + escapeHtml(imgSrc) + '" />'
+      : '';
+
+    // ----- Simple fields -----
+    var reference    = getFirst(item, ['Reference']);
+    var brand        = getFirst(item, ['Brand']);
+    var collection   = getFirst(item, ['Collection']);
+    var description  = getFirst(item, ['Description']);
+    var details      = getFirst(item, ['Details']);
+    var caseTxt      = getFirst(item, ['Case']);
+    var dial         = getFirst(item, ['Dial']);
+    var bracelet     = getFirst(item, ['Bracelet']);
+    var priceStr     = fmtPriceFrom(item);
+    var lastUpdated  = getFirst(item, ['LastUpdated']);
+
+    // Aliases (array)
+    var aliases = Array.isArray(item && item.Aliases) ? item.Aliases : [];
+
+    // Source URL (clickable)
+    var sourceUrl = getFirst(item, ['SourceURL']);
+    var sourceHtml = '';
+    if (sourceUrl) {
+      var safeHref = escapeHtml(sourceUrl);
+      sourceHtml = '<a href="' + safeHref + '" target="_blank" rel="noopener">' + safeHref + '</a>';
     }
 
-    // ----- DETAILS (same structure as GM: <p><strong>Label:</strong> value</p>) -----
-    var reference   = escapeHtml(getFirst(item, ['Reference']) || '');
-    var brand       = escapeHtml(getFirst(item, ['Brand']) || '');
-    var collection  = escapeHtml(getFirst(item, ['Collection']) || '');
-    var description = escapeHtml(getFirst(item, ['Description']) || '');
-    var price       = escapeHtml(fmtPriceFrom(item) || '');
-    var sourceUrl   = escapeHtml(getFirst(item, ['SourceURL']) || '');
+    // Calibre
+    var cal          = item && item.Calibre ? item.Calibre : null;
+    var calName      = getFirst(cal, ['Name']);
+    var calFunctions = getFirst(cal, ['Functions']);
+    var calMechanism = getFirst(cal, ['Mechanism']);
+    var calFreq      = getFirst(cal, ['Frequency']);
+    var calJewels    = getFirst(cal, ['NumberOfJewels']);
+    var calReserve   = getFirst(cal, ['PowerReserve']);
+    var calThick     = getFirst(cal, ['Thickness']);
+    var calNumParts  = getFirst(cal, ['NumberOfParts']);
 
-    // Calibre (nested)
-    var cal            = item && item.Calibre ? item.Calibre : null;
-    var calName        = escapeHtml(getFirst(cal || {}, ['Name']) || '');
-    var calFunctions   = escapeHtml(getFirst(cal || {}, ['Functions']) || '');
-    var calMechanism   = escapeHtml(getFirst(cal || {}, ['Mechanism']) || '');
-    var calFreq        = escapeHtml(getFirst(cal || {}, ['Frequency']) || '');
-    var calJewels      = escapeHtml(getFirst(cal || {}, ['NumberOfJewels']) || '');
-    var calReserve     = escapeHtml(getFirst(cal || {}, ['PowerReserve']) || '');
-    var calThickness   = escapeHtml(getFirst(cal || {}, ['Thickness']) || '');
-    var calNumParts    = escapeHtml(getFirst(cal || {}, ['NumberOfParts']) || '');
+    // Specs object (arbitrary keys)
+    var specsHtml = renderSpecs(item && item.Specs ? item.Specs : null);
 
-    // Arrays
-    var keywords = Array.isArray(item && item.Keywords) ? item.Keywords.join(', ')
-                   : (getFirst(item || {}, ['Keywords']) || '');
-    var tags     = Array.isArray(item && item.Tags) ? item.Tags.join(', ')
-                   : (getFirst(item || {}, ['Tags']) || '');
+    // Optional arrays like Keywords/Tags if present
+    var keywords = Array.isArray(item && item.Keywords) ? item.Keywords : (getFirst(item || {}, ['Keywords']) || '');
+    var tags     = Array.isArray(item && item.Tags) ? item.Tags : (getFirst(item || {}, ['Tags']) || '');
 
-    var detailsHtml =
+    var html =
+      imgHtml +
       '<div style="flex:1 1 auto;">' +
-        (reference   ? '<p><strong>Reference:</strong> ' + reference   + '</p>' : '') +
-        (brand       ? '<p><strong>Brand:</strong> '     + brand       + '</p>' : '') +
-        (collection  ? '<p><strong>Collection:</strong> '+ collection  + '</p>' : '') +
-        (description ? '<p><strong>Description:</strong>'+ description + '</p>' : '') +
-        (price       ? '<p><strong>Price:</strong> '     + price       + '</p>' : '') +
-        (sourceUrl   ? '<p><strong>Source URL:</strong> '+ sourceUrl   + '</p>' : '') +
+        renderRow('Reference', reference && escapeHtml(reference)) +
+        renderRow('Brand', brand && escapeHtml(brand)) +
+        renderRow('Collection', collection && escapeHtml(collection)) +
+        renderRow('Description', description && escapeHtml(description)) +
+        renderRow('Details', details && escapeHtml(details)) +
+        renderRow('Case', caseTxt && escapeHtml(caseTxt)) +
+        renderRow('Dial', dial && escapeHtml(dial)) +
+        renderRow('Bracelet', bracelet && escapeHtml(bracelet)) +
+        renderRow('Price', priceStr && escapeHtml(priceStr)) +
+        renderRow('Last Updated', lastUpdated && escapeHtml(lastUpdated)) +
+        renderArray('Aliases', aliases) +
+        renderRow('Source URL', sourceHtml) +
 
-        (calName     ? '<p><strong>Calibre Name:</strong> '    + calName      + '</p>' : '') +
-        (calFunctions? '<p><strong>Functions:</strong> '       + calFunctions + '</p>' : '') +
-        (calMechanism? '<p><strong>Mechanism:</strong> '       + calMechanism + '</p>' : '') +
-        (calFreq     ? '<p><strong>Frequency:</strong> '       + calFreq      + '</p>' : '') +
-        (calJewels   ? '<p><strong>Number of Jewels:</strong> '+ calJewels    + '</p>' : '') +
-        (calReserve  ? '<p><strong>Power Reserve:</strong> '   + calReserve   + '</p>' : '') +
-        (calThickness? '<p><strong>Thickness:</strong> '       + calThickness + '</p>' : '') +
-        (calNumParts ? '<p><strong>Number Of Parts:</strong> ' + calNumParts  + '</p>' : '') +
+        (calName      ? renderRow('Calibre Name', escapeHtml(calName)) : '') +
+        (calFunctions ? renderRow('Functions',    escapeHtml(calFunctions)) : '') +
+        (calMechanism ? renderRow('Mechanism',    escapeHtml(calMechanism)) : '') +
+        (calFreq      ? renderRow('Frequency',    escapeHtml(calFreq)) : '') +
+        (calJewels    ? renderRow('Number of Jewels', escapeHtml(calJewels)) : '') +
+        (calReserve   ? renderRow('Power Reserve', escapeHtml(calReserve)) : '') +
+        (calThick     ? renderRow('Thickness', escapeHtml(calThick)) : '') +
+        (calNumParts  ? renderRow('Number of Parts', escapeHtml(calNumParts)) : '') +
 
-        (keywords    ? '<p><strong>Keywords:</strong> '        + escapeHtml(keywords) + '</p>' : '') +
-        (tags        ? '<p><strong>Tags:</strong> '            + escapeHtml(tags)     + '</p>' : '') +
+        (specsHtml ? specsHtml : '') +
+        (keywords && keywords.length ? renderArray('Keywords', keywords) : '') +
+        (tags && tags.length ? renderArray('Tags', tags) : '') +
       '</div>';
 
-    card.innerHTML = imgHtml + detailsHtml; // image first (like GM)
+    card.innerHTML = html;
     return card;
   }
 
@@ -170,15 +217,14 @@
 
       if (!Array.isArray(data)) data = [];
 
-      // Clear "Searching…" and the input
+      // Clear status + input; render
       if (note) note.innerHTML = '';
       input.value = '';
 
-      // Render into dock exactly like GM
       dock.innerHTML = '';
       if (data.length === 0) {
         dock.innerHTML =
-          '<div class="note empty">No matches found.<br><small>Try a different model, nickname, dealer, or reference.</small></div>';
+          '<div class="note empty">No matches found.<br><small>Try a different reference, brand, collection, or keyword.</small></div>';
         return;
       }
 

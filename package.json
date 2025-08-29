@@ -7,6 +7,7 @@
   "author": "",
   "keywords": [],
   "dependencies": {
+    "@simplewebauthn/server": "^9.0.3",
     "cheerio": "^1.0.0",
     "cloudinary": "^2.7.0",
     "csv-parser": "^3.2.0",
@@ -24,6 +25,7 @@
     "ap:scrape": "node scripts/scrapeAPProduct.js",
     "ap:crawl:all": "node scripts/crawlAP.js --all --write --upload --resume --concurrency=2 --delay=2500",
     "ap:crawl:offshore": "node scripts/crawlAP.js --collections=royal-oak-offshore --write --upload --resume --concurrency=2 --delay=2500",
-    "ap:crawl:code1159": "node scripts/crawlAP.js --collections=code-1159 --write --upload --resume --concurrency=2 --delay=2500"
+    "ap:crawl:code1159": "node scripts/crawlAP.js --collections=code-1159 --write --upload --resume --concurrency=2 --delay=2500",
+    "patek:scrape": "node scripts/scrapePatekProduct.js"
   }
 }

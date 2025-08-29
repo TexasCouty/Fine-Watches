@@ -12,6 +12,12 @@
     <img src="assets/LuxeTime Square Black Logo.png" alt="LuxeTime Logo" class="logo" />
     <h1>LuxeTime Watches Lookup</h1>
 
+    <!-- Passkey / Face ID actions -->
+    <div style="display:flex; gap:10px; justify-content:center; margin:12px 0 22px;">
+      <button id="btnCreatePasskey" onclick="createPasskey()">Create Passkey (Face ID)</button>
+      <button id="btnSignInPasskey" onclick="signInWithPasskey()">Sign in with Passkey</button>
+    </div>
+
     <!-- Two sections side-by-side using .lookup-grid -->
     <div class="lookup-grid">
       <!-- Grey Market Lookup -->
@@ -32,7 +38,6 @@
         <!-- Add/Edit Form -->
         <div id="greyMarketFormContainer" style="margin-top:20px; display:none;">
           <h3 id="greyMarketFormTitle">Add New Grey Market Entry</h3>
-          <!-- form fields (unchanged from previous) -->
           <label for="gm_unique_id">Unique ID</label>
           <input type="text" id="gm_unique_id" />
 
@@ -84,16 +89,11 @@
 
           <button id="saveGmBtn">Save</button>
           <button id="cancelGmBtn">Cancel</button>
-          <button
-            id="gm_delete_button"
-            style="background:#b93a3a;color:#fff;display:none;"
-          >
-            Delete
-          </button>
+          <button id="gm_delete_button" style="background:#b93a3a;color:#fff;display:none;">Delete</button>
         </div>
       </div>
 
-      <!-- Reference Lookup (unchanged) -->
+      <!-- Reference Lookup -->
       <div class="lookup-section">
         <h2>Reference Lookup</h2>
         <label for="refQuery"><strong>Enter Reference or Keywords:</strong></label>
@@ -107,7 +107,6 @@
 
     <!-- DETAIL DOCK: full-width card area below the two top cards -->
     <div id="detailDock" class="detail-dock"></div>
-
   </div>
 
   <!-- Image Modal -->
@@ -116,14 +115,12 @@
     class="img-modal"
     style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.9);justify-content:center;align-items:center;"
   >
-    <img
-      id="imgModalImg"
-      style="max-width:90vw;max-height:90vh;box-shadow:0 0 32px #222;border-radius:18px;"
-    />
+    <img id="imgModalImg" style="max-width:90vw;max-height:90vh;box-shadow:0 0 32px #222;border-radius:18px;" />
   </div>
 
   <!-- JS -->
   <script src="main.js"></script>
   <script src="reference.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

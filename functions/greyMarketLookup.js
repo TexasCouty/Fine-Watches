@@ -2,6 +2,7 @@
 // Unified GM search (Model, Model Name, Nickname or Dial) with diagnostics.
 
 const { MongoClient } = require('mongodb');
+const { read, NAME } = require('./_lib/session');
 
 const ENV = {
   URI: process.env.MONGO_URI,
@@ -21,7 +22,7 @@ function buildQuery(term) {
       { Model: rx },
       { 'Model Name': rx },
       { 'Nickname or Dial': rx },
-      { 'Unique ID': rx }, // handy sometimes
+      { 'Unique ID': rx },
     ],
   };
 }
@@ -49,6 +50,13 @@ exports.handler = async (event) => {
   try {
     if (event.httpMethod !== 'GET') {
       return { statusCode: 405, body: 'Method Not Allowed' };
+    }
+
+    // 🔐 Require session cookie
+    const sid = read({ headers: event.headers }, NAME);
+    if (!sid) {
+      console.warn('[GM] 401: no session cookie');
+      return { statusCode: 401, body: 'Unauthorized' };
     }
 
     const params = new URLSearchParams(event.rawQuery || event.queryStringParameters || '');
@@ -84,13 +92,8 @@ exports.handler = async (event) => {
     };
   } catch (err) {
     const dt = Date.now() - t0;
-    const msg = (err && err.message) ? err.message.replace(/mongodb\+srv:[^ ]+/g, '***') : String(err);
-    console.error(`[GM] ✖ Error after ${dt}ms:`, msg);
-
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ error: 'Internal error querying grey market' }),
-    };
+    const msg = (err && err.message) ? err.message : String(err);
+    console.error('[GM] ERROR:', msg, 'in', dt, 'ms');
+    return { statusCode: 500, body: JSON.stringify({ error: 'Server error' }) };
   }
 };

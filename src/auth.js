@@ -1,213 +1,152 @@
-/* src/auth.js
-   Minimal WebAuthn (Passkey/Face ID) client + UI guard for your app.
-   - Detects support
-   - Create passkey  → /.netlify/functions/beginRegistration → navigator.credentials.create → /verifyRegistration
-   - Sign-in         → /.netlify/functions/beginAuthentication → navigator.credentials.get   → /verifyAuthentication
-   - Pings           → /.netlify/functions/sessionStatus to lock/unlock UI
-*/
+// src/auth.js
+// Full-screen gate; matches your server's expected payloads:
+// - beginRegistration/beginAuthentication -> GET returning { options }
+// - verifyRegistration expects { attestation: ... }
+// - verifyAuthentication expects { assertion: ... }
 
 (function () {
-  'use strict';
+  const GATE_ID = 'ltx-auth-gate';
 
-  // ---- Small helpers (base64url <-> ArrayBuffer) -------
-  function bufToB64url(buf) {
-    const b64 = btoa(String.fromCharCode.apply(null, new Uint8Array(buf)));
-    return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+  // Base64url helpers
+  const enc = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  const dec = (s) => Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0)).buffer;
+
+  function reviveRegOptions(opts) {
+    const o = { ...opts };
+    o.challenge = dec(o.challenge);
+    if (o.user && typeof o.user.id === 'string') o.user = { ...o.user, id: dec(o.user.id) };
+    if (Array.isArray(o.excludeCredentials)) o.excludeCredentials = o.excludeCredentials.map(c => ({ ...c, id: dec(c.id) }));
+    return o;
   }
-  function b64urlToBuf(b64url) {
-    const b64 = b64url.replace(/-/g, '+').replace(/_/g, '/');
-    const pad = '='.repeat((4 - (b64.length % 4)) % 4);
-    const raw = atob(b64 + pad);
-    const out = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-    return out.buffer;
+  function reviveAuthOptions(opts) {
+    const o = { ...opts };
+    o.challenge = dec(o.challenge);
+    if (Array.isArray(o.allowCredentials)) o.allowCredentials = o.allowCredentials.map(c => ({ ...c, id: dec(c.id) }));
+    return o;
   }
-  function revivePublicKeyOpts(opts) {
-    // Convert challenge & any id fields (allowCredentials, user.id) back to ArrayBuffers
-    if (!opts) return opts;
-    const pk = Object.assign({}, opts);
-    if (pk.challenge && typeof pk.challenge === 'string') pk.challenge = b64urlToBuf(pk.challenge);
-    if (pk.user && typeof pk.user.id === 'string') pk.user = Object.assign({}, pk.user, { id: b64urlToBuf(pk.user.id) });
-    if (Array.isArray(pk.allowCredentials)) {
-      pk.allowCredentials = pk.allowCredentials.map(x => {
-        if (x && typeof x.id === 'string') return Object.assign({}, x, { id: b64urlToBuf(x.id) });
-        return x;
-      });
-    }
-    return pk;
+
+  function mountGate() {
+    if (document.getElementById(GATE_ID)) return;
+    const style = document.createElement('style');
+    style.textContent = `
+      #${GATE_ID}{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#0b0f14}
+      #${GATE_ID} .panel{width:min(520px,90vw);border:1px solid #d4af37;border-radius:14px;padding:22px;background:#0f141b;color:#eee;box-shadow:0 8px 30px rgba(0,0,0,.35);text-align:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+      #${GATE_ID} h1{margin:0 0 6px;font-size:22px;letter-spacing:.5px}
+      #${GATE_ID} p{margin:8px 0 18px;opacity:.85}
+      #${GATE_ID} .btn{display:inline-block;margin:6px 8px 0;padding:10px 14px;border:1px solid #d4af37;border-radius:10px;color:#111;background:#d4af37;font-weight:600;cursor:pointer;user-select:none}
+      #${GATE_ID} .btn.secondary{background:transparent;color:#d4af37}
+      #${GATE_ID} .note{margin-top:10px;font-size:13px;opacity:.8}
+    `;
+    document.head.appendChild(style);
+
+    const div = document.createElement('div');
+    div.id = GATE_ID;
+    div.innerHTML = `
+      <div class="panel">
+        <h1>Unlock LuxeTime</h1>
+        <p>Use Face ID / Touch ID (Passkey). After sign-in, the app will unlock.</p>
+        <div><button id="btnCreatePk" class="btn">Create passkey</button></div>
+        <div><button id="btnSigninPk" class="btn secondary">Sign in with passkey</button></div>
+        <div class="note" id="pkNote"></div>
+      </div>`;
+    document.body.appendChild(div);
+
+    document.getElementById('btnCreatePk').onclick = onCreate;
+    document.getElementById('btnSigninPk').onclick = onSignin;
   }
-  function credToJSON(cred) {
-    // Serialize PublicKeyCredential for POST
-    if (!cred) return null;
-    const clientDataJSON = bufToB64url(cred.response.clientDataJSON);
-    if (cred.response.attestationObject) {
-      return {
-        id: cred.id,
-        rawId: bufToB64url(cred.rawId),
-        type: cred.type,
-        authenticatorAttachment: cred.authenticatorAttachment || null,
-        response: {
-          clientDataJSON,
-          attestationObject: bufToB64url(cred.response.attestationObject)
+  function unmountGate() {
+    document.getElementById(GATE_ID)?.remove();
+  }
+  function note(msg) {
+    const n = document.getElementById('pkNote'); if (n) n.textContent = msg || '';
+  }
+
+  async function hasSession() {
+    try {
+      const r = await fetch('/.netlify/functions/sessionStatus', { credentials: 'include' });
+      const j = await r.json().catch(() => ({}));
+      return !!j.authenticated;
+    } catch { return false; }
+  }
+
+  async function onCreate() {
+    try {
+      note('Preparing registration…');
+      const br = await fetch('/.netlify/functions/beginRegistration', { credentials: 'include' });
+      if (!br.ok) throw new Error('beginRegistration HTTP ' + br.status);
+      const { options } = await br.json();
+      if (!options) throw new Error('No options from server');
+
+      const cred = await navigator.credentials.create({ publicKey: reviveRegOptions(options) });
+      if (!cred) throw new Error('No credential');
+
+      const payload = {
+        attestation: {
+          id: cred.id,
+          rawId: enc(cred.rawId),
+          type: cred.type,
+          response: {
+            clientDataJSON: enc(cred.response.clientDataJSON),
+            attestationObject: enc(cred.response.attestationObject),
+          },
         }
       };
-    }
-    return {
-      id: cred.id,
-      rawId: bufToB64url(cred.rawId),
-      type: cred.type,
-      authenticatorAttachment: cred.authenticatorAttachment || null,
-      response: {
-        clientDataJSON,
-        authenticatorData: bufToB64url(cred.response.authenticatorData),
-        signature: bufToB64url(cred.response.signature),
-        userHandle: cred.response.userHandle ? bufToB64url(cred.response.userHandle) : null
-      }
-    };
-  }
 
-  // ---- DOM scaffolding: add a tiny fixed panel; requires no HTML edits ----
-  function ensurePanel() {
-    let panel = document.getElementById('passkeyPanel');
-    if (panel) return panel;
-    panel = document.createElement('div');
-    panel.id = 'passkeyPanel';
-    panel.style.cssText =
-      'position:fixed;right:12px;top:12px;z-index:1001;background:#101317;border:1px solid #d4af37;color:#fff;' +
-      'padding:10px 12px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.35);font:14px system-ui,sans-serif;';
-    panel.innerHTML =
-      '<div style="font-weight:600;margin-bottom:6px">Admin Access</div>' +
-      '<div id="passkeyStatus" style="margin-bottom:8px;">Checking…</div>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-        '<button id="btnCreatePasskey" style="padding:6px 10px;border-radius:8px;border:1px solid #d4af37;background:#0f1720;color:#ffd95e;cursor:pointer">Create passkey</button>' +
-        '<button id="btnSigninPasskey" style="padding:6px 10px;border-radius:8px;border:1px solid #d4af37;background:#0f1720;color:#ffd95e;cursor:pointer">Sign-in</button>' +
-        '<button id="btnSignOut" style="padding:6px 10px;border-radius:8px;border:1px solid #555;background:#222;color:#bbb;cursor:pointer;display:none">Sign-out</button>' +
-      '</div>';
-    document.body.appendChild(panel);
-    return panel;
-  }
-
-  // ---- Lock/unlock admin UI (disable edit/save/delete controls) ----
-  function lockUI() {
-    const ids = ['openAddBtn','saveGmBtn','cancelGmBtn','gm_delete_button'];
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.disabled = true; el.style.opacity = '0.55'; el.title = 'Sign in to edit'; }
-    });
-  }
-  function unlockUI() {
-    const ids = ['openAddBtn','saveGmBtn','cancelGmBtn','gm_delete_button'];
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.disabled = false; el.style.opacity = ''; el.title = ''; }
-    });
-  }
-
-  async function getSessionStatus() {
-    try {
-      const r = await fetch('/.netlify/functions/sessionStatus', { headers: { 'cache-control': 'no-store' } });
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return await r.json(); // { authenticated: boolean }
-    } catch (e) {
-      console.warn('[auth] sessionStatus error', e);
-      return { authenticated: false };
-    }
-  }
-
-  async function refreshStatusUI() {
-    const s = await getSessionStatus();
-    const statusEl = document.getElementById('passkeyStatus');
-    const so = document.getElementById('btnSignOut');
-    if (s.authenticated) {
-      unlockUI();
-      if (statusEl) statusEl.textContent = 'Signed in ✔';
-      if (so) so.style.display = '';
-    } else {
-      lockUI();
-      if (statusEl) statusEl.textContent = 'Signed out';
-      if (so) so.style.display = 'none';
-    }
-  }
-
-  async function createPasskey() {
-    const statusEl = document.getElementById('passkeyStatus');
-    try {
-      statusEl && (statusEl.textContent = 'Preparing registration…');
-      const prep = await fetch('/.netlify/functions/beginRegistration', { method: 'POST' });
-      if (!prep.ok) throw new Error('beginRegistration HTTP ' + prep.status);
-      const { publicKey } = await prep.json();
-      if (!publicKey) throw new Error('No publicKey options from server');
-      const cred = await navigator.credentials.create({ publicKey: revivePublicKeyOpts(publicKey) });
-      if (!cred) throw new Error('User cancelled or no credential created');
-      statusEl && (statusEl.textContent = 'Finalizing…');
-      const verify = await fetch('/.netlify/functions/verifyRegistration', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(credToJSON(cred))
+      const vr = await fetch('/.netlify/functions/verifyRegistration', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      const res = await verify.json().catch(() => ({}));
-      if (!verify.ok || !res?.ok) throw new Error('verifyRegistration failed');
-      statusEl && (statusEl.textContent = 'Passkey created ✔');
-      await refreshStatusUI();
+      const body = await vr.json().catch(() => ({}));
+      if (!vr.ok) throw new Error(body?.error || 'verifyRegistration failed');
+      note('Passkey created ✔ — now sign in');
     } catch (e) {
-      console.error('[auth] createPasskey', e);
-      alert('Could not create passkey: ' + e.message);
-      statusEl && (statusEl.textContent = 'Error creating passkey');
+      console.error(e); note(e.message || 'Registration failed');
     }
   }
 
-  async function signInWithPasskey() {
-    const statusEl = document.getElementById('passkeyStatus');
+  async function onSignin() {
     try {
-      statusEl && (statusEl.textContent = 'Preparing sign-in…');
-      const prep = await fetch('/.netlify/functions/beginAuthentication', { method: 'POST' });
-      if (!prep.ok) throw new Error('beginAuthentication HTTP ' + prep.status);
-      const { publicKey } = await prep.json();
-      if (!publicKey) throw new Error('No publicKey options from server');
-      const cred = await navigator.credentials.get({ publicKey: revivePublicKeyOpts(publicKey) });
-      if (!cred) throw new Error('User cancelled or no credential');
-      statusEl && (statusEl.textContent = 'Verifying…');
-      const verify = await fetch('/.netlify/functions/verifyAuthentication', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(credToJSON(cred))
+      note('Preparing sign-in…');
+      const ba = await fetch('/.netlify/functions/beginAuthentication', { credentials: 'include' });
+      if (!ba.ok) throw new Error('beginAuthentication HTTP ' + ba.status);
+      const { options } = await ba.json();
+      if (!options) throw new Error('No options from server');
+
+      const cred = await navigator.credentials.get({ publicKey: reviveAuthOptions(options) });
+      if (!cred) throw new Error('No assertion');
+
+      const payload = {
+        assertion: {
+          id: cred.id,
+          rawId: enc(cred.rawId),
+          type: cred.type,
+          response: {
+            clientDataJSON: enc(cred.response.clientDataJSON),
+            authenticatorData: enc(cred.response.authenticatorData),
+            signature: enc(cred.response.signature),
+            userHandle: cred.response.userHandle ? enc(cred.response.userHandle) : null,
+          },
+        }
+      };
+
+      const va = await fetch('/.netlify/functions/verifyAuthentication', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
-      const res = await verify.json().catch(() => ({}));
-      if (!verify.ok || !res?.ok) throw new Error('verifyAuthentication failed');
-      statusEl && (statusEl.textContent = 'Signed in ✔');
-      await refreshStatusUI();
+      const body = await va.json().catch(() => ({}));
+      if (!va.ok) throw new Error(body?.error || 'verifyAuthentication failed');
+
+      if (await hasSession()) { unmountGate(); }
+      else note('Signed in, but session not detected — refresh and try again.');
     } catch (e) {
-      console.error('[auth] signIn', e);
-      alert('Sign-in failed: ' + e.message);
-      statusEl && (statusEl.textContent = 'Sign-in error');
+      console.error(e); note(e.message || 'Sign-in failed');
     }
   }
 
-  async function signOut() {
-    try {
-      await fetch('/.netlify/functions/sessionStatus?logout=1', { method: 'POST' }); // this function clears the cookie when logout=1
-    } catch {}
-    await refreshStatusUI();
-  }
-
-  // ---- Init on page load ----
-  document.addEventListener('DOMContentLoaded', async function () {
-    ensurePanel();
-
-    const supported = !!(window.PublicKeyCredential && navigator.credentials);
-    if (!supported) {
-      const s = document.getElementById('passkeyStatus');
-      if (s) s.textContent = 'Passkeys not supported on this device/browser';
-      lockUI();
-      return;
-    }
-
-    document.getElementById('btnCreatePasskey')?.addEventListener('click', createPasskey);
-    document.getElementById('btnSigninPasskey')?.addEventListener('click', signInWithPasskey);
-    document.getElementById('btnSignOut')?.addEventListener('click', signOut);
-
-    // First paint: lock until we know
-    lockUI();
-    await refreshStatusUI();
+  document.addEventListener('DOMContentLoaded', async () => {
+    mountGate();
+    if (await hasSession()) unmountGate();
   });
 })();

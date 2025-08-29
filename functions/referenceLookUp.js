@@ -1,7 +1,8 @@
 // functions/referenceLookUp.js
-// Reference search with detailed diagnostics and safe secret masking.
+// Reference search with diagnostics and session enforcement.
 
 const { MongoClient } = require('mongodb');
+const { read, NAME } = require('./_lib/session');
 
 const ENV = {
   URI: process.env.MONGO_URI,
@@ -9,15 +10,10 @@ const ENV = {
   COLL: process.env.MONGO_REF_COLL || 'references',
 };
 
-function mask(uri) {
-  if (!uri) return '<undefined>';
-  try { return uri.replace(/\/\/([^@]+)@/, '//***:***@'); }
-  catch { return '<unparseable>'; }
-}
-
+function mask(uri) { return uri ? uri.replace(/\/\/([^@]+)@/, '//***:***@') : '<undefined>'; }
 function rx(s) { return new RegExp(s, 'i'); }
 
-// More forgiving search: tokenized "AND of ORs" across common fields
+// Tokenized AND-of-ORs across common fields
 function buildSmartQuery(term) {
   const tokens = (term || '').split(/\s+/).filter(Boolean);
   const F = [
@@ -41,10 +37,7 @@ console.log('[RefLookup] ENV MONGO_REF_COLL:', ENV.COLL);
 async function getClient() {
   if (cachedClient) return cachedClient;
   if (!ENV.URI) throw new Error('Missing MONGO_URI');
-  const client = new MongoClient(ENV.URI, {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 8000,
-  });
+  const client = new MongoClient(ENV.URI, { maxPoolSize: 10, serverSelectionTimeoutMS: 8000 });
   await client.connect();
   cachedClient = client;
   console.log('[RefLookup] ✅ Connected (client cached)');
@@ -56,6 +49,13 @@ exports.handler = async (event) => {
   try {
     if (event.httpMethod !== 'GET') {
       return { statusCode: 405, body: 'Method Not Allowed' };
+    }
+
+    // 🔐 Require session cookie
+    const sid = read({ headers: event.headers }, NAME);
+    if (!sid) {
+      console.warn('[RefLookup] 401: no session cookie');
+      return { statusCode: 401, body: 'Unauthorized' };
     }
 
     const params = new URLSearchParams(event.rawQuery || '');
@@ -72,8 +72,7 @@ exports.handler = async (event) => {
     console.log(`[RefLookup] ► Request q="${q}" limit=${limit}`);
 
     const client = await getClient();
-    const db = client.db(ENV.DB);
-    const coll = db.collection(ENV.COLL);
+    const coll = client.db(ENV.DB).collection(ENV.COLL);
 
     try {
       const est = await coll.estimatedDocumentCount();
@@ -83,29 +82,27 @@ exports.handler = async (event) => {
     }
 
     const query = buildSmartQuery(q);
-    console.log('[RefLookup] Query:', JSON.stringify(query));
+    const proj = {
+      Reference: 1, Brand: 1, Collection: 1, Description: 1, Details: 1,
+      ImageFilename: 1, 'Calibre.Name': 1, SourceURL: 1, LastUpdated: 1,
+      Aliases: 1, Specs: 1, Dial: 1, Case: 1, Bracelet: 1, Price: 1,
+      PriceCurrency: 1, PriceAmount: 1,
+    };
 
-    console.time('[RefLookup] find');
-    // Return *all* fields (except _id) so we can display everything
-    const docs = await coll.find(query, { projection: { _id: 0 } })
-                           .limit(limit)
-                           .toArray();
-    console.timeEnd('[RefLookup] find');
+    console.time('[RefLookup] Mongo find');
+    const docs = await coll.find(query, { projection: proj }).limit(limit).toArray();
+    console.timeEnd('[RefLookup] Mongo find');
 
-    console.log(`[RefLookup] ◄ ${docs.length} docs in ${Date.now() - t0}ms`);
+    const dt = Date.now() - t0;
+    console.log(`[RefLookup] ◄ Response ${docs.length} docs in ${dt}ms`);
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json; charset=utf-8' },
       body: JSON.stringify(docs),
     };
   } catch (err) {
-    const msg = (err && err.message ? err.message : String(err))
-      .replace(/mongodb\+srv:[^ )]+/g, '***');
-    console.error(`[RefLookup] ✖ ${msg} (after ${Date.now() - t0}ms)`);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify({ error: 'Internal error querying references' }),
-    };
+    const dt = Date.now() - t0;
+    console.error('[RefLookup] ERROR:', err && err.message, 'in', dt, 'ms');
+    return { statusCode: 500, body: JSON.stringify({ error: 'Server error' }) };
   }
 };

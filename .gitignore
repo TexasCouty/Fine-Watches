@@ -1,47 +1,39 @@
-# Node.js dependencies
+# Node.js / tooling
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Log files
 *.log
 logs/
 *.pid
 *.seed
-*.pid.lock
+.cache/
+coverage/
+dist/
+tmp/
 
-# OS / Editor junk
+# Env / Netlify
+.env
+.env.local
+.env.*.local
+.netlify/
+
+# OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
 
-# Netlify
-.netlify/
-
-
-# Build and temp artifacts
-dist/
-build/
-tmp/
-.cache/
-coverage/
-
-# PowerShell / Batch helpers
-setup_env.ps1
-setup_env.bat
-
-
-
-# Lock files (optional for team consistency)
-# package-lock.json
-# yarn.lock
-
-# local one-click backups
+# Project-specific
 backup/
+.playwright/
+
+# Big data + heavy assets (keep small logos)
+data/
+src/assets/grey_market/**
+
+# Docs (keep the main README, ignore the backup copy)
+READMEBACKUp.md
+# If you truly want to ignore *all* markdown except main README, uncomment:
+# *.md
+# !README.md

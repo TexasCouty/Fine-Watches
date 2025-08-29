@@ -37,3 +37,5 @@ READMEBACKUp.md
 # If you truly want to ignore *all* markdown except main README, uncomment:
 # *.md
 # !README.md
+setup_env.ps1
+setup_env.bat

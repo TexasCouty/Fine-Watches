@@ -4,7 +4,7 @@
 
 
 const crypto = require('crypto');
-
+const { read, NAME } = require('./_lib/session');
 
 exports.handler = async () => {
 try {

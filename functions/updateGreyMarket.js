@@ -3,6 +3,8 @@ const { MongoClient } = require('mongodb');
 const uri = process.env.MONGO_URI;
 let cachedClient = null;
 
+const { read, NAME } = require('./_lib/session');
+
 exports.handler = async (event) => {
   console.log('✏️ Update Grey Market Function STARTED');
 

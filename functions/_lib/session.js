@@ -1,49 +1,38 @@
 // functions/_lib/session.js
-const crypto = require('crypto');
+// Tiny cookie helpers for Netlify Functions
+const NAME = 'lt_session';
+const CHAL = 'lt_chal';
+const UID  = 'lt_uid';
+const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 
-const NAME = 'sid'; // session "logged-in" flag
-const UID  = 'uid'; // your local user-id (account-per-device)
-const CHAL = 'wchal'; // the WebAuthn challenge
-
-const secret = () => (process.env.SESSION_SECRET || 'dev-secret');
-
-function sign(v) {
-  const mac = crypto.createHmac('sha256', secret()).update(v).digest('base64url');
-  return `${v}.${mac}`;
+function cookieStr(key, val, opts) {
+  const o = Object.assign({ Path: '/', HttpOnly: true, SameSite: 'Lax', Secure: true, MaxAge: MAX_AGE }, opts || {});
+  const parts = [`${key}=${encodeURIComponent(val)}`];
+  if (o.MaxAge != null) parts.push(`Max-Age=${o.MaxAge}`);
+  if (o.Path) parts.push(`Path=${o.Path}`);
+  if (o.HttpOnly) parts.push('HttpOnly');
+  if (o.SameSite) parts.push(`SameSite=${o.SameSite}`);
+  if (o.Secure) parts.push('Secure');
+  return parts.join('; ');
 }
-function verify(signed) {
-  if (!signed) return null;
-  const p = signed.lastIndexOf('.');
-  if (p < 0) return null;
-  const v = signed.slice(0, p);
-  const mac = signed.slice(p + 1);
-  const exp = crypto.createHmac('sha256', secret()).update(v).digest('base64url');
-  try { return crypto.timingSafeEqual(Buffer.from(mac), Buffer.from(exp)) ? v : null; }
-  catch { return null; }
-}
-
-function parseCookies(header) {
+function parseCookies(headers) {
+  const raw = (headers && (headers.cookie || headers.Cookie)) || '';
   const out = {};
-  if (!header) return out;
-  header.split(';').forEach(kv => {
-    const i = kv.indexOf('=');
-    if (i > -1) out[kv.slice(0, i).trim()] = decodeURIComponent(kv.slice(i + 1).trim());
+  raw.split(';').forEach(p => {
+    const idx = p.indexOf('=');
+    if (idx > -1) out[p.slice(0, idx).trim()] = decodeURIComponent(p.slice(idx + 1).trim());
   });
   return out;
 }
-function cookie(name, value, opts = {}) {
-  const parts = [`${name}=${encodeURIComponent(value)}`, 'Path=/', 'SameSite=Lax', 'Secure', 'HttpOnly'];
-  if (opts.maxAge) parts.push(`Max-Age=${Math.floor(opts.maxAge)}`);
-  return parts.join('; ');
+function read(req, key) {
+  const c = parseCookies(req.headers || {});
+  return c[key || NAME] || '';
+}
+function write(key, val) {
+  return cookieStr(key || NAME, val);
+}
+function clear(key) {
+  return cookieStr(key || NAME, '', { MaxAge: 0 });
 }
 
-function read(ctx, key) {
-  const c = parseCookies(ctx.headers?.cookie || ctx.headers?.Cookie || '');
-  const raw = c[key];
-  return raw ? verify(raw) : null;
-}
-function write(key, value, maxAge) {
-  return cookie(key, sign(value), { maxAge });
-}
-
-module.exports = { NAME, UID, CHAL, parseCookies, read, write, sign, verify };
+module.exports = { NAME, CHAL, UID, MAX_AGE, parseCookies, read, write, clear };

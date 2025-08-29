@@ -1,16 +1,20 @@
 // functions/_lib/mongo.js
 const { MongoClient } = require('mongodb');
 
-const URI = process.env.MONGO_URI;
-const DB  = process.env.MONGO_DB || 'test';
+let clientPromise = null;
 
-let client;
-async function getDb() {
-  if (!client) {
-    if (!URI) throw new Error('Missing MONGO_URI');
-    client = new MongoClient(URI, { maxPoolSize: 10, serverSelectionTimeoutMS: 8000 });
-    await client.connect();
+function getClient() {
+  if (!clientPromise) {
+    const uri = process.env.MONGO_URI;
+    if (!uri) throw new Error('MONGO_URI not set');
+    clientPromise = new MongoClient(uri, { maxPoolSize: 5 }).connect();
   }
-  return client.db(DB);
+  return clientPromise;
 }
+
+async function getDb(dbName) {
+  const client = await getClient();
+  return client.db(dbName || process.env.MONGO_DB);
+}
+
 module.exports = { getDb };

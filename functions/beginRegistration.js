@@ -1,54 +1,95 @@
 // functions/beginRegistration.js
-const { getDb } = require('./_lib/mongo');
-const { write, read, UID, CHAL, parseCookies } = require('./_lib/session');
-const { generateRegistrationOptions } = require('@simplewebauthn/server');
-const crypto = require('crypto');
+'use strict';
 
-const RP_ID = process.env.RP_ID;
-const RP_NAME = process.env.RP_NAME || 'LuxeTime';
+const crypto = require('crypto');
+const { generateRegistrationOptions } = require('@simplewebauthn/server');
+const { UID, CHAL, read, write } = require('./_lib/session');
+
+function json(status, body, extra = {}) {
+  return {
+    statusCode: status,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store',
+      ...extra,
+    },
+    body: JSON.stringify(body),
+  };
+}
 
 exports.handler = async (event) => {
-  try {
-    if (event.httpMethod !== 'GET') return { statusCode: 405, body: 'Method Not Allowed' };
+  const headers = event.headers || {};
+  const host = headers['x-forwarded-host'] || headers.host || '';
+  const proto = headers['x-forwarded-proto'] || 'https';
+  const ua = headers['user-agent'] || '';
 
-    const headers = { 'Content-Type': 'application/json' };
-    // session/user id (account-per-device)
-    let uid = read({ headers: event.headers }, UID);
-    if (!uid) {
-      uid = crypto.randomUUID();
-      headers['Set-Cookie'] = [ write(UID, uid, 60 * 60 * 24 * 365) ]; // 1 year
+  try {
+    if (event.httpMethod !== 'GET') {
+      console.warn('[beginRegistration] 405 method=', event.httpMethod);
+      return json(405, { error: 'Method Not Allowed' });
     }
 
-    const db = await getDb();
-    const users = db.collection('users');
-    const creds = db.collection('webauthn_credentials');
+    // Resolve env with safe fallbacks (so we can see values in logs)
+    const RP_ID   = process.env.RP_ID   || (host ? host.split(':')[0] : '');
+    const ORIGIN  = process.env.ORIGIN  || (host ? `${proto}://${host}` : '');
+    const RP_NAME = process.env.RP_NAME || 'LuxeTime';
 
-    await users.updateOne({ _id: uid }, { $setOnInsert: { _id: uid, displayName: 'LuxeTime User' } }, { upsert: true });
-
-    const existing = await creds.find({ userId: uid }).project({ credentialID: 1 }).toArray();
-    const excludeCredentials = existing.map(c => ({ id: c.credentialID, type: 'public-key' }));
-
-    const options = await generateRegistrationOptions({
-      rpName: RP_NAME,
-      rpID: RP_ID,
-      userID: uid,
-      userName: uid,
-      attestationType: 'none',
-      excludeCredentials,
-      authenticatorSelection: {
-        userVerification: 'preferred',
-        residentKey: 'preferred',
-        authenticatorAttachment: 'platform', // Face ID / Touch ID / Windows Hello
-      },
+    console.log('[beginRegistration] ▶', {
+      host, proto, ua, RP_ID, ORIGIN, RP_NAME, time: new Date().toISOString(),
     });
 
-    const set = headers['Set-Cookie'] ? [].concat(headers['Set-Cookie']) : [];
-    set.push(write(CHAL, options.challenge, 60 * 5)); // 5 minutes
-    headers['Set-Cookie'] = set;
+    if (!RP_ID || !ORIGIN) {
+      console.error('[beginRegistration] Missing RP_ID or ORIGIN', { RP_ID, ORIGIN });
+      return json(500, { error: 'Missing RP_ID or ORIGIN env' });
+    }
 
-    return { statusCode: 200, headers, body: JSON.stringify({ options }) };
-  } catch (e) {
-    console.error('[beginRegistration] error', e);
-    return { statusCode: 500, body: JSON.stringify({ error: 'internal error' }) };
+    // Stable per-device uid cookie
+    let uid = read({ headers }, UID);
+    const setCookies = [];
+    if (!uid) {
+      uid = crypto.randomUUID();
+      setCookies.push(write(UID, uid));
+      console.log('[beginRegistration] issued uid:', uid);
+    } else {
+      console.log('[beginRegistration] existing uid:', uid);
+    }
+
+    // Build options (wrapped in try/catch so we never 502)
+    let options;
+    try {
+      options = await generateRegistrationOptions({
+        rpID: RP_ID,
+        rpName: RP_NAME,
+        userID: Buffer.from(uid),            // opaque user handle
+        userName: `lt-${uid.slice(0, 8)}`,   // display only
+        attestationType: 'none',
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',  // FaceID/TouchID/Windows Hello
+          residentKey: 'preferred',
+          userVerification: 'preferred',
+        },
+        excludeCredentials: [], // (populate from DB later if needed)
+      });
+    } catch (e) {
+      console.error('[beginRegistration] generateRegistrationOptions error:', e && e.message);
+      return json(500, { error: 'generateRegistrationOptions failed', message: String(e.message || e) });
+    }
+
+    // Store challenge in cookie
+    setCookies.push(write(CHAL, options.challenge));
+
+    console.log('[beginRegistration] ◀ ok');
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-store',
+        'Set-Cookie': setCookies,
+      },
+      body: JSON.stringify({ options }),
+    };
+  } catch (err) {
+    console.error('[beginRegistration] ✖ uncaught:', err && err.stack ? err.stack : String(err));
+    return json(500, { error: 'beginRegistration failed', message: String(err.message || err) });
   }
 };

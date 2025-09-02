@@ -1,152 +1,178 @@
 // src/auth.js
-// Full-screen gate; matches your server's expected payloads:
-// - beginRegistration/beginAuthentication -> GET returning { options }
-// - verifyRegistration expects { attestation: ... }
-// - verifyAuthentication expects { assertion: ... }
+// Client auth gate for LuxeTime: Passkeys + password fallback + UI gating
+// Requires Netlify Functions: beginRegistration, verifyRegistration,
+// beginAuthentication, verifyAuthentication, loginWithPassword, sessionStatus
 
 (function () {
-  const GATE_ID = 'ltx-auth-gate';
-
-  // Base64url helpers
-  const enc = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  const dec = (s) => Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0)).buffer;
-
-  function reviveRegOptions(opts) {
-    const o = { ...opts };
-    o.challenge = dec(o.challenge);
-    if (o.user && typeof o.user.id === 'string') o.user = { ...o.user, id: dec(o.user.id) };
-    if (Array.isArray(o.excludeCredentials)) o.excludeCredentials = o.excludeCredentials.map(c => ({ ...c, id: dec(c.id) }));
-    return o;
+  // ---------- Helpers ----------
+  function b64urlToBuf(b64url) {
+    const pad = '='.repeat((4 - (b64url.length % 4)) % 4);
+    const b64 = (b64url.replace(/-/g, '+').replace(/_/g, '/')) + pad;
+    const str = atob(b64);
+    const buf = new Uint8Array(str.length);
+    for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
+    return buf.buffer;
   }
-  function reviveAuthOptions(opts) {
-    const o = { ...opts };
-    o.challenge = dec(o.challenge);
-    if (Array.isArray(o.allowCredentials)) o.allowCredentials = o.allowCredentials.map(c => ({ ...c, id: dec(c.id) }));
-    return o;
+  function bufToB64url(buf) {
+    const bytes = buf instanceof ArrayBuffer ? new Uint8Array(buf) : new Uint8Array(buf.buffer);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
   }
-
-  function mountGate() {
-    if (document.getElementById(GATE_ID)) return;
-    const style = document.createElement('style');
-    style.textContent = `
-      #${GATE_ID}{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#0b0f14}
-      #${GATE_ID} .panel{width:min(520px,90vw);border:1px solid #d4af37;border-radius:14px;padding:22px;background:#0f141b;color:#eee;box-shadow:0 8px 30px rgba(0,0,0,.35);text-align:center;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-      #${GATE_ID} h1{margin:0 0 6px;font-size:22px;letter-spacing:.5px}
-      #${GATE_ID} p{margin:8px 0 18px;opacity:.85}
-      #${GATE_ID} .btn{display:inline-block;margin:6px 8px 0;padding:10px 14px;border:1px solid #d4af37;border-radius:10px;color:#111;background:#d4af37;font-weight:600;cursor:pointer;user-select:none}
-      #${GATE_ID} .btn.secondary{background:transparent;color:#d4af37}
-      #${GATE_ID} .note{margin-top:10px;font-size:13px;opacity:.8}
-    `;
-    document.head.appendChild(style);
-
-    const div = document.createElement('div');
-    div.id = GATE_ID;
-    div.innerHTML = `
-      <div class="panel">
-        <h1>Unlock LuxeTime</h1>
-        <p>Use Face ID / Touch ID (Passkey). After sign-in, the app will unlock.</p>
-        <div><button id="btnCreatePk" class="btn">Create passkey</button></div>
-        <div><button id="btnSigninPk" class="btn secondary">Sign in with passkey</button></div>
-        <div class="note" id="pkNote"></div>
-      </div>`;
-    document.body.appendChild(div);
-
-    document.getElementById('btnCreatePk').onclick = onCreate;
-    document.getElementById('btnSigninPk').onclick = onSignin;
+  async function getJSON(url) {
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' }, credentials: 'include' });
+    const text = await res.text();
+    try { return { ok: res.ok, status: res.status, json: JSON.parse(text) }; }
+    catch { return { ok: res.ok, status: res.status, json: text }; }
   }
-  function unmountGate() {
-    document.getElementById(GATE_ID)?.remove();
-  }
-  function note(msg) {
-    const n = document.getElementById('pkNote'); if (n) n.textContent = msg || '';
+  async function postJSON(url, body) {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    const text = await res.text();
+    try { return { ok: res.ok, status: res.status, json: JSON.parse(text) }; }
+    catch { return { ok: res.ok, status: res.status, json: text }; }
   }
 
-  async function hasSession() {
+  // ---------- UI gating ----------
+  const grid = document.querySelector('.lookup-grid'); // main content grid
+  const gmBtn = document.getElementById('gmSearchBtn');
+  const refBtn = document.getElementById('refLookupBtn');
+
+  function showApp() {
+    if (grid) grid.style.display = '';
+    if (gmBtn) { gmBtn.disabled = false; gmBtn.style.filter = ''; gmBtn.style.pointerEvents = '';}
+    if (refBtn) { refBtn.disabled = false; refBtn.style.filter = ''; refBtn.style.pointerEvents = '';}
+  }
+  function showAuthOnly() {
+    if (grid) grid.style.display = 'none';
+    if (gmBtn) { gmBtn.disabled = true; gmBtn.style.filter = 'grayscale(1)'; gmBtn.style.pointerEvents = 'none';}
+    if (refBtn) { refBtn.disabled = true; refBtn.style.filter = 'grayscale(1)'; refBtn.style.pointerEvents = 'none';}
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function refreshGate() {
     try {
-      const r = await fetch('/.netlify/functions/sessionStatus', { credentials: 'include' });
-      const j = await r.json().catch(() => ({}));
-      return !!j.authenticated;
-    } catch { return false; }
+      const r = await getJSON('/.netlify/functions/sessionStatus');
+      if (r.ok && r.json && r.json.authenticated) showApp();
+      else showAuthOnly();
+    } catch {
+      showAuthOnly();
+    }
   }
 
-  async function onCreate() {
+  document.addEventListener('DOMContentLoaded', refreshGate);
+
+  // ---------- Globals expected by index.html ----------
+  // Create Passkey (registration)
+  window.createPasskey = async function createPasskey() {
     try {
-      note('Preparing registration…');
-      const br = await fetch('/.netlify/functions/beginRegistration', { credentials: 'include' });
+      console.debug('[auth] beginRegistration →');
+      const br = await getJSON('/.netlify/functions/beginRegistration');
       if (!br.ok) throw new Error('beginRegistration HTTP ' + br.status);
-      const { options } = await br.json();
-      if (!options) throw new Error('No options from server');
+      const opts = br.json && (br.json.options || br.json);
 
-      const cred = await navigator.credentials.create({ publicKey: reviveRegOptions(options) });
-      if (!cred) throw new Error('No credential');
+      // Convert base64url fields to ArrayBuffers
+      const publicKey = Object.assign({}, opts.publicKey);
+      publicKey.challenge = b64urlToBuf(publicKey.challenge);
+      if (publicKey.user && typeof publicKey.user.id === 'string') {
+        publicKey.user = Object.assign({}, publicKey.user, { id: b64urlToBuf(publicKey.user.id) });
+      }
 
-      const payload = {
-        attestation: {
-          id: cred.id,
-          rawId: enc(cred.rawId),
-          type: cred.type,
-          response: {
-            clientDataJSON: enc(cred.response.clientDataJSON),
-            attestationObject: enc(cred.response.attestationObject),
-          },
+      const cred = await navigator.credentials.create({ publicKey });
+      if (!cred) throw new Error('navigator.credentials.create returned null');
+
+      const attObj = {
+        id: cred.id,
+        type: cred.type,
+        rawId: bufToB64url(cred.rawId),
+        response: {
+          attestationObject: bufToB64url(cred.response.attestationObject),
+          clientDataJSON: bufToB64url(cred.response.clientDataJSON),
         }
       };
 
-      const vr = await fetch('/.netlify/functions/verifyRegistration', {
-        method: 'POST', credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const body = await vr.json().catch(() => ({}));
-      if (!vr.ok) throw new Error(body?.error || 'verifyRegistration failed');
-      note('Passkey created ✔ — now sign in');
-    } catch (e) {
-      console.error(e); note(e.message || 'Registration failed');
-    }
-  }
+      const vr = await postJSON('/.netlify/functions/verifyRegistration', { attestation: attObj });
+      if (!vr.ok) throw new Error('verifyRegistration HTTP ' + vr.status + ' ' + JSON.stringify(vr.json));
 
-  async function onSignin() {
+      console.debug('[auth] verifyRegistration ✔', vr.json);
+      // Server sets the session cookie on success.
+      await refreshGate();
+      alert('Passkey created! You are signed in.');
+    } catch (e) {
+      console.error('[auth] createPasskey error', e);
+      alert('Could not create passkey: ' + e.message);
+    }
+  };
+
+  // Sign-in with Passkey (authentication)
+  window.signInWithPasskey = async function signInWithPasskey() {
     try {
-      note('Preparing sign-in…');
-      const ba = await fetch('/.netlify/functions/beginAuthentication', { credentials: 'include' });
+      console.debug('[auth] beginAuthentication →');
+      const ba = await getJSON('/.netlify/functions/beginAuthentication');
       if (!ba.ok) throw new Error('beginAuthentication HTTP ' + ba.status);
-      const { options } = await ba.json();
-      if (!options) throw new Error('No options from server');
+      const opts = ba.json && (ba.json.options || ba.json);
 
-      const cred = await navigator.credentials.get({ publicKey: reviveAuthOptions(options) });
-      if (!cred) throw new Error('No assertion');
+      const publicKey = Object.assign({}, opts.publicKey);
+      publicKey.challenge = b64urlToBuf(publicKey.challenge);
+      if (publicKey.allowCredentials && Array.isArray(publicKey.allowCredentials)) {
+        publicKey.allowCredentials = publicKey.allowCredentials.map(c => ({
+          type: c.type,
+          id: b64urlToBuf(c.id),
+          transports: c.transports
+        }));
+      }
 
-      const payload = {
-        assertion: {
-          id: cred.id,
-          rawId: enc(cred.rawId),
-          type: cred.type,
-          response: {
-            clientDataJSON: enc(cred.response.clientDataJSON),
-            authenticatorData: enc(cred.response.authenticatorData),
-            signature: enc(cred.response.signature),
-            userHandle: cred.response.userHandle ? enc(cred.response.userHandle) : null,
-          },
+      const assertion = await navigator.credentials.get({ publicKey });
+      if (!assertion) throw new Error('navigator.credentials.get returned null');
+
+      const asObj = {
+        id: assertion.id,
+        type: assertion.type,
+        rawId: bufToB64url(assertion.rawId),
+        response: {
+          authenticatorData: bufToB64url(assertion.response.authenticatorData),
+          clientDataJSON: bufToB64url(assertion.response.clientDataJSON),
+          signature: bufToB64url(assertion.response.signature),
+          userHandle: assertion.response.userHandle ? bufToB64url(assertion.response.userHandle) : null,
         }
       };
 
-      const va = await fetch('/.netlify/functions/verifyAuthentication', {
-        method: 'POST', credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const body = await va.json().catch(() => ({}));
-      if (!va.ok) throw new Error(body?.error || 'verifyAuthentication failed');
+      const vr = await postJSON('/.netlify/functions/verifyAuthentication', { assertion: asObj });
+      if (!vr.ok) throw new Error('verifyAuthentication HTTP ' + vr.status + ' ' + JSON.stringify(vr.json));
 
-      if (await hasSession()) { unmountGate(); }
-      else note('Signed in, but session not detected — refresh and try again.');
+      console.debug('[auth] verifyAuthentication ✔', vr.json);
+      await refreshGate();
+      alert('Signed in!');
     } catch (e) {
-      console.error(e); note(e.message || 'Sign-in failed');
+      console.error('[auth] signInWithPasskey error', e);
+      alert('Could not sign in with passkey: ' + e.message);
     }
-  }
+  };
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    mountGate();
-    if (await hasSession()) unmountGate();
-  });
+  // Password fallback (Netlify Function: loginWithPassword)
+  window.loginWithPasswordPrompt = async function loginWithPasswordPrompt() {
+    try {
+      const pwd = prompt('Enter access password');
+      if (!pwd) return;
+      const r = await postJSON('/.netlify/functions/loginWithPassword', { password: pwd });
+      if (!r.ok) throw new Error('login HTTP ' + r.status);
+      await refreshGate();
+      alert('Signed in with password');
+    } catch (e) {
+      console.error('[auth] login error', e);
+      alert('Password login failed: ' + e.message);
+    }
+  };
+
+  window.logout = async function logout() {
+    try {
+      await fetch('/.netlify/functions/sessionStatus?logout=1', { method: 'POST', credentials: 'include' });
+    } finally {
+      await refreshGate();
+    }
+  };
 })();
